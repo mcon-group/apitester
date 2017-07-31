@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.mcg.apitester</groupId>
     <artifactId>apitester</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
   </parent>
   <artifactId>apitester-ui</artifactId>
 </project>
