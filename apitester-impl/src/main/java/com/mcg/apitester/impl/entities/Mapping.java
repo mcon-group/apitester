@@ -1,4 +1,4 @@
-package com.mcg.apitester.impl;
+package com.mcg.apitester.impl.entities;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 
-class Mapping {
+public class Mapping {
 	
 	private List<String> patterns;
 	private List<RequestMethod> methods;

@@ -1,4 +1,4 @@
-package com.mcg.apitester.impl;
+package com.mcg.apitester.impl.controllers;
 
 import java.util.List;
 
@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mcg.apitester.impl.EndpointService;
+import com.mcg.apitester.impl.entities.Mapping;
 
 @RestController
 public class EndpointController {

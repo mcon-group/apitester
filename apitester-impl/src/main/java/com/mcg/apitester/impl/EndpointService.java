@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import com.mcg.apitester.impl.entities.Mapping;
+import com.mcg.apitester.impl.entities.MethodInfo;
 
 @Service
 public class EndpointService {
@@ -36,6 +39,7 @@ public class EndpointService {
 		List<Mapping> out = new ArrayList<>();
 		Map<RequestMappingInfo, HandlerMethod> map = this.handlerMapping.getHandlerMethods();
 		for(Entry<RequestMappingInfo,HandlerMethod> e : map.entrySet()) {
+			
 			RequestMappingInfo rmi = e.getKey();
 			HandlerMethod hm = e.getValue();
 			

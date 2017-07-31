@@ -1,4 +1,4 @@
-package com.mcg.apitester.impl;
+package com.mcg.apitester.impl.entities;
 
 public class ParameterInfo {
 	
@@ -9,6 +9,7 @@ public class ParameterInfo {
 	private String typeShort; 
 	private String defaultValue = "[none]"; 
 	private PARAM_TYPE paramType;
+	private Object object;
 	
 	public enum PARAM_TYPE { RETURN, PATH, REQUEST, BODY };
 	
@@ -76,6 +77,14 @@ public class ParameterInfo {
 
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+
+	public Object getObject() {
+		return object;
+	}
+
+	public void setObject(Object object) {
+		this.object = object;
 	}
 	
 	

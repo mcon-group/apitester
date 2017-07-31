@@ -1,4 +1,4 @@
-package com.mcg.apitester.impl;
+package com.mcg.apitester.impl.entities;
 
 import java.util.List;
 
