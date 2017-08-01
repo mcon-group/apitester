@@ -2,8 +2,11 @@ package com.mcg.apitester.impl.entities;
 
 public class ParameterInfo {
 	
+	private boolean deprecated; 
+	private boolean file; 
 	private boolean collection; 
 	private boolean required = false; 
+	private String description; 
 	private String name; 
 	private String type; 
 	private String typeShort; 
@@ -85,6 +88,30 @@ public class ParameterInfo {
 
 	public void setObject(Object object) {
 		this.object = object;
+	}
+
+	public boolean isDeprecated() {
+		return deprecated;
+	}
+
+	public void setDeprecated(boolean deprecated) {
+		this.deprecated = deprecated;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isFile() {
+		return file;
+	}
+
+	public void setFile(boolean file) {
+		this.file = file;
 	}
 	
 	

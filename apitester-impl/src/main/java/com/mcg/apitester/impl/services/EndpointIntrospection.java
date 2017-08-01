@@ -1,4 +1,4 @@
-package com.mcg.apitester.impl;
+package com.mcg.apitester.impl.services;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -12,23 +12,30 @@ import java.util.Map;
 
 import org.javaruntype.type.TypeParameter;
 import org.javaruntype.type.Types;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.fasterxml.classmate.MemberResolver;
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.ResolvedTypeWithMembers;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.classmate.members.ResolvedMethod;
+import com.mcg.apitester.api.annotations.ApiDescription;
+import com.mcg.apitester.api.annotations.ApiError;
+import com.mcg.apitester.api.annotations.ApiErrors;
+import com.mcg.apitester.api.annotations.ApiIgnore;
+import com.mcg.apitester.impl.entities.ApiReturnStatus;
 import com.mcg.apitester.impl.entities.MethodInfo;
 import com.mcg.apitester.impl.entities.ParameterInfo;
 import com.mcg.apitester.impl.entities.ParameterInfo.PARAM_TYPE;
 
 public class EndpointIntrospection {
 	
-	private static ParameterInfo getInfo(ResolvedType resolvedType, MethodParameter mp) {
+	private static ParameterInfo getInfo(ResolvedType resolvedType, MethodParameter mp, String paramName) {
 		ParameterInfo out = new ParameterInfo();
 		if (resolvedType.getArrayElementType() != null) {
 			out.setCollection(true);
@@ -50,7 +57,10 @@ public class EndpointIntrospection {
 		}
 		if(mp!=null && mp.getParameterName()!=null) {
 			out.setName(mp.getParameterName());
+		} else {
+			out.setName(paramName);
 		}
+			
 		if(mp==null) {
 			out.setParamType(PARAM_TYPE.RETURN);
 		} else {
@@ -93,17 +103,34 @@ public class EndpointIntrospection {
 		if(rr==null) {
 			return new ParameterInfo(false,"void","void");
 		} else {
-			return getInfo(rr,null);  
+			return getInfo(rr,null,null);  
 		}
 	}
-	
 	
 	public static List<ParameterInfo> getInfo(Class<?> c, Method m, MethodParameter[] params) {
 		List<ParameterInfo> out = new ArrayList<>();
 		ResolvedMethod rm = getResolvedMethod(c, m);
 		if(rm==null) return null;
+		
+		String[] parameterNames = new LocalVariableTableParameterNameDiscoverer().getParameterNames(m); 
+		
 		for(int i=0;i < rm.getArgumentCount();i++) {
-			ParameterInfo pi = getInfo(rm.getArgumentType(i),params[i]);
+			if(
+					!m.getParameters()[i].isAnnotationPresent(RequestBody.class) && 
+					!m.getParameters()[i].isAnnotationPresent(PathVariable.class) && 
+					!m.getParameters()[i].isAnnotationPresent(RequestParam.class)
+					
+			) {
+				continue;
+			}
+
+			ParameterInfo pi = getInfo(rm.getArgumentType(i),params[i],parameterNames[i]);
+			
+			if(m.getParameters()[i].isAnnotationPresent(ApiDescription.class)) {
+				pi.setDescription(getDescription(c, m.getParameters()[i].getAnnotation(ApiDescription.class)));
+			}
+			
+			
 			if(pi!=null) {
 				out.add(pi);
 			}
@@ -111,10 +138,22 @@ public class EndpointIntrospection {
 		return out;
 	}
 	
-	
+	public static String getDescription(Class<?> clazz, ApiDescription apiDescription) {
+		String x = apiDescription.value();
+		if(apiDescription.file()!=null) {
+		}
+		return x;
+	}
 	
 	public static MethodInfo getMethodInfo(Class<?> c, Method m, MethodParameter[] params) {
-		return new MethodInfo(getReturnTypeInfo(c, m), getInfo(c, m, params));
+		if(c.isAnnotationPresent(ApiIgnore.class)) return null;
+		if(m.isAnnotationPresent(ApiIgnore.class)) return null;
+		MethodInfo mi = new MethodInfo(c.getName(),m.getName(),getReturnTypeInfo(c, m), getInfo(c, m, params));
+		if(m.getAnnotation(ApiDescription.class)!=null) {
+			mi.setDescription(getDescription(c,m.getAnnotation(ApiDescription.class)));
+		}
+		mi.setReturnStatus(returnStatusFromAnnotations(c, m));
+		return mi;
 	}
 	
 	public static Object createMap(Class<?> clazz, List<Class<?>> done) {
@@ -195,5 +234,48 @@ public class EndpointIntrospection {
 			return m;
 		}
 	}	
+	
+	
+	public static List<ApiReturnStatus> returnStatusFromAnnotations(Class clazz, Method m) {
+		List<ApiReturnStatus> out = new ArrayList<>();
+		ResponseStatus rs = m.getAnnotation(ResponseStatus.class);
+		ApiReturnStatus aes = new ApiReturnStatus();
+		aes.setDef(true);
+		if(rs!=null) {
+			aes.setStatus(rs.code().value()); 
+			aes.setName(rs.code().name());
+		} else {
+			aes.setStatus(200); 
+			aes.setName("OK");
+		}
+		out.add(aes);
+		
+		if(clazz.isAnnotationPresent(ApiErrors.class)) {
+			for(ApiError ae : ((ApiErrors)clazz.getAnnotation(ApiErrors.class)).value()) {
+				ApiReturnStatus ars = new ApiReturnStatus();
+				ars.setStatus(ae.value().value());
+				ars.setName(ae.value().name());
+				ars.setDescription(ae.description());
+				out.add(ars);
+			}
+		}
+		if(m.isAnnotationPresent(ApiErrors.class)) {
+			for(ApiError ae : ((ApiErrors)m.getAnnotation(ApiErrors.class)).value()) {
+				ApiReturnStatus ars = new ApiReturnStatus();
+				ars.setStatus(ae.value().value());
+				ars.setName(ae.value().name());
+				ars.setDescription(ae.description());
+				out.add(ars);
+			}
+		}
+		
+		for(Class<?> ec : m.getExceptionTypes()) {
+			// theoretically, exceptions could be parsed .... 
+		}
+		
+		
+		return out;
+	}
+	
 	
 }

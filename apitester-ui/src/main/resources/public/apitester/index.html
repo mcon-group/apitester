@@ -1,4 +1,22 @@
-<html>
-
-
+<html xmlns:th="http://www.thymeleaf.org">
+	<style>
+	html {
+		overflow-y: scroll;
+	}
+	</style>
+	<head>
+		<link id="main_styles" rel="stylesheet" href="apitester/css/styles.css" />
+		<title></title>
+	</head>
+	<body ng-app="apitester">
+		<div class="container">
+			<h1>API Tester</h1>
+			<div class="row"  ng-view="">
+			
+			</div>
+		</div>
+	</body>
+	<script src="apitester/js/dependencies.js"></script>
+	<script src="apitester/js/app.js"></script>
+	<script src="apitester/js/templates.js"></script>
 </html>

@@ -1,4 +1,4 @@
-package com.mcg.apitester.impl;
+package com.mcg.apitester.impl.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +15,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import com.mcg.apitester.api.annotations.ApiIgnore;
 import com.mcg.apitester.impl.entities.Mapping;
 import com.mcg.apitester.impl.entities.MethodInfo;
 
@@ -42,14 +43,22 @@ public class EndpointService {
 			
 			RequestMappingInfo rmi = e.getKey();
 			HandlerMethod hm = e.getValue();
+
+			if(hm.getMethod().getAnnotation(ApiIgnore.class)!=null) continue;
+			if(hm.getBean().getClass().getAnnotation(ApiIgnore.class)!=null) continue;
 			
 			Set<String> patterns = rmi.getPatternsCondition().getPatterns(); 
 			Set<RequestMethod> methods = rmi.getMethodsCondition().getMethods();
-			
+
 			MethodInfo methodInfo = EndpointIntrospection.getMethodInfo(hm.getBeanType(),hm.getMethod(),hm.getMethodParameters());
-			
-			Mapping mapping = new Mapping(patterns,methods,methodInfo);
-			out.add(mapping);
+			if(methodInfo!=null) {
+				for(String pattern : patterns) {
+					for(RequestMethod method: methods) {
+						Mapping mapping = new Mapping(pattern,Collections.singletonList(method),methodInfo);
+						out.add(mapping);
+					}
+				}
+			}
 		}
 		Collections.sort(
 			out,
@@ -57,13 +66,7 @@ public class EndpointService {
 
 				@Override
 				public int compare(Mapping o1, Mapping o2) {
-					List<String> a = o1.getPatterns();
-					List<String> b = o2.getPatterns();
-					Collections.sort(a);
-					Collections.sort(a);
-					String as = a.size()>0?a.get(0):"";
-					String bs = b.size()>0?b.get(0):"";
-					return as.compareTo(bs);
+					return o1.getPattern().compareTo(o2.getPattern());
 				}
 				
 			}

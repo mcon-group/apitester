@@ -8,26 +8,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 public class Mapping {
 	
-	private List<String> patterns;
+	private String pattern;
 	private List<RequestMethod> methods;
 	private MethodInfo methodInfo;
 	
 	public Mapping(
-			Collection<String> patterns, 
+			String pattern, 
 			Collection<RequestMethod> methods,
 			MethodInfo methodInfo
 		) {
-		this.patterns = new ArrayList<>(patterns);
+		this.pattern = pattern;
 		this.methods = new ArrayList<>(methods);
 		this.setMethodInfo(methodInfo);
 	}
 
-	public List<String> getPatterns() {
-		return patterns;
+	public String getPattern() {
+		return pattern;
 	}
 
-	public void setPatterns(List<String> patterns) {
-		this.patterns = patterns;
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
 	}
 
 	public List<RequestMethod> getMethods() {
