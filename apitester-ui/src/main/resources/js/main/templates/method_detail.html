@@ -1,4 +1,6 @@
 	<div>
+		<i class="pull-right glyphicon" ng-class="{'glyphicon-eye-open' : details, 'glyphicon-eye-close' : !details }" ng-click="details = !details" style="margin: 5"></i>
+		<i class="pull-right glyphicon glyphicon-play" ng-click="select()" style="margin: 5"></i>
 		<h3>
 			<button ng-repeat="method in endpoint.methods" class="btn" ng-class="{'btn-success': method == 'GET', 'btn-danger': method == 'DELETE', 'btn-primary': method == 'POST', 'btn-info': method == 'PUT'}">{{method}}</button>
 			{{endpoint.pattern}}
@@ -10,7 +12,6 @@
 			{{endpoint.methodInfo.className}}.{{endpoint.methodInfo.methodName}}
 		</div>
 	</div>
-	
 	<div ng-if="endpoint.methodInfo.description"  class="form-group">
 		<label>Description</label>
 		<div>
@@ -24,26 +25,29 @@
 	<div ng-if="endpoint.methodInfo.params.length>0"  class="form-group">
 		<label>Parameters</label>
 		<table class="table table-compact table-striped">
-			<tr ng-repeat="param in endpoint.methodInfo.params">
-				<td width="15%">
-					<button class="btn btn-sm btn-default">{{param.paramType}}</button>
-				</td>
-				<td>	
-					<i class="glyphicon glyphicon-exclamation-sign" ng-if="param.required"></i>
-				</td>
-				<td>	
-					{{param.name}}
-				</td>
-				<td>	
-					{{param.typeShort}}<span ng-if="param.collection">[]</span>
-				</td>
-				<td>
-					<div ng-if="param.description">
-						<div markdown="param.description">
+			<tbody ng-repeat="param in endpoint.methodInfo.params">
+				<tr>
+					<td width="15%">
+						<button class="btn btn-sm btn-default">{{param.paramType}}</button>
+					</td>
+					<td>	
+						<i class="glyphicon glyphicon-exclamation-sign" ng-if="param.required"></i>
+					</td>
+					<td>	
+						{{param.name}}
+					</td>
+					<td>	
+						{{param.typeShort}}<span ng-if="param.collection">[]</span>
+					</td>
+					<td>
+						<div ng-if="param.description" markdown="param.description">
 						</div>
-					</div>
-				</td>
-			</tr>
+					</td>
+				</tr>
+				<tr ng-show="details">
+					<td colspan="5"><pre>{{param.object | json}}</pre></td>
+				</tr>
+			</tbody>
 		</table>	
 	</div>
 	<div class="form-group">
@@ -61,6 +65,9 @@
 						{{endpoint.methodInfo.returnType.typeShort}}<span ng-if="endpoint.methodInfo.returnType.collection">[]</span>
 					</td>
 				</tr>
+				<tr ng-show="details">
+					<td colspan="2"><div ng-if="details"></div><pre>{{endpoint.methodInfo.returnType.object | json}}</div></pre></td>
+				</tr>
 			</table>	
 		</div>
 	</div>	
@@ -73,6 +80,9 @@
 				</td>
 				<td>	
 					{{returnStatus.name}}
+				</td>
+				<td>	
+					
 				</td>
 			</tr>
 		</table>	

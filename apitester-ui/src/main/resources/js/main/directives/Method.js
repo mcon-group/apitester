@@ -8,6 +8,7 @@ angular.module("apitester").directive(
 			},
 			templateUrl : "method_detail.html",
 			link : function(scope) {
+				scope.details = false;
 			}
 		}
 	}

@@ -1,10 +1,18 @@
 <div class="col-md-6">
 </div>
 <div class="col-md-6">
-	<div class="form-group">
+	<div class="input-group">
+		<div class="input-group-addon"><i class="glyphicon glyphicon-search"></i></div>
 		<input ng-change="updateList()" ng-model="search" class="form-control">
 	</div>
-	<div ng-repeat="endpoint in endpoints" style="border-top-style:solid; border-top-width: 1px; border-top-color: black; padding-bottom: 20px">
+</div>
+<div class="col-md-12">
+<hr>
+</div>
+<div class="col-md-6">
+</div>
+<div class="col-md-6">
+	<div ng-repeat="endpoint in endpoints" style="padding-top: 30px; padding-bottom: 30px">
 		<div endpoint="endpoint">
 		</div>
 	</div>
