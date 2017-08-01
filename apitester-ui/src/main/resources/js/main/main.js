@@ -22,7 +22,7 @@ angular.module("apitester").config(
 			});
 			$routeProvider.when("/main", {
 				"controller" : "EndpointController",
-				"templateUrl" : "enpoint_list.html",
+				"templateUrl" : "endpoint_list.html",
 			});
 			$routeProvider.otherwise({
 				redirectTo : '/main'

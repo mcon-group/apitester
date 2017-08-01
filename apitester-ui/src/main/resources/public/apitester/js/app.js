@@ -22,7 +22,7 @@ angular.module("apitester").config(
 			});
 			$routeProvider.when("/main", {
 				"controller" : "EndpointController",
-				"templateUrl" : "enpoint_list.html",
+				"templateUrl" : "endpoint_list.html",
 			});
 			$routeProvider.otherwise({
 				redirectTo : '/main'
@@ -59,6 +59,17 @@ angular.module("apitester").controller(
 					$scope.updateList();
 				}
 		);
+	}
+);
+angular.module("apitester").service(
+	"EndpointService",
+	function($route,Restangular) {
+		var s = {
+				list : function(success,error) {
+					Restangular.all("endpoints").getList().then(success,error);
+				}
+		}
+		return s;
 	}
 );
 angular.module(
@@ -108,16 +119,5 @@ angular.module("apitester").directive(
 				scope.details = false;
 			}
 		}
-	}
-);
-angular.module("apitester").service(
-	"EndpointService",
-	function($route,Restangular) {
-		var s = {
-				list : function(success,error) {
-					Restangular.all("endpoints").getList().then(success,error);
-				}
-		}
-		return s;
 	}
 );
