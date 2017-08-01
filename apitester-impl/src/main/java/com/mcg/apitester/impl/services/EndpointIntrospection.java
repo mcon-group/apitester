@@ -129,8 +129,6 @@ public class EndpointIntrospection {
 			if(m.getParameters()[i].isAnnotationPresent(ApiDescription.class)) {
 				pi.setDescription(getDescription(c, m.getParameters()[i].getAnnotation(ApiDescription.class)));
 			}
-			
-			
 			if(pi!=null) {
 				out.add(pi);
 			}
@@ -148,7 +146,12 @@ public class EndpointIntrospection {
 	public static MethodInfo getMethodInfo(Class<?> c, Method m, MethodParameter[] params) {
 		if(c.isAnnotationPresent(ApiIgnore.class)) return null;
 		if(m.isAnnotationPresent(ApiIgnore.class)) return null;
-		MethodInfo mi = new MethodInfo(c.getName(),m.getName(),getReturnTypeInfo(c, m), getInfo(c, m, params));
+		MethodInfo mi = new MethodInfo(
+				c.getName(),
+				m.getName(),
+				getReturnTypeInfo(c, m), 
+				getInfo(c, m, params)
+			);
 		if(m.getAnnotation(ApiDescription.class)!=null) {
 			mi.setDescription(getDescription(c,m.getAnnotation(ApiDescription.class)));
 		}

@@ -49,6 +49,10 @@ angular.module("apitester").controller(
 			$scope.endpoints = ne;
 		}
 		
+		$scope.$on("methodSelected", function(e,endpoint) {
+			$scope.selectedEndpoint = endpoint;
+		})
+		
 		EndpointService.list(
 				function(endpoints) {
 					$scope.allEndpoints = endpoints;
@@ -96,6 +100,11 @@ angular.module("apitester").directive(
 			},
 			templateUrl : "method_detail.html",
 			link : function(scope) {
+				scope.select = function() {
+					console.log("method selected ... ");
+					scope.$emit("methodSelected",scope.endpoint);
+					scope.$broadcast("methodSelected",scope.endpoint);
+				};
 				scope.details = false;
 			}
 		}

@@ -8,6 +8,11 @@ angular.module("apitester").directive(
 			},
 			templateUrl : "method_detail.html",
 			link : function(scope) {
+				scope.select = function() {
+					console.log("method selected ... ");
+					scope.$emit("methodSelected",scope.endpoint);
+					scope.$broadcast("methodSelected",scope.endpoint);
+				};
 				scope.details = false;
 			}
 		}

@@ -10,9 +10,11 @@
 <hr>
 </div>
 <div class="col-md-6">
+	<div ng-if="selectedEndpoint" endpoint="selectedEndpoint">
+	</div>
 </div>
 <div class="col-md-6">
-	<div ng-repeat="endpoint in endpoints" style="padding-top: 30px; padding-bottom: 30px">
+	<div ng-repeat="endpoint in endpoints"  style="padding-bottom: 30px;">
 		<div endpoint="endpoint">
 		</div>
 	</div>

@@ -49,7 +49,7 @@ public class EndpointService {
 			
 			Set<String> patterns = rmi.getPatternsCondition().getPatterns(); 
 			Set<RequestMethod> methods = rmi.getMethodsCondition().getMethods();
-
+			
 			MethodInfo methodInfo = EndpointIntrospection.getMethodInfo(hm.getBeanType(),hm.getMethod(),hm.getMethodParameters());
 			if(methodInfo!=null) {
 				for(String pattern : patterns) {
