@@ -61,17 +61,6 @@ angular.module("apitester").controller(
 		);
 	}
 );
-angular.module("apitester").service(
-	"EndpointService",
-	function($route,Restangular) {
-		var s = {
-				list : function(success,error) {
-					Restangular.all("endpoints").getList().then(success,error);
-				}
-		}
-		return s;
-	}
-);
 angular.module(
 		'apitester'
 ).provider(
@@ -119,5 +108,16 @@ angular.module("apitester").directive(
 				scope.details = false;
 			}
 		}
+	}
+);
+angular.module("apitester").service(
+	"EndpointService",
+	function($route,Restangular) {
+		var s = {
+				list : function(success,error) {
+					Restangular.all("endpoints").getList().then(success,error);
+				}
+		}
+		return s;
 	}
 );
