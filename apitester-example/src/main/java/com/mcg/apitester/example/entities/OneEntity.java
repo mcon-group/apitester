@@ -8,6 +8,7 @@ public class OneEntity {
 	private String id;
 	private String name;
 	private Date lastModified;
+	private Pets mainPet;
 	private List<Pets> pets;
 	private List<AnotherEntity> otherEntities;
 
@@ -49,6 +50,14 @@ public class OneEntity {
 
 	public void setPets(List<Pets> pets) {
 		this.pets = pets;
+	}
+
+	public Pets getMainPet() {
+		return mainPet;
+	}
+
+	public void setMainPet(Pets mainPet) {
+		this.mainPet = mainPet;
 	}
 
 }
