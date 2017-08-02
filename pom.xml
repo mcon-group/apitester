@@ -9,6 +9,7 @@
 		<module>apitester-ui</module>
 		<module>apitester-api</module>
 		<module>apitester-impl</module>
+		<module>apitester-example</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
