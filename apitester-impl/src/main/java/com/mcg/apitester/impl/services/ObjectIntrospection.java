@@ -22,6 +22,7 @@ public class ObjectIntrospection {
 		}
 		done = new ArrayList<Class<?>>(done);
 		done.add(clazz);
+		
 		if (clazz.isEnum()) {
 			try {
 				List<String> ss = new ArrayList<>();

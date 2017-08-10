@@ -74,5 +74,21 @@ public class ObjectIntrospectionTest {
 
 		Assert.assertEquals(3, om.size());
 	}
+
+	public int x() { return 0; }
+	
+	@Test
+	public void testEntityWithPrimitives() throws NoSuchMethodException, SecurityException {
+		Class<?> c = this.getClass().getDeclaredMethod("x").getReturnType();
+		Object o = ObjectIntrospection.createMap(c, new ArrayList<>());
+		print(o);
+		Assert.assertEquals(true, Integer.class.isAssignableFrom(o.getClass()));
+		Assert.assertEquals(1, o);
+	}
+
+	
+	
+	
+	
 	
 }

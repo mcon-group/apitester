@@ -1,19 +1,20 @@
 package com.mcg.apitester.impl.services;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-import org.javaruntype.type.TypeParameter;
-import org.javaruntype.type.Types;
+import org.springframework.beans.factory.support.GenericTypeAwareAutowireCandidateResolver;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,27 +36,35 @@ import com.mcg.apitester.impl.entities.ParameterInfo.PARAM_TYPE;
 
 public class EndpointIntrospection {
 	
-	private static ParameterInfo getInfo(ResolvedType resolvedType, MethodParameter mp, String paramName) {
+	private static ParameterInfo getParameterInfo(ResolvedType resolvedType, MethodParameter mp, String paramName) {
 		ParameterInfo out = new ParameterInfo();
+		
+		Class<?> t = resolvedType.getErasedType();
+		out.setCollection(true);
+		
 		if (resolvedType.getArrayElementType() != null) {
-			out.setCollection(true);
-			out.setType(resolvedType.getArrayElementType().getErasedType().getCanonicalName());
-			out.setTypeShort(resolvedType.getArrayElementType().getErasedType().getSimpleName());
-		} else if (Collection.class.isAssignableFrom(resolvedType.getErasedType())) {
-			out.setCollection(true);
+			t = resolvedType.getArrayElementType().getErasedType();
+		} else if (Collection.class.isAssignableFrom(t)) {
 			if (resolvedType.getTypeParameters() != null && resolvedType.getTypeParameters().size() == 1) {
-				out.setType(resolvedType.getTypeParameters().get(0).getErasedType().getCanonicalName());
-				out.setTypeShort(resolvedType.getTypeParameters().get(0).getErasedType().getSimpleName());
+				t = resolvedType.getTypeParameters().get(0).getErasedType();
 			}
 		} else {
 			out.setCollection(false);
 			out.setType(resolvedType.getErasedType().getCanonicalName());
 			out.setTypeShort(resolvedType.getErasedType().getSimpleName());
 		}
+
+		out.setType(t.getCanonicalName());
+		out.setTypeShort(t.getSimpleName());
 		
-		try {
-			out.setObject(ObjectIntrospection.createMap(Class.forName(out.getType()), new ArrayList<>()));
-		} catch (Exception e) {
+		if(t.isPrimitive() || t.getCanonicalName().startsWith("java.lang")) {
+			out.setPrimitive(true);
+		} else {
+			out.setPrimitive(false);
+			try {
+				out.setObject(ObjectIntrospection.createMap(Class.forName(out.getType()), new ArrayList<>()));
+			} catch (Exception e) {
+			}
 		}
 		
 		if(mp!=null && mp.getParameterName()!=null) {
@@ -71,7 +80,7 @@ public class EndpointIntrospection {
 				out.setParamType(PARAM_TYPE.PATH);
 				out.setRequired(true);
 			} else if (mp.getParameterAnnotation(RequestParam.class)!=null) {
-				out.setParamType(PARAM_TYPE.PATH);
+				out.setParamType(PARAM_TYPE.REQUEST);
 				out.setRequired(mp.getParameterAnnotation(RequestParam.class).required());
 				out.setDefaultValue(mp.getParameterAnnotation(RequestParam.class).defaultValue());
 			} else if (mp.getParameterAnnotation(RequestBody.class)!=null) {
@@ -79,6 +88,13 @@ public class EndpointIntrospection {
 				out.setRequired(mp.getParameterAnnotation(RequestBody.class).required());
 			} else {
 				return null;
+			}
+		}
+
+		if(mp!=null) {
+			ApiDescription ad = mp.getParameterAnnotation(ApiDescription.class);
+			if(ad!=null) {
+				out.setDescription(getDescription(null,ad));
 			}
 		}
 		
@@ -106,7 +122,7 @@ public class EndpointIntrospection {
 		if(rr==null) {
 			return new ParameterInfo(false,"void","void");
 		} else {
-			return getInfo(rr,null,null);  
+			return getParameterInfo(rr,null,null);  
 		}
 	}
 	
@@ -127,11 +143,8 @@ public class EndpointIntrospection {
 				continue;
 			}
 
-			ParameterInfo pi = getInfo(rm.getArgumentType(i),params[i],parameterNames[i]);
+			ParameterInfo pi = getParameterInfo(rm.getArgumentType(i),params[i],parameterNames[i]);
 			
-			if(m.getParameters()[i].isAnnotationPresent(ApiDescription.class)) {
-				pi.setDescription(getDescription(c, m.getParameters()[i].getAnnotation(ApiDescription.class)));
-			}
 			if(pi!=null) {
 				out.add(pi);
 			}
@@ -139,31 +152,88 @@ public class EndpointIntrospection {
 		return out;
 	}
 	
-	public static String getDescription(Class<?> clazz, ApiDescription apiDescription) {
-		String x = apiDescription.value();
-		if(apiDescription.file()!=null) {
+	private static <T extends Annotation> List<T> getAnnotations(Class c, Class<T> type) {
+		List<T> out = new ArrayList<>();
+		if(c==null) return out;
+		if(c.isAnnotationPresent(type)) {
+			out.add((T)c.getAnnotation(type));
 		}
-		return x;
+
+		out.addAll(getAnnotations(c.getSuperclass(), type));
+		
+		for(Class cp : c.getInterfaces()) {
+			out.addAll(getAnnotations(cp, type));
+		}
+		return out;
+	}
+	
+	private static <T extends Annotation> List<T> getAnnotations(Method m, Class<T> type) {
+		List<T> out = new ArrayList<>();
+		if(m.isAnnotationPresent(type)) {
+			out.add((T)m.getAnnotation(type));
+		}
+		out.addAll(getAnnotations(m.getDeclaringClass(),type));
+		return out;
+	}
+	
+	public static String getDescription(Class clazz, ApiDescription ad) {
+		if(ad.file().length()>0) {
+			return getFile(clazz, ad.file());
+		} 
+		return ad.value();
+	}
+	
+	public static String getFile(Class c, String file) {
+		InputStream is = null;
+		try {
+			Resource r = new ClassPathResource(file);
+			if(r!=null) {
+				is = r.getInputStream();
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				byte[] buff = new byte[1024];
+				int a = 0;
+				while((a=is.read(buff))>-1) {
+					baos.write(buff,0,a);
+				}
+				baos.flush();
+				return new String(baos.toByteArray());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (Exception e2) {
+			}
+		}
+		return "";
+	}
+	
+	
+	public static List<String> getDescriptions(Class<?> clazz, Method m) {
+		List<String> out = new ArrayList<>();
+		for(ApiDescription ad : getAnnotations(m,ApiDescription.class)) {
+			out.add(getDescription(clazz, ad));
+		}
+		return out;
 	}
 	
 	public static MethodInfo getMethodInfo(Class<?> c, Method m, MethodParameter[] params) {
 		if(c.isAnnotationPresent(ApiIgnore.class)) return null;
 		if(m.isAnnotationPresent(ApiIgnore.class)) return null;
-		MethodInfo mi = new MethodInfo(
-				c.getName(),
-				m.getName(),
-				getReturnTypeInfo(c, m), 
-				getInfo(c, m, params)
-			);
-		if(m.getAnnotation(ApiDescription.class)!=null) {
-			mi.setDescription(getDescription(c,m.getAnnotation(ApiDescription.class)));
-		}
+		MethodInfo mi = new MethodInfo();
+		mi.setClassName(c.getName());
+		mi.setMethodName(m.getName());
+		mi.setReturnType(getReturnTypeInfo(c, m));
+		mi.setParams(getInfo(c, m, params));
+		mi.setDescriptions(getDescriptions(c,m));
 		mi.setReturnStatus(returnStatusFromAnnotations(c, m));
 		return mi;
 	}
 	
 	
 	public static List<ApiReturnStatus> returnStatusFromAnnotations(Class clazz, Method m) {
+		
 		List<ApiReturnStatus> out = new ArrayList<>();
 		ResponseStatus rs = m.getAnnotation(ResponseStatus.class);
 		ApiReturnStatus aes = new ApiReturnStatus();
@@ -177,28 +247,35 @@ public class EndpointIntrospection {
 		}
 		out.add(aes);
 		
-		if(clazz.isAnnotationPresent(ApiErrors.class)) {
-			for(ApiError ae : ((ApiErrors)clazz.getAnnotation(ApiErrors.class)).value()) {
-				ApiReturnStatus ars = new ApiReturnStatus();
-				ars.setStatus(ae.value().value());
-				ars.setName(ae.value().name());
-				ars.setDescription(ae.description());
-				out.add(ars);
+		List<ApiError> allError = new ArrayList<>();
+		
+		allError.addAll(getAnnotations(clazz, ApiError.class));
+		
+		for(ApiErrors aErrs : getAnnotations(clazz, ApiErrors.class)) {
+			for(ApiError ae: aErrs.value()) {
+				allError.add(ae);
 			}
 		}
-		if(m.isAnnotationPresent(ApiErrors.class)) {
-			for(ApiError ae : ((ApiErrors)m.getAnnotation(ApiErrors.class)).value()) {
-				ApiReturnStatus ars = new ApiReturnStatus();
-				ars.setStatus(ae.value().value());
-				ars.setName(ae.value().name());
-				ars.setDescription(ae.description());
-				out.add(ars);
-			}
+		for(ApiError ae : allError) {
+			ApiReturnStatus ars = new ApiReturnStatus();
+			ars.setStatus(ae.value().value());
+			ars.setName(ae.value().name());
+			ars.setDescription(ae.description());
+			out.add(ars);
 		}
 		
 		for(Class<?> ec : m.getExceptionTypes()) {
 			// theoretically, exceptions could be parsed .... 
 		}
+		
+		out.sort(new Comparator<ApiReturnStatus>() {
+
+			@Override
+			public int compare(ApiReturnStatus o1, ApiReturnStatus o2) {
+				return new Integer(o1.getStatus()).compareTo(o2.getStatus());
+			}
+			
+		});
 		
 		
 		return out;

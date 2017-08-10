@@ -1,10 +1,4 @@
 	<div>
-		<h3>
-			<button ng-repeat="method in endpoint.methods" class="btn" ng-class="{'btn-success': method == 'GET', 'btn-danger': method == 'DELETE', 'btn-primary': method == 'POST', 'btn-info': method == 'PUT'}">{{method}}</button>
-			{{endpoint.pattern}}
-		</h3>
-	</div>
-	<div>
 		<i class="pull-right glyphicon" ng-class="{'glyphicon-eye-open' : details, 'glyphicon-eye-close' : !details }" ng-click="details = !details" style="margin: 5"></i>
 		<i class="pull-right glyphicon glyphicon-play" ng-click="select()" style="margin: 5"></i>
 	</div>
@@ -14,11 +8,11 @@
 			{{endpoint.methodInfo.className}}.{{endpoint.methodInfo.methodName}}
 		</div>
 	</div>
-	<div ng-if="endpoint.methodInfo.description"  class="form-group">
+	<div ng-if="endpoint.methodInfo.descriptions.length>0"  class="form-group">
 		<label>Description</label>
-		<div>
-			<div markdown="endpoint.methodInfo.description">
-			</div>
+		<div ng-repeat="description in endpoint.methodInfo.descriptions">
+			<p markdown="description">
+			</p>
 		</div>
 	</div>
 	<div class="form-group">
@@ -47,7 +41,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr ng-show="details">
+					<tr ng-show="!param.primitive && details">
 						<td colspan="5"><pre>{{param.object | json}}</pre></td>
 					</tr>
 				</tbody>
@@ -86,7 +80,7 @@
 					{{returnStatus.name}}
 				</td>
 				<td>	
-					
+					{{returnStatus.description}}
 				</td>
 			</tr>
 		</table>	

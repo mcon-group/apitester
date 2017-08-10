@@ -3,6 +3,7 @@ package com.mcg.apitester.impl.entities;
 public class ParameterInfo {
 	
 	private boolean deprecated; 
+	private boolean primitive; 
 	private boolean file; 
 	private boolean collection; 
 	private boolean required = false; 
@@ -112,6 +113,14 @@ public class ParameterInfo {
 
 	public void setFile(boolean file) {
 		this.file = file;
+	}
+
+	public boolean isPrimitive() {
+		return primitive;
+	}
+
+	public void setPrimitive(boolean primitive) {
+		this.primitive = primitive;
 	}
 	
 	

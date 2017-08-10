@@ -1,14 +1,5 @@
 package com.mcg.apitester.impl.entities;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-import com.mcg.apitester.api.annotations.ApiError;
-import com.mcg.apitester.api.annotations.ApiErrors;
-
 public class ApiReturnStatus {
 
 	private boolean def;

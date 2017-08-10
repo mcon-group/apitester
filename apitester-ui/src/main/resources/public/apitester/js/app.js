@@ -29,6 +29,51 @@ angular.module("apitester").config(
 			});
 		});
 
+angular.module("apitester").controller(
+	"EndpointController",
+	function($route,$scope,EndpointService) {
+		console.log("endpoint controller instantiated");
+		
+		$scope.search = "";
+		$scope.selected = "paths";
+		
+		$scope.updateList = function() {
+			var ne = [];
+			var np = [];
+			console.log("checking endpoint: ", $scope.allEndpoints);
+			_.each($scope.allEndpoints, function(endpoint) {
+				if(endpoint.pattern.indexOf($scope.search)>-1) {
+					ne.push(endpoint);
+				}
+			});
+			console.log("checking paths: ", $scope.allPaths);
+			_.each($scope.allPaths, function(path) {
+				if(path.path.indexOf($scope.search)>-1) {
+					np.push(path);
+				}
+			});
+			$scope.paths = np;
+			$scope.endpoints = ne;
+		}
+		
+		$scope.$on("methodSelected", function(e,endpoint) {
+			$scope.selectedEndpoint = endpoint;
+		})
+		
+		EndpointService.listEndpoints(
+				function(endpoints) {
+					$scope.allEndpoints = endpoints;
+					$scope.updateList();
+				}
+		);
+		EndpointService.listPaths(
+				function(paths) {
+					$scope.allPaths = paths;
+					$scope.updateList();
+				}
+		);
+	}
+);
 angular.module(
 		'apitester'
 ).provider(
@@ -78,46 +123,45 @@ angular.module("apitester").directive(
 		}
 	}
 );
+angular.module("apitester").directive(
+	"path",
+	function($route,$templateCache,$controller,$compile) {
+		return {
+			transclude: true,
+			scope: {
+				path : "="
+			},
+			templateUrl : "path_info_detail.html",
+			link : function(scope) {
+				scope.details = false;
+				scope.selectMethod = function (method) {
+					scope.selectedMethod = method; 
+					var m = [];
+					_.each(scope.path.mappings,function(mapping) {
+						if(mapping.methods.includes(method)) {
+							console.log(" --- "+method+" --- matches ");
+							m.push(mapping);
+						} else {
+							console.log(" --- "+method+" --- does not match");
+						}
+					});
+					scope.mappings = m;
+				}
+			}
+		}
+	}
+);
 angular.module("apitester").service(
 	"EndpointService",
 	function($route,Restangular) {
 		var s = {
-				list : function(success,error) {
-					Restangular.all("endpoints").getList().then(success,error);
-				}
+			listEndpoints : function(success,error) {
+				Restangular.all("endpoints").getList().then(success,error);
+			},
+			listPaths : function(success,error) {
+				Restangular.all("paths").getList().then(success,error);
+			}
 		}
 		return s;
-	}
-);
-angular.module("apitester").controller(
-	"EndpointController",
-	function($route,$scope,EndpointService) {
-		console.log("endpoint controller instantiated");
-		
-		$scope.search = "";
-		
-		$scope.updateList = function() {
-			var ne = [];
-			_.each($scope.allEndpoints, function(endpoint) {
-				if(endpoint.pattern.indexOf($scope.search)>-1) {
-					console.log(endpoint.pattern+" DOES contain "+$scope.search);
-					ne.push(endpoint);
-				} else {
-					console.log(endpoint.pattern+" does not contain "+$scope.search);
-				}
-			});
-			$scope.endpoints = ne;
-		}
-		
-		$scope.$on("methodSelected", function(e,endpoint) {
-			$scope.selectedEndpoint = endpoint;
-		})
-		
-		EndpointService.list(
-				function(endpoints) {
-					$scope.allEndpoints = endpoints;
-					$scope.updateList();
-				}
-		);
 	}
 );

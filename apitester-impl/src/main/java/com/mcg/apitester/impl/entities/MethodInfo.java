@@ -1,5 +1,6 @@
 package com.mcg.apitester.impl.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MethodInfo {
@@ -7,19 +8,16 @@ public class MethodInfo {
 	private String className;
 	private String methodName;
 	
-	private String description;
 	private boolean deprecated;
 	
+	private List<String> descriptions = new ArrayList<>();
+	
+	private List<ParameterInfo> params = new ArrayList<>();
 	private ParameterInfo returnType;
-	private List<ParameterInfo> params;
 	
-	private List<ApiReturnStatus> returnStatus;
+	private List<ApiReturnStatus> returnStatus = new ArrayList<>();
 	
-	public MethodInfo(String className, String methodName, ParameterInfo returnType, List<ParameterInfo> params) {
-		this.returnType = returnType;
-		this.params = params;
-		this.className = className;
-		this.methodName = methodName;
+	public MethodInfo() {
 	}
 
 	public ParameterInfo getReturnType() {
@@ -62,20 +60,20 @@ public class MethodInfo {
 		this.deprecated = deprecated;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public List<ApiReturnStatus> getReturnStatus() {
 		return returnStatus;
 	}
 
 	public void setReturnStatus(List<ApiReturnStatus> returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public List<String> getDescriptions() {
+		return descriptions;
+	}
+
+	public void setDescriptions(List<String> descriptions) {
+		this.descriptions = descriptions;
 	}
 
 }

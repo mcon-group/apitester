@@ -3,6 +3,7 @@ package com.mcg.apitester.impl.services;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,12 +19,15 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import com.mcg.apitester.api.annotations.ApiIgnore;
 import com.mcg.apitester.impl.entities.Mapping;
 import com.mcg.apitester.impl.entities.MethodInfo;
+import com.mcg.apitester.impl.entities.PathInfo;
 
 @Service
 public class EndpointService {
 	
 	private List<Mapping> mappings;
 
+	private List<PathInfo> paths;
+	
 	@Autowired
 	private RequestMappingHandlerMapping handlerMapping;
 
@@ -36,6 +40,33 @@ public class EndpointService {
 	}
 
 
+	public List<PathInfo> getPathInfos() {
+		if(paths==null) {
+			paths = getPathsInternal();
+		}
+		return paths;
+	}
+	
+	private List<PathInfo> getPathsInternal() {
+		Map<String,PathInfo> infos = new HashMap<>();
+		for(Mapping m : getMappings()) {
+			PathInfo pi = infos.get(m.getPattern()); 
+			if(pi==null) pi = new PathInfo();
+			pi.getMappings().add(m);
+			pi.setPath(m.getPattern());
+			infos.put(m.getPattern(), pi);
+		}
+		List<PathInfo> out = new ArrayList<>(infos.values());
+		Collections.sort(out, new Comparator<PathInfo>() {
+			@Override
+			public int compare(PathInfo o1, PathInfo o2) {
+				return o1.getPath().compareTo(o2.getPath());
+			}
+		});
+		
+		return out;
+	}
+	
 	private List<Mapping> getMappingsInternal() {
 		List<Mapping> out = new ArrayList<>();
 		Map<RequestMappingInfo, HandlerMethod> map = this.handlerMapping.getHandlerMethods();
