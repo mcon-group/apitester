@@ -27,7 +27,7 @@ public class OneController extends BaseController {
 			@RequestParam  String y, 
 			@RequestParam @ApiDescription("Pagination: The offset") int offset, 
 			@RequestParam @ApiDescription("Pagination: The maximum number of entries per page") int max, 
-			@RequestParam @ApiDescription("The field to order by. One of 'name', 'date' or 'size'") String orderBy) {
+			@RequestParam @ApiDescription("The field to order by. One of 'name', 'date' or 'size'") String[] orderBy) {
 		return null;
 	}
 

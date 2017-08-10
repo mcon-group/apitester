@@ -59,6 +59,12 @@ public class EndpointIntrospection {
 			out.setTypeShort(resolvedType.getErasedType().getSimpleName());
 		}
 
+		if(t.getName().equals("org.springframework.web.multipart.MultipartFile")) {
+			out.setFile(true);
+		} else {
+			out.setFile(false);
+		}
+		
 		out.setType(t.getCanonicalName());
 		out.setTypeShort(t.getSimpleName());
 		

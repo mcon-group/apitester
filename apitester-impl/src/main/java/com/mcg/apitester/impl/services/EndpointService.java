@@ -27,7 +27,7 @@ public class EndpointService {
 	private List<Mapping> mappings;
 
 	private List<PathInfo> paths;
-	
+
 	@Autowired
 	private RequestMappingHandlerMapping handlerMapping;
 
