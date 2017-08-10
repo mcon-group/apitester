@@ -11,13 +11,7 @@
 </div>
 <div class="col-md-6">
 	<div ng-if="selectedEndpoint">
-		<div>
-			<h3>
-				<button ng-repeat="method in selectedEndpoint.methods" class="btn" ng-class="{'btn-success': method == 'GET', 'btn-danger': method == 'DELETE', 'btn-primary': method == 'POST', 'btn-info': method == 'PUT'}">{{method}}</button>
-				{{selectedEndpoint.pattern}}
-			</h3>
-		</div>
-		<div endpoint="selectedEndpoint">
+		<div endpoint-tester="selectedEndpoint">
 		</div>
 	</div>
 </div>

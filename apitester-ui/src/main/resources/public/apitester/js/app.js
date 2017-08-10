@@ -74,6 +74,41 @@ angular.module("apitester").controller(
 		);
 	}
 );
+angular.module("apitester").directive(
+	"endpoint",
+	function($route,$templateCache,$controller,$compile) {
+		return {
+			transclude: true,
+			scope: {
+				endpoint : "="
+			},
+			templateUrl : "method_detail.html",
+			link : function(scope) {
+				scope.select = function() {
+					console.log("method selected ... ");
+					scope.$emit("methodSelected",scope.endpoint);
+					scope.$broadcast("methodSelected",scope.endpoint);
+				};
+				scope.details = false;
+			}
+		}
+	}
+);
+angular.module("apitester").directive(
+	"endpointTester",
+	function($route,$templateCache,$controller,$compile) {
+		return {
+			transclude: true,
+			scope: {
+				endpointTester : "="
+			},
+			templateUrl : "method_tester.html",
+			link : function(scope) {
+				scope.endpoint = scope.endpointTester;
+			}
+		}
+	}
+);
 angular.module(
 		'apitester'
 ).provider(
@@ -103,26 +138,6 @@ angular.module(
 
 	}
 });
-angular.module("apitester").directive(
-	"endpoint",
-	function($route,$templateCache,$controller,$compile) {
-		return {
-			transclude: true,
-			scope: {
-				endpoint : "="
-			},
-			templateUrl : "method_detail.html",
-			link : function(scope) {
-				scope.select = function() {
-					console.log("method selected ... ");
-					scope.$emit("methodSelected",scope.endpoint);
-					scope.$broadcast("methodSelected",scope.endpoint);
-				};
-				scope.details = false;
-			}
-		}
-	}
-);
 angular.module("apitester").directive(
 	"path",
 	function($route,$templateCache,$controller,$compile) {

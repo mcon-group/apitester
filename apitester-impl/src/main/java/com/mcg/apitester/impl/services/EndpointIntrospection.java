@@ -155,24 +155,26 @@ public class EndpointIntrospection {
 	private static <T extends Annotation> List<T> getAnnotations(Class c, Class<T> type) {
 		List<T> out = new ArrayList<>();
 		if(c==null) return out;
-		if(c.isAnnotationPresent(type)) {
-			out.add((T)c.getAnnotation(type));
-		}
 
 		out.addAll(getAnnotations(c.getSuperclass(), type));
 		
 		for(Class cp : c.getInterfaces()) {
 			out.addAll(getAnnotations(cp, type));
 		}
+
+		if(c.isAnnotationPresent(type)) {
+			out.add((T)c.getAnnotation(type));
+		}
+
 		return out;
 	}
 	
 	private static <T extends Annotation> List<T> getAnnotations(Method m, Class<T> type) {
 		List<T> out = new ArrayList<>();
+		out.addAll(getAnnotations(m.getDeclaringClass(),type));
 		if(m.isAnnotationPresent(type)) {
 			out.add((T)m.getAnnotation(type));
 		}
-		out.addAll(getAnnotations(m.getDeclaringClass(),type));
 		return out;
 	}
 	
