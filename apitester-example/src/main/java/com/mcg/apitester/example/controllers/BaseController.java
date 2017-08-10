@@ -2,12 +2,21 @@ package com.mcg.apitester.example.controllers;
 
 import org.springframework.http.HttpStatus;
 
+import com.mcg.apitester.api.annotations.ApiDescription;
 import com.mcg.apitester.api.annotations.ApiError;
 import com.mcg.apitester.api.annotations.ApiErrors;
+import com.mcg.apitester.api.annotations.ApiExtraParam;
+import com.mcg.apitester.api.annotations.ApiExtraParams;
 import com.mcg.apitester.api.annotations.ApiHeader;
 import com.mcg.apitester.api.annotations.ApiHeaders;
 
 
+@ApiExtraParams(
+	{
+		@ApiExtraParam(type=String.class,name="apiKey",description="The API key to use with this request")
+	}
+)
+@ApiDescription(file="/com/mcg/apitester/example/controllers/BaseController.md")
 @ApiHeaders(
 	{
 		@ApiHeader(name="AUTHENTICATION", description="the value of the authentication token acquired through a call to /authentication")
@@ -19,6 +28,6 @@ import com.mcg.apitester.api.annotations.ApiHeaders;
 		@ApiError(value=HttpStatus.UNAUTHORIZED,description="If the user is not authenticated"),
 		@ApiError(value=HttpStatus.FORBIDDEN,description="If the user is authenticated, but doesn't have sufficient permissions")
 	})
-public class BaseController {
+public class BaseController implements IController {
 
 }

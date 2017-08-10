@@ -21,7 +21,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label>Parameters</label>
+		<label><i class="glyphicon glyphicon-chevron-right"> </i>  Parameters</label>
 		<div ng-if="endpoint.methodInfo.params.length==0">
 			<i>This method has no parameters.</i>
 		</div>
@@ -54,7 +54,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label>Headers</label>
+		<label><i class="glyphicon glyphicon-list"> </i>  Headers</label>
 		<div ng-if="endpoint.methodInfo.headerInfos.length==0">
 			<i>This method has no headers.</i>
 		</div>
@@ -74,7 +74,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label>Returns</label>
+		<label><i class="glyphicon glyphicon-chevron-left"> </i>  Returns</label>
 		<div ng-if="endpoint.methodInfo.returnType.type=='void'">
 			<i>This method does not return anything</i>
 		</div>

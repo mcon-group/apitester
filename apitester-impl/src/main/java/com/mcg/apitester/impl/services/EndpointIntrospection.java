@@ -28,14 +28,16 @@ import com.fasterxml.classmate.members.ResolvedMethod;
 import com.mcg.apitester.api.annotations.ApiDescription;
 import com.mcg.apitester.api.annotations.ApiError;
 import com.mcg.apitester.api.annotations.ApiErrors;
+import com.mcg.apitester.api.annotations.ApiExtraParam;
+import com.mcg.apitester.api.annotations.ApiExtraParams;
 import com.mcg.apitester.api.annotations.ApiHeader;
 import com.mcg.apitester.api.annotations.ApiHeaders;
 import com.mcg.apitester.api.annotations.ApiIgnore;
+import com.mcg.apitester.api.annotations.ParamType;
 import com.mcg.apitester.impl.entities.ApiReturnStatus;
 import com.mcg.apitester.impl.entities.HeaderInfo;
 import com.mcg.apitester.impl.entities.MethodInfo;
 import com.mcg.apitester.impl.entities.ParameterInfo;
-import com.mcg.apitester.impl.entities.ParameterInfo.PARAM_TYPE;
 
 public class EndpointIntrospection {
 	
@@ -77,17 +79,17 @@ public class EndpointIntrospection {
 		}
 			
 		if(mp==null) {
-			out.setParamType(PARAM_TYPE.RETURN);
+			out.setParamType(ParamType.RETURN);
 		} else {
 			if(mp.getParameterAnnotation(PathVariable.class)!=null) {
-				out.setParamType(PARAM_TYPE.PATH);
+				out.setParamType(ParamType.PATH);
 				out.setRequired(true);
 			} else if (mp.getParameterAnnotation(RequestParam.class)!=null) {
-				out.setParamType(PARAM_TYPE.REQUEST);
+				out.setParamType(ParamType.REQUEST);
 				out.setRequired(mp.getParameterAnnotation(RequestParam.class).required());
 				out.setDefaultValue(mp.getParameterAnnotation(RequestParam.class).defaultValue());
 			} else if (mp.getParameterAnnotation(RequestBody.class)!=null) {
-				out.setParamType(PARAM_TYPE.BODY);
+				out.setParamType(ParamType.BODY);
 				out.setRequired(mp.getParameterAnnotation(RequestBody.class).required());
 			} else {
 				return null;
@@ -129,7 +131,39 @@ public class EndpointIntrospection {
 		}
 	}
 	
-	public static List<ParameterInfo> getInfo(Class<?> c, Method m, MethodParameter[] params) {
+	public static List<ApiExtraParam> getApiExtraParams(Class clazz, Method m) {
+		List<ApiExtraParam> allParam = new ArrayList<>();
+		
+		allParam.addAll(getAnnotations(clazz, ApiExtraParam.class));
+		
+		for(ApiExtraParams aParams : getAnnotations(clazz, ApiExtraParams.class)) {
+			for(ApiExtraParam ae: aParams.value()) {
+				allParam.add(ae);
+			}
+		}
+		return allParam;
+	}
+	
+	public static List<ParameterInfo> getParamsFromAnnotation(Class clazz, Method m) {
+		
+		List<ParameterInfo> out = new ArrayList<>();
+		
+		for(ApiExtraParam p : getApiExtraParams(clazz, m)) {
+			ParameterInfo pi = new ParameterInfo();
+			pi.setName(p.name());
+			pi.setDescription(p.description());
+			pi.setCollection(p.collection());
+			pi.setType(p.type().getCanonicalName());
+			pi.setTypeShort(p.type().getSimpleName());
+			pi.setParamType(p.paramType());
+			pi.setRequired(p.mandatory());
+			out.add(pi);
+		}
+		return out;
+	}
+	
+	
+	public static List<ParameterInfo> getParamInfo(Class<?> c, Method m, MethodParameter[] params) {
 		List<ParameterInfo> out = new ArrayList<>();
 		ResolvedMethod rm = getResolvedMethod(c, m);
 		if(rm==null) return null;
@@ -152,6 +186,9 @@ public class EndpointIntrospection {
 				out.add(pi);
 			}
 		}
+		
+		out.addAll(getParamsFromAnnotation(c, m));
+		
 		return out;
 	}
 	
@@ -232,7 +269,7 @@ public class EndpointIntrospection {
 		mi.setClassName(c.getName());
 		mi.setMethodName(m.getName());
 		mi.setReturnType(getReturnTypeInfo(c, m));
-		mi.setParams(getInfo(c, m, params));
+		mi.setParams(getParamInfo(c, m, params));
 		mi.setDescriptions(getDescriptions(c,m));
 		mi.setReturnStatus(returnStatusFromAnnotations(c, m));
 		mi.setHeaderInfos(getHeaderInfo(c, m));

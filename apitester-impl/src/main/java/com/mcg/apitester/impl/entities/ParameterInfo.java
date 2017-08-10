@@ -1,5 +1,7 @@
 package com.mcg.apitester.impl.entities;
 
+import com.mcg.apitester.api.annotations.ParamType;
+
 public class ParameterInfo {
 	
 	private boolean deprecated; 
@@ -12,10 +14,8 @@ public class ParameterInfo {
 	private String type; 
 	private String typeShort; 
 	private String defaultValue = "[none]"; 
-	private PARAM_TYPE paramType;
+	private ParamType paramType;
 	private Object object;
-	
-	public enum PARAM_TYPE { RETURN, PATH, REQUEST, BODY };
 	
 	public ParameterInfo() {
 	}
@@ -59,11 +59,11 @@ public class ParameterInfo {
 		this.name = name;
 	}
 
-	public PARAM_TYPE getParamType() {
+	public ParamType getParamType() {
 		return paramType;
 	}
 
-	public void setParamType(PARAM_TYPE paramType) {
+	public void setParamType(ParamType paramType) {
 		this.paramType = paramType;
 	}
 
