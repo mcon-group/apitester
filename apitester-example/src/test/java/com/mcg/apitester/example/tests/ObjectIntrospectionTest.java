@@ -1,7 +1,6 @@
 package com.mcg.apitester.example.tests;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -29,12 +28,15 @@ public class ObjectIntrospectionTest {
 	
 	
 	@Test
-	public void testOneEntity() {
+	public void testOneEntity() throws JsonProcessingException {
 		Object o = ObjectIntrospection.createMap(OneEntity.class, new ArrayList<>());
 		print(o);
 		Assert.assertEquals(true, Map.class.isAssignableFrom(o.getClass()));
 		Map<String,Object> om = (Map<String, Object>) o;
-		Assert.assertEquals(5, om.size());
+		
+		System.err.println(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(om));
+		
+		Assert.assertEquals(6, om.size());
 	}
 	
 	

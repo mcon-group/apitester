@@ -16,6 +16,7 @@ public class MethodInfo {
 	private ParameterInfo returnType;
 	
 	private List<ApiReturnStatus> returnStatus = new ArrayList<>();
+	private List<HeaderInfo> headerInfos = new ArrayList<>();
 	
 	public MethodInfo() {
 	}
@@ -74,6 +75,14 @@ public class MethodInfo {
 
 	public void setDescriptions(List<String> descriptions) {
 		this.descriptions = descriptions;
+	}
+
+	public List<HeaderInfo> getHeaderInfos() {
+		return headerInfos;
+	}
+
+	public void setHeaderInfos(List<HeaderInfo> headerInfos) {
+		this.headerInfos = headerInfos;
 	}
 
 }

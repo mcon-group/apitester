@@ -28,8 +28,11 @@ import com.fasterxml.classmate.members.ResolvedMethod;
 import com.mcg.apitester.api.annotations.ApiDescription;
 import com.mcg.apitester.api.annotations.ApiError;
 import com.mcg.apitester.api.annotations.ApiErrors;
+import com.mcg.apitester.api.annotations.ApiHeader;
+import com.mcg.apitester.api.annotations.ApiHeaders;
 import com.mcg.apitester.api.annotations.ApiIgnore;
 import com.mcg.apitester.impl.entities.ApiReturnStatus;
+import com.mcg.apitester.impl.entities.HeaderInfo;
 import com.mcg.apitester.impl.entities.MethodInfo;
 import com.mcg.apitester.impl.entities.ParameterInfo;
 import com.mcg.apitester.impl.entities.ParameterInfo.PARAM_TYPE;
@@ -212,6 +215,8 @@ public class EndpointIntrospection {
 	}
 	
 	
+	
+	
 	public static List<String> getDescriptions(Class<?> clazz, Method m) {
 		List<String> out = new ArrayList<>();
 		for(ApiDescription ad : getAnnotations(m,ApiDescription.class)) {
@@ -230,13 +235,57 @@ public class EndpointIntrospection {
 		mi.setParams(getInfo(c, m, params));
 		mi.setDescriptions(getDescriptions(c,m));
 		mi.setReturnStatus(returnStatusFromAnnotations(c, m));
+		mi.setHeaderInfos(getHeaderInfo(c, m));
 		return mi;
+	}
+	
+	public static List<ApiHeader> getApiHeader(Class clazz, Method m) {
+		List<ApiHeader> allHeader = new ArrayList<>();
+		
+		allHeader.addAll(getAnnotations(clazz, ApiHeader.class));
+		
+		for(ApiHeaders aHeaders : getAnnotations(clazz, ApiHeaders.class)) {
+			for(ApiHeader ae: aHeaders.value()) {
+				allHeader.add(ae);
+			}
+		}
+		return allHeader;
+	}
+	
+	public static List<HeaderInfo> getHeaderInfo(Class clazz, Method m) {
+		
+		List<HeaderInfo> out = new ArrayList<>();
+		
+		for(ApiHeader h : getApiHeader(clazz, m)) {
+			HeaderInfo hi = new HeaderInfo();
+			hi.setName(h.name());
+			hi.setDescription(h.description());
+			out.add(hi);
+		}
+		return out;
+	}
+	
+	
+	
+	public static List<ApiError> getApiError(Class clazz, Method m) {
+		List<ApiError> allError = new ArrayList<>();
+		
+		allError.addAll(getAnnotations(clazz, ApiError.class));
+		
+		for(ApiErrors aErrs : getAnnotations(clazz, ApiErrors.class)) {
+			for(ApiError ae: aErrs.value()) {
+				allError.add(ae);
+			}
+		}
+		return allError;
 	}
 	
 	
 	public static List<ApiReturnStatus> returnStatusFromAnnotations(Class clazz, Method m) {
 		
 		List<ApiReturnStatus> out = new ArrayList<>();
+		
+		// "OK" status, 200 if nothing else configured
 		ResponseStatus rs = m.getAnnotation(ResponseStatus.class);
 		ApiReturnStatus aes = new ApiReturnStatus();
 		aes.setDef(true);
@@ -248,17 +297,8 @@ public class EndpointIntrospection {
 			aes.setName("OK");
 		}
 		out.add(aes);
-		
-		List<ApiError> allError = new ArrayList<>();
-		
-		allError.addAll(getAnnotations(clazz, ApiError.class));
-		
-		for(ApiErrors aErrs : getAnnotations(clazz, ApiErrors.class)) {
-			for(ApiError ae: aErrs.value()) {
-				allError.add(ae);
-			}
-		}
-		for(ApiError ae : allError) {
+
+		for(ApiError ae : getApiError(clazz, m)) {
 			ApiReturnStatus ars = new ApiReturnStatus();
 			ars.setStatus(ae.value().value());
 			ars.setName(ae.value().name());
@@ -271,14 +311,11 @@ public class EndpointIntrospection {
 		}
 		
 		out.sort(new Comparator<ApiReturnStatus>() {
-
 			@Override
 			public int compare(ApiReturnStatus o1, ApiReturnStatus o2) {
 				return new Integer(o1.getStatus()).compareTo(o2.getStatus());
 			}
-			
 		});
-		
 		
 		return out;
 	}

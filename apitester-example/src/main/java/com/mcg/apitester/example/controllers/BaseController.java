@@ -4,7 +4,15 @@ import org.springframework.http.HttpStatus;
 
 import com.mcg.apitester.api.annotations.ApiError;
 import com.mcg.apitester.api.annotations.ApiErrors;
+import com.mcg.apitester.api.annotations.ApiHeader;
+import com.mcg.apitester.api.annotations.ApiHeaders;
 
+
+@ApiHeaders(
+	{
+		@ApiHeader(name="AUTHENTICATION", description="the value of the authentication token acquired through a call to /authentication")
+	}
+)
 @ApiErrors(
 	{
 		@ApiError(value=HttpStatus.INTERNAL_SERVER_ERROR,description="If processing the request failed"),
