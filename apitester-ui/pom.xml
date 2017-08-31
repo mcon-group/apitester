@@ -25,7 +25,7 @@
 					<nodeVersion>v6.9.1</nodeVersion>
 					<nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
 					<workingDirectory>src/main/js</workingDirectory>
-					<installDirectory>${project.basedir}}/target/node</installDirectory>
+					<installDirectory>${project.basedir}/target/node</installDirectory>
 				</configuration>
 				<executions>
 					<execution>
