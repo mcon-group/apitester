@@ -150,7 +150,7 @@ public class EndpointIntrospection {
 		return allParam;
 	}
 	
-	public static List<ParameterInfo> getParamsFromAnnotation(Class clazz, Method m) {
+	public static List<ParameterInfo> getExtraParamsAnnotation(Class clazz, Method m) {
 		
 		List<ParameterInfo> out = new ArrayList<>();
 		
@@ -163,6 +163,8 @@ public class EndpointIntrospection {
 			pi.setTypeShort(p.type().getSimpleName());
 			pi.setParamType(p.paramType());
 			pi.setRequired(p.mandatory());
+			pi.setPrimitive(p.type().getCanonicalName().startsWith("java.lang"));
+			pi.setObject(ObjectIntrospection.createMap(p.type(), new ArrayList<>()));
 			out.add(pi);
 		}
 		return out;
@@ -193,7 +195,7 @@ public class EndpointIntrospection {
 			}
 		}
 		
-		out.addAll(getParamsFromAnnotation(c, m));
+		out.addAll(getExtraParamsAnnotation(c, m));
 		
 		return out;
 	}

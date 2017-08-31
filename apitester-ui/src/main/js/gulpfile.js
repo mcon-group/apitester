@@ -5,7 +5,7 @@ var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var watch = require('gulp-watch');
 
-var target="../public/apitester"
+var target="../resources/public/apitester"
  
 gulp.task('build-js', function() {
     return gulp.src(

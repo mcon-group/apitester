@@ -148,7 +148,6 @@ angular.module("apitester").directive(
 			},
 			templateUrl : "path_info_detail.html",
 			link : function(scope) {
-				scope.mappings = [];
 				scope.details = false;
 				scope.selectMethod = function (method) {
 					scope.selectedMethod = method; 

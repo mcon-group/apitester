@@ -9,11 +9,13 @@ import com.mcg.apitester.api.annotations.ApiExtraParam;
 import com.mcg.apitester.api.annotations.ApiExtraParams;
 import com.mcg.apitester.api.annotations.ApiHeader;
 import com.mcg.apitester.api.annotations.ApiHeaders;
+import com.mcg.apitester.api.annotations.ParamType;
 
 
 @ApiExtraParams(
 	{
-		@ApiExtraParam(type=String.class,name="apiKey",description="The API key to use with this request")
+		@ApiExtraParam(type=String.class,name="apiKey",description="The API key to use with this request",paramType=ParamType.REQUEST),
+		@ApiExtraParam(type=String.class,name="languages",description="Laguage wishlist, in order of preference",paramType=ParamType.REQUEST)
 	}
 )
 @ApiDescription(file="/com/mcg/apitester/example/controllers/BaseController.md")

@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.javaruntype.type.TypeParameter;
 import org.javaruntype.type.Types;
+import org.springframework.util.StringUtils;
 
 public class ObjectIntrospection {
 	
@@ -29,7 +30,7 @@ public class ObjectIntrospection {
 				for (Object s : clazz.getEnumConstants()) {
 					ss.add(s.toString());
 				}
-				return ss;
+				return StringUtils.collectionToDelimitedString(ss, "|");
 			} catch (Exception e) {
 				return null;
 			}
