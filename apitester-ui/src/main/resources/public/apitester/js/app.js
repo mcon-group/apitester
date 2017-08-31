@@ -74,6 +74,20 @@ angular.module("apitester").controller(
 		);
 	}
 );
+angular.module("apitester").service(
+	"EndpointService",
+	function($route,Restangular) {
+		var s = {
+			listEndpoints : function(success,error) {
+				Restangular.all("endpoints").getList().then(success,error);
+			},
+			listPaths : function(success,error) {
+				Restangular.all("paths").getList().then(success,error);
+			}
+		}
+		return s;
+	}
+);
 angular.module("apitester").directive(
 	"endpoint",
 	function($route,$templateCache,$controller,$compile) {
@@ -165,19 +179,5 @@ angular.module("apitester").directive(
 				}
 			}
 		}
-	}
-);
-angular.module("apitester").service(
-	"EndpointService",
-	function($route,Restangular) {
-		var s = {
-			listEndpoints : function(success,error) {
-				Restangular.all("endpoints").getList().then(success,error);
-			},
-			listPaths : function(success,error) {
-				Restangular.all("paths").getList().then(success,error);
-			}
-		}
-		return s;
 	}
 );
