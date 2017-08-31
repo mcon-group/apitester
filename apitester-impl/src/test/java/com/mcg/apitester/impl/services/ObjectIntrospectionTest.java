@@ -56,12 +56,8 @@ public class ObjectIntrospectionTest {
 	public void testSimpleEumeration() {
 		Object o = ObjectIntrospection.createMap(SimpleEnum.class, new ArrayList<>());
 		print(o);
-		Assert.assertEquals(true, List.class.isAssignableFrom(o.getClass()));
-		List<String> l = (List<String>)o;
-		Assert.assertEquals(3, l.size());
-		Assert.assertEquals("A", l.get(0));
-		Assert.assertEquals("B", l.get(1));
-		Assert.assertEquals("C", l.get(2));
+		Assert.assertEquals(true, String.class.isAssignableFrom(o.getClass()));
+		Assert.assertEquals("A|B|C", o);
 	}
 	
 	@Test
