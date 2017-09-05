@@ -13,9 +13,28 @@
 	<div class="col-md-12">
 		<button ng-click="selectMethod(method)" ng-repeat="method in path.methods" class="btn" ng-class="{'btn-success': method == 'GET', 'btn-danger': method == 'DELETE', 'btn-primary': method == 'POST', 'btn-info': method == 'PUT', 'active' : method == selectedMethod}" style="margin: 5px">{{method}}</button>	
 	</div>
-	<div class="col-md-12">
-		<div ng-repeat="mapping in mappings"  style="padding-bottom: 30px;">
-			<div endpoint="mapping">
+	<div class="col-md-12" ng-repeat="mapping in mappings">
+		<div class="row">
+			<div class="col-md-12">
+				<span class="pull-right glyphicon" ng-click="toggleExecute()" ng-class="{'glyphicon-play' : !execute, 'glyphicon-remove-circle' : execute}"> </span>
+			</div>
+		</div>
+		<div class="row">
+			<div ng-show="!execute">
+				<div class="col-md-12">
+					<div endpoint="mapping">
+					</div>
+				</div>
+			</div>
+			<div ng-show="execute">
+				<div class="col-md-6">
+					<div endpoint="mapping">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div endpoint-tester="mapping">
+					</div>
+				</div>	
+			</div>	
 		</div>
 	</div>
-	

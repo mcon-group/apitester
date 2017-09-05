@@ -105,6 +105,17 @@ angular.module("apitester").directive(
 			templateUrl : "method_tester.html",
 			link : function(scope) {
 				scope.endpoint = scope.endpointTester;
+				scope.data = {};
+				scope.endpoint.methodInfo.params.forEach(
+					function (each) {
+						console.log(each.name+" : "+each.type);
+						if(each.collection) {
+							scope.data[each.name] = [];
+						} else {
+							scope.data[each.name] = "";
+						}
+					}
+				);
 			}
 		}
 	}
@@ -149,8 +160,15 @@ angular.module("apitester").directive(
 			templateUrl : "path_info_detail.html",
 			link : function(scope) {
 				scope.mappings = [];
+				scope.execute = false;
 				scope.details = false;
+				scope.toggleExecute = function() {
+					scope.execute = !scope.execute;
+				};
 				scope.selectMethod = function (method) {
+					if(scope.selectedMethod == method) {
+						method = 'none';
+					}
 					scope.selectedMethod = method; 
 					var m = [];
 					_.each(scope.path.mappings,function(mapping) {
@@ -162,7 +180,7 @@ angular.module("apitester").directive(
 						}
 					});
 					scope.mappings = m;
-				}
+				};
 			}
 		}
 	}

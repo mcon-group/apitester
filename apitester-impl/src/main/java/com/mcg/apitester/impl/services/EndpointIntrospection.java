@@ -14,6 +14,7 @@ import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -337,6 +338,10 @@ public class EndpointIntrospection {
 		if(rs!=null) {
 			aes.setStatus(rs.code().value()); 
 			aes.setName(rs.code().name());
+			if(rs.code()==HttpStatus.INTERNAL_SERVER_ERROR && rs.value()!=HttpStatus.INTERNAL_SERVER_ERROR) {
+				aes.setStatus(rs.value().value()); 
+				aes.setName(rs.value().name());
+			}
 		} else {
 			aes.setStatus(200); 
 			aes.setName("OK");
