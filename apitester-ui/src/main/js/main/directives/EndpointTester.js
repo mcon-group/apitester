@@ -58,7 +58,7 @@ angular.module("apitester").directive(
          * @return {undefined}
          */
         function get(apiPath, queryParams) {
-          Restangular.one(apiPath).get(queryParams);
+          return Restangular.one(apiPath).get(queryParams);
         }
 
         /**
