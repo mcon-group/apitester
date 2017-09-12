@@ -1,4 +1,4 @@
-	
+
 	<div class="form-group" ng-repeat="param in endpoint.methodInfo.params">
 		<label>{{param.name}}</label>
 		<div ng-if="param.collection">
@@ -13,4 +13,14 @@
 		</div>
 	</div>
 <pre>{{data | json}}</pre>
+<div class="form-group">
+	<button
+		class="btn btn-primary"
+		ng-click="sendRequest()"
+	>
+		Send
+	</button>
+</div>
+<pre>{{apiResponse | json}}</pre>
 <pre>{{endpoint | json}}</pre>
+
