@@ -125,6 +125,7 @@ angular.module("apitester").directive(
         scope.getRequestBody = getRequestBody;
         scope.getRequestParams = getRequestParams;
         scope.post = post;
+        scope.put = put;
         scope.sendRequest = sendRequest;
         scope.treatErrorResponse = treatErrorResponse;
         scope.treatSuccessResponse = treatSuccessResponse;
@@ -232,6 +233,19 @@ angular.module("apitester").directive(
         }
 
         /**
+         * @name put
+         * @description Makes a PUT request with Restangular
+         * @param {string} apiPath - API path used for Restangular.one()
+         * @param {object} requestParams - API request parameters
+         * @param {object} requestBody - API request parameters
+         * @return {undefined}
+         */
+        function put(apiPath, requestParams, requestBody) {
+          return Restangular.one(apiPath)
+            .customPUT(requestBody, null, requestParams);
+        }
+
+        /**
          * @name sendRequest
          * @description Sends the API request, depending on request method
          * @return {undefined}
@@ -246,6 +260,9 @@ angular.module("apitester").directive(
           switch (scope.endpoint.methods[0]) {
             case 'POST':
               request = scope.post(apiPath, requestParams, requestBody);
+              break;
+            case 'PUT':
+              request = scope.put(apiPath, requestParams, requestBody);
               break;
             default:
               request = scope.get(apiPath, requestParams);
