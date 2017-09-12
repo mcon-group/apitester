@@ -28,6 +28,7 @@ angular.module("apitester").directive(
         scope.getRequestParams = getRequestParams;
         scope.post = post;
         scope.put = put;
+        scope.remove = remove;
         scope.sendRequest = sendRequest;
         scope.treatErrorResponse = treatErrorResponse;
         scope.treatSuccessResponse = treatSuccessResponse;
@@ -148,6 +149,17 @@ angular.module("apitester").directive(
         }
 
         /**
+         * @name remove
+         * @description Makes a DELETE request with Restangular
+         * @param {string} apiPath - API path used for Restangular.one()
+         * @param {object} requestParams - API request parameters
+         * @return {undefined}
+         */
+        function remove(apiPath, requestParams) {
+          return Restangular.one(apiPath).remove(requestParams);
+        }
+
+        /**
          * @name sendRequest
          * @description Sends the API request, depending on request method
          * @return {undefined}
@@ -160,6 +172,9 @@ angular.module("apitester").directive(
           var request;
 
           switch (scope.endpoint.methods[0]) {
+            case 'DELETE':
+              request = scope.remove(apiPath, requestParams);
+              break;
             case 'POST':
               request = scope.post(apiPath, requestParams, requestBody);
               break;
@@ -196,7 +211,7 @@ angular.module("apitester").directive(
         function treatSuccessResponse(response) {
           scope.apiResponse = response;
         }
-      }
-    }
+      },
+    };
   }
 );
