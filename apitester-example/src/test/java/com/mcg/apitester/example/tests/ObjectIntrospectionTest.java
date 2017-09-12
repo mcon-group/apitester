@@ -36,7 +36,7 @@ public class ObjectIntrospectionTest {
 		
 		System.err.println(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(om));
 		
-		Assert.assertEquals(6, om.size());
+		Assert.assertEquals(9, om.size());
 	}
 	
 	
