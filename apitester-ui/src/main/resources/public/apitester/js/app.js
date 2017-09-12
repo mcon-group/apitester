@@ -77,25 +77,39 @@ angular.module("apitester").controller(
 	}
 );
 angular.module("apitester").directive(
-	"endpoint",
-	function($route,$templateCache,$controller,$compile) {
-		return {
-			transclude: true,
-			scope: {
-				endpoint : "="
-			},
-			templateUrl : "method_detail.html",
-			link : function(scope) {
-				scope.select = function() {
-					console.log("method selected ... ");
-					scope.$emit("methodSelected",scope.endpoint);
-					scope.$broadcast("methodSelected",scope.endpoint);
-				};
-				scope.details = false;
-			}
-		}
-	}
+  "endpoint",
+  function($timeout) {
+    return {
+      transclude: true,
+      scope: {
+        endpoint : "="
+      },
+      templateUrl : "method_detail.html",
+      link : function(scope, elmt) {
+        scope.select = function() {
+          console.log("method selected ... ");
+          scope.$emit("methodSelected",scope.endpoint);
+          scope.$broadcast("methodSelected",scope.endpoint);
+        };
+        scope.details = false;
+
+
+        var params = scope.endpoint.methodInfo.params;
+        scope.pathParams = _.filter(params, function(param) {
+          return param.paramType === 'PATH';
+        });
+        scope.requestParams = _.filter(params, function(param) {
+          return param.paramType === 'REQUEST';
+        });
+        scope.requestBody = _.find(params, function(param) {
+          return param.paramType === 'BODY';
+        });
+        scope.response = scope.endpoint.methodInfo.returnType;
+      },
+    };
+  }
 );
+
 angular.module("apitester").directive(
   "endpointTester",
   function(Restangular) {
@@ -343,6 +357,82 @@ angular.module(
 
 	}
 });
+angular.module(
+  'apitester'
+).directive('paramValueInput', function() {
+  return {
+    templateUrl: 'param_value_input.html',
+    scope: {
+      param: '=',
+    },
+  };
+});
+
+angular.module(
+  'apitester'
+).directive('paramValueObj', function($timeout) {
+  return {
+    templateUrl: 'param_value_obj.html',
+    scope: {
+      param: '=',
+      blur: '&',
+    },
+    link: function(scope, elmt) {
+      var $textarea;
+
+      scope.updateBody = updateBody;
+
+
+      activate();
+
+
+      /**
+       * @name activate
+       * @description functions to be called, and values to be set, when
+       *    directive is activate
+       * @return {undefined}
+       */
+      function activate() {
+        $timeout(function() {
+          $textarea = elmt.find('textarea');
+
+          if (scope.param.paramType !== 'RETURN') {
+            scope.updateBody(JSON.stringify(scope.param.object));
+          }
+
+          var $pre = $textarea.closest('.row').find('pre');
+          $textarea.css({height: $pre.outerHeight()});
+        }, 300);
+      }
+
+      /**
+       * @name updateBody
+       * @description udpate value for request body
+       * @param {string} [value=param.value] - The stringified
+       * body
+       * @return {undefined}
+       */
+      function updateBody(value) {
+        if (!value) {
+          value = scope.param.value;
+        }
+
+        $textarea.removeClass('border-red');
+        try {
+          scope.param.value = JSON.stringify(
+            JSON.parse(value.replace(/(\r\n|\n|\r)/gm, '')),
+            null,
+            2
+          );
+        } catch (error) {
+          console.error(error);
+          $textarea.addClass('border-red');
+        }
+      }
+    },
+  };
+});
+
 angular.module("apitester").directive(
 	"path",
 	function($route,$templateCache,$controller,$compile) {

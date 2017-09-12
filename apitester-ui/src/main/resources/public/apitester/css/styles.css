@@ -10,3 +10,7 @@
 	border-top-color: #CCCCCC;
 	border-top-width: 0;
 }
+
+.border-red {
+	border: 1px solid red;
+}

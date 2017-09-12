@@ -6,7 +6,7 @@ var rename = require('gulp-rename');
 var watch = require('gulp-watch');
 
 var target="../resources/public/apitester"
- 
+
 gulp.task('build-js', function() {
     return gulp.src(
     		[
@@ -52,8 +52,8 @@ gulp.task('build-fonts', function(){
 
 gulp.task('build-deps', function() {
     var jsFiles = [
-        'node_modules/angular/angular.js',
         'node_modules/jquery/dist/jquery.js',
+        'node_modules/angular/angular.js',
         'node_modules/underscore/underscore.js',
         'node_modules/angular-route/angular-route.js',
         'node_modules/angular-upload/angular-upload.js',
