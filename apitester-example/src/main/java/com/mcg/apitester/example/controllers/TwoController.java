@@ -1,5 +1,6 @@
 package com.mcg.apitester.example.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,14 @@ public class TwoController {
 			@RequestParam @ApiDescription("Pagination: The offset") int offset, 
 			@RequestParam @ApiDescription("Pagination: The maximum number of entries per page") int max, 
 			@RequestParam @ApiDescription("The field to order by. One of 'name', 'date' or 'size'") String orderBy) {
-		return null;
+		List<OneEntity> e = new ArrayList<>();
+		e.add(BaseController.create(OneEntity.class));
+		e.add(BaseController.create(OneEntity.class));
+		e.add(BaseController.create(OneEntity.class));
+		e.add(BaseController.create(OneEntity.class));
+		e.add(BaseController.create(OneEntity.class));
+		e.add(BaseController.create(OneEntity.class));
+		return e; 
 	}
 
 	@RequestMapping(value="/two/entities/{id}",method=RequestMethod.GET)
@@ -37,12 +45,17 @@ public class TwoController {
 			@RequestParam int offset, 
 			@RequestParam int max, 
 			@RequestParam String orderBy) {
-		return null;
+		return BaseController.create(OneEntity.class);
 	}
 	
 	@RequestMapping(value="/two/entities",method=RequestMethod.POST)
 	public OneEntity create(@RequestBody OneEntity body) {
-		return null;
+		return BaseController.create(OneEntity.class);
+	}
+	
+	@RequestMapping(value="/two/same_name/{foo}",method=RequestMethod.GET)
+	public OneEntity getWithTwoParams(@PathVariable(name="foo") String foo1, @RequestParam(name="foo") String foo2) {
+		return BaseController.create(OneEntity.class);
 	}
 	
 		

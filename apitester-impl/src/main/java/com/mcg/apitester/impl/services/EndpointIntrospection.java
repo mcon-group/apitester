@@ -9,13 +9,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-import org.springframework.beans.factory.support.GenericTypeAwareAutowireCandidateResolver;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -88,14 +86,19 @@ public class EndpointIntrospection {
 		if(mp==null) {
 			out.setParamType(ParamType.RETURN);
 		} else {
-			if(mp.getParameterAnnotation(PathVariable.class)!=null) {
+			PathVariable pv = mp.getParameterAnnotation(PathVariable.class);
+			RequestParam rp = mp.getParameterAnnotation(RequestParam.class);
+			RequestBody rb = mp.getParameterAnnotation(RequestBody.class);
+			if(pv!=null) {
 				out.setParamType(ParamType.PATH);
+				if(pv.name().length()>0) out.setName(pv.name());
 				out.setRequired(true);
-			} else if (mp.getParameterAnnotation(RequestParam.class)!=null) {
+			} else if (rp!=null) {
 				out.setParamType(ParamType.REQUEST);
 				out.setRequired(mp.getParameterAnnotation(RequestParam.class).required());
 				out.setDefaultValue(mp.getParameterAnnotation(RequestParam.class).defaultValue());
-			} else if (mp.getParameterAnnotation(RequestBody.class)!=null) {
+				if(rp.name().length()>0) out.setName(rp.name());
+			} else if (rb!=null) {
 				out.setParamType(ParamType.BODY);
 				out.setRequired(mp.getParameterAnnotation(RequestBody.class).required());
 			} else {

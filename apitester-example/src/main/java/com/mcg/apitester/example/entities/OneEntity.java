@@ -6,11 +6,15 @@ import java.util.List;
 public class OneEntity {
 
 	private String id;
+	private long timestamp;
 	private String name;
 	private Date lastModified;
 	private Pets mainPet;
 	private List<Pets> pets;
 	private List<AnotherEntity> otherEntities;
+	private int[] values;
+	private Pets[] petArray;
+	
 
 	public String getId() {
 		return id;
@@ -58,6 +62,30 @@ public class OneEntity {
 
 	public void setMainPet(Pets mainPet) {
 		this.mainPet = mainPet;
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public int[] getValues() {
+		return values;
+	}
+
+	public void setValues(int[] values) {
+		this.values = values;
+	}
+
+	public Pets[] getPetArray() {
+		return petArray;
+	}
+
+	public void setPetArray(Pets[] petArray) {
+		this.petArray = petArray;
 	}
 
 }

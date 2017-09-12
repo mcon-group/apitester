@@ -38,19 +38,20 @@ public class OneController extends BaseController {
 			@RequestParam int offset, 
 			@RequestParam int max, 
 			@RequestParam String orderBy) {
-		return null;
+		return create(OneEntity.class);
 	}
 	
 	@ApiDescription(file="/com/mcg/apitester/example/controllers/OneController_create.md")
 	@RequestMapping(value="/one/entities",method=RequestMethod.POST)
 	public OneEntity create(@RequestBody OneEntity body) {
-		return null;
+		
+		return create(OneEntity.class);
 	}
 	
 	
 	@RequestMapping(value="/one/entities/{id}",method=RequestMethod.PUT)
 	public OneEntity update(@PathVariable String id, @RequestBody OneEntity body) {
-		return null;
+		return create(OneEntity.class);
 	}
 	
 	@ApiErrors(
