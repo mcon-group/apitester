@@ -22,33 +22,14 @@ angular.module("apitester").directive(
           }
         );
 
-        scope.treatErrorResponse = treatErrorResponse;
-        scope.treatSuccessResponse = treatSuccessResponse;
         scope.get = get;
         scope.getApiPath = getApiPath;
+        scope.getRequestBody = getRequestBody;
         scope.getRequestParams = getRequestParams;
         scope.sendRequest = sendRequest;
+        scope.treatErrorResponse = treatErrorResponse;
+        scope.treatSuccessResponse = treatSuccessResponse;
 
-
-        /**
-         * @name treatErrorResponse
-         * @description
-         * @param {object} response - Error response from Restangular
-         * @return {undefined}
-         */
-        function treatErrorResponse(response) {
-          scope.apiResponse = response.data;
-        }
-
-        /**
-         * @name treatSuccessResponse
-         * @description
-         * @param {object} response - Success response from Restangular
-         * @return {undefined}
-         */
-        function treatSuccessResponse(response) {
-          scope.apiResponse = response;
-        }
 
         /**
          * @name get
@@ -89,6 +70,30 @@ angular.module("apitester").directive(
         }
 
         /**
+         * @name getRequestBody
+         * @description Returns the request body as object
+         * @return {object}
+         */
+        function getRequestBody() {
+          return _.chain(scope.methodParams)
+            .filter(function(param) {
+              return param.paramType === 'REQUEST';
+            })
+            .map(function(param) {
+              var paramName = param.name;
+              var value = scope.data[paramName];
+
+              if (value) {
+                return [paramName, value];
+              }
+            })
+            .compact()
+            .object()
+            .value()
+          ;
+        }
+
+        /**
          * @name getRequestParams
          * @description Returns the request parameters as object, with values
          *     being truthy
@@ -120,6 +125,7 @@ angular.module("apitester").directive(
          */
         function sendRequest() {
           var apiPath = scope.getApiPath();
+          var requestBody = scope.getRequestBody();
           var requestParams = scope.getRequestParams();
 
           var request;
@@ -127,12 +133,34 @@ angular.module("apitester").directive(
           // TODO: use switch, and use GET as default
           if (scope.endpoint.methods[0] === 'GET') {
             request = scope.get(apiPath, requestParams);
+          } else if (scope.endpoint.methods[0] === 'POST') {
+
           }
 
           request.then(
             scope.treatSuccessResponse,
             scope.treatErrorResponse
           );
+        }
+
+        /**
+         * @name treatErrorResponse
+         * @description
+         * @param {object} response - Error response from Restangular
+         * @return {undefined}
+         */
+        function treatErrorResponse(response) {
+          scope.apiResponse = response.data;
+        }
+
+        /**
+         * @name treatSuccessResponse
+         * @description
+         * @param {object} response - Success response from Restangular
+         * @return {undefined}
+         */
+        function treatSuccessResponse(response) {
+          scope.apiResponse = response;
         }
       }
     }
