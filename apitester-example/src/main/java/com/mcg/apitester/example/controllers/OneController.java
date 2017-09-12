@@ -1,5 +1,6 @@
 package com.mcg.apitester.example.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,10 @@ public class OneController extends BaseController {
 			@RequestParam @ApiDescription("Pagination: The offset") int offset, 
 			@RequestParam @ApiDescription("Pagination: The maximum number of entries per page") int max, 
 			@RequestParam @ApiDescription("The field to order by. One of 'name', 'date' or 'size'") String[] orderBy) {
-		return null;
+		ArrayList<OneEntity> arrayList = new ArrayList<OneEntity>();
+		arrayList.add(create(OneEntity.class));
+		
+		return arrayList;
 	}
 
 	@RequestMapping(value="/one/entities/{id}",method=RequestMethod.GET)
