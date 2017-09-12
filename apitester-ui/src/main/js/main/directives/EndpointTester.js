@@ -22,43 +22,25 @@ angular.module("apitester").directive(
           }
         );
 
-        scope.treatErrorResponse = treatErrorResponse;
-        scope.treatSuccessResponse = treatSuccessResponse;
         scope.get = get;
         scope.getApiPath = getApiPath;
+        scope.getRequestBody = getRequestBody;
         scope.getRequestParams = getRequestParams;
+        scope.post = post;
         scope.sendRequest = sendRequest;
+        scope.treatErrorResponse = treatErrorResponse;
+        scope.treatSuccessResponse = treatSuccessResponse;
 
-
-        /**
-         * @name treatErrorResponse
-         * @description
-         * @param {object} response - Error response from Restangular
-         * @return {undefined}
-         */
-        function treatErrorResponse(response) {
-          scope.apiResponse = response.data;
-        }
-
-        /**
-         * @name treatSuccessResponse
-         * @description
-         * @param {object} response - Success response from Restangular
-         * @return {undefined}
-         */
-        function treatSuccessResponse(response) {
-          scope.apiResponse = response;
-        }
 
         /**
          * @name get
          * @description Makes a GET request with Restangular
          * @param {string} apiPath - API path used for Restangular.one()
-         * @param {object} queryParams - API request parameters
+         * @param {object} requestParams - API request parameters
          * @return {undefined}
          */
-        function get(apiPath, queryParams) {
-          return Restangular.one(apiPath).get(queryParams);
+        function get(apiPath, requestParams) {
+          return Restangular.one(apiPath).get(requestParams);
         }
 
         /**
@@ -89,6 +71,31 @@ angular.module("apitester").directive(
         }
 
         /**
+         * @name getRequestBody
+         * @description Returns the request body as object
+         * @return {object}
+         */
+        function getRequestBody() {
+          var bodies = _.chain(scope.methodParams)
+            .filter(function(param) {
+              return param.paramType === 'BODY';
+            })
+            .map(function(param) {
+              var paramName = param.name;
+              var value = scope.data[paramName];
+
+              return value;
+            })
+            .value()
+          ;
+
+          if (bodies && bodies.length) {
+            // TODO: JSON UI???
+            return JSON.parse(_.first(bodies));
+          }
+        }
+
+        /**
          * @name getRequestParams
          * @description Returns the request parameters as object, with values
          *     being truthy
@@ -114,25 +121,63 @@ angular.module("apitester").directive(
         }
 
         /**
+         * @name post
+         * @description Makes a POST request with Restangular
+         * @param {string} apiPath - API path used for Restangular.one()
+         * @param {object} requestParams - API request parameters
+         * @param {object} requestBody - API request parameters
+         * @return {undefined}
+         */
+        function post(apiPath, requestParams, requestBody) {
+          return Restangular.one(apiPath)
+            .post(null, requestBody, requestParams);
+        }
+
+        /**
          * @name sendRequest
          * @description Sends the API request, depending on request method
          * @return {undefined}
          */
         function sendRequest() {
           var apiPath = scope.getApiPath();
+          var requestBody = scope.getRequestBody();
           var requestParams = scope.getRequestParams();
 
           var request;
 
-          // TODO: use switch, and use GET as default
-          if (scope.endpoint.methods[0] === 'GET') {
-            request = scope.get(apiPath, requestParams);
+          switch (scope.endpoint.methods[0]) {
+            case 'POST':
+              request = scope.post(apiPath, requestParams, requestBody);
+              break;
+            default:
+              request = scope.get(apiPath, requestParams);
+              break;
           }
 
           request.then(
             scope.treatSuccessResponse,
             scope.treatErrorResponse
           );
+        }
+
+        /**
+         * @name treatErrorResponse
+         * @description treat API error response
+         * @param {object} response - Error response from Restangular
+         * @return {undefined}
+         */
+        function treatErrorResponse(response) {
+          scope.apiResponse = response.data;
+        }
+
+        /**
+         * @name treatSuccessResponse
+         * @description treat API success response
+         * @param {object} response - Success response from Restangular
+         * @return {undefined}
+         */
+        function treatSuccessResponse(response) {
+          scope.apiResponse = response;
         }
       }
     }
