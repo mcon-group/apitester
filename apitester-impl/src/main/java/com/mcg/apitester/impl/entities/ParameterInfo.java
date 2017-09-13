@@ -13,7 +13,7 @@ public class ParameterInfo {
 	private String name; 
 	private String type; 
 	private String typeShort; 
-	private String defaultValue = "[none]"; 
+	private String defaultValue = ""; 
 	private ParamType paramType;
 	private Object object;
 	
@@ -80,6 +80,8 @@ public class ParameterInfo {
 	}
 
 	public void setDefaultValue(String defaultValue) {
+		Thread.dumpStack();
+		System.err.println("default value set to: "+defaultValue);
 		this.defaultValue = defaultValue;
 	}
 

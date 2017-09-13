@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ValueConstants;
 
 import com.fasterxml.classmate.MemberResolver;
 import com.fasterxml.classmate.ResolvedType;
@@ -96,8 +97,12 @@ public class EndpointIntrospection {
 			} else if (rp!=null) {
 				out.setParamType(ParamType.REQUEST);
 				out.setRequired(mp.getParameterAnnotation(RequestParam.class).required());
-				out.setDefaultValue(mp.getParameterAnnotation(RequestParam.class).defaultValue());
-				if(rp.name().length()>0) out.setName(rp.name());
+				if(! rp.defaultValue().equals(ValueConstants.DEFAULT_NONE)) {
+					out.setDefaultValue(rp.defaultValue());
+				}
+				if(rp.name().length()>0) {
+					out.setName(rp.name());
+				}
 			} else if (rb!=null) {
 				out.setParamType(ParamType.BODY);
 				out.setRequired(mp.getParameterAnnotation(RequestBody.class).required());
