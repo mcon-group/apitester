@@ -1,8 +1,8 @@
 angular.module(
   'apitester'
-).directive('paramValueInput', function() {
+).directive('paramValue', function() {
   return {
-    templateUrl: 'param_value_input.html',
+    templateUrl: 'param_value.html',
     scope: {
       param: '=',
     },
