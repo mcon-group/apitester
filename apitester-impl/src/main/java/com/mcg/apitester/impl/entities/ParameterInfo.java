@@ -82,8 +82,6 @@ public class ParameterInfo {
 	}
 
 	public void setDefaultValue(String defaultValue) {
-		Thread.dumpStack();
-		System.err.println("default value set to: "+defaultValue);
 		this.defaultValue = defaultValue;
 	}
 
