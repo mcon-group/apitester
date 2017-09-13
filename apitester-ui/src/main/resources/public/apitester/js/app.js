@@ -397,7 +397,11 @@ angular.module(
           $textarea = elmt.find('textarea');
 
           if (scope.param.paramType !== 'RETURN') {
-            scope.updateBody(JSON.stringify(scope.param.object));
+            var value = scope.param.object;
+            if (scope.param.collection) {
+              value = [value];
+            }
+            scope.updateBody(JSON.stringify(value));
           }
 
           var $pre = $textarea.closest('.row').find('pre');
