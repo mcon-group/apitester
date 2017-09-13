@@ -26,6 +26,7 @@
         class="form-control"
         type="text"
         ng-model="param.newValue"
+        ng-required="param.required && !param.collectionValues.length"
       >
       <span class="input-group-btn">
         <button
