@@ -43,11 +43,37 @@
   <div ng-if="!param.primitive && param.paramType !== 'REQUEST'">
     <div class="row">
       <div class="col-md-6">
-        {{param.typeShort}}<span ng-if="param.collection">[]</span>
+        {{param.typeShort}}<span ng-if="param.collection">[]</span><br>
+        <br>
       </div>
-      <div class="col-md-6"></div>
+      <div class="col-md-6">
+        <table
+          ng-if="param.status"
+        >
+          <tbody>
+            <tr>
+              <td style="width: 1%">
+                <span
+                  class="label label-success"
+                  style="top: 0; vertical-align: top;"
+                  ng-class="{'label-info' : param.status > 299, 'label-warning' : param.status > 399, 'label-danger' : param.status > 499}"
+                >
+                  {{param.status}}
+                </span>
+              </td>
+              <td>
+                <span>{{param.message}}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+      </div>
     </div>
-    <div class="row">
+    <div
+      class="row"
+      ng-if="param.type !== 'void'"
+    >
       <div class="col-md-6">
         <pre>{{param.object | json}}</pre>
       </div>

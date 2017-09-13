@@ -22,25 +22,25 @@
     </span>
   </div>
   <div class="input-group">
-      <input
-        class="form-control"
-        type="text"
-        ng-model="param.newValue"
-        ng-required="param.required && !param.collectionValues.length"
+    <input
+      class="form-control"
+      type="text"
+      ng-class="param.required && !param.collectionValues.length ? 'input-invalid' : ''"
+      ng-model="param.newValue"
+    >
+    <span class="input-group-btn">
+      <button
+        class="btn btn-primary"
+        type="button"
+        ng-click="addValue()"
       >
-      <span class="input-group-btn">
-        <button
-          class="btn btn-primary"
-          type="button"
-          ng-click="addValue()"
-        >
-          <span
-            class="glyphicon glyphicon-plus"
-            style="line-height: inherit;"
-          ></span>
-        </button>
-      </span>
-    </div>
+        <span
+          class="glyphicon glyphicon-plus"
+          style="line-height: inherit;"
+        ></span>
+      </button>
+    </span>
+  </div>
 </div>
 
 <div ng-if="!param.collectionValues">

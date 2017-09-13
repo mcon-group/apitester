@@ -70,25 +70,19 @@
 	</div>
 	<div class="form-group">
 		<button
-			class="btn btn-primary btn-lg btn-block"
+			class="btn btn-primary btn-block"
 			type="submit"
+			ng-disabled="loading"
 		>
 			Send
 		</button>
-		<br>
-		<div
-			class="h1"
-			ng-if="response.status"
-		>
-			<span class="label label-success" ng-class="{'label-info' : response.status > 299, 'label-warning' : response.status > 399, 'label-danger' : response.status > 499}">{{response.status}}</span>
-		</div>
 	</div>
 	<div class="form-group">
 		<label><i class="glyphicon glyphicon-chevron-left"> </i>  Returns</label>
-		<div ng-if="response.type=='void'">
+		<div ng-show="response.type === 'void'">
 			<i>This method does not return anything</i>
 		</div>
-		<div ng-if="response.type!='void'">
+		<div>
 			<table class="table table-compact">
 				<tr
 					param-value
@@ -102,7 +96,13 @@
 		<table class="table table-compact">
 			<tr ng-repeat="returnStatus in endpoint.methodInfo.returnStatus">
 				<td width="15%">
-					<button class="btn btn-sm btn-success" ng-class="{'btn-info' : returnStatus.status > 299, 'btn-warning' : returnStatus.status > 399, 'btn-danger' : returnStatus.status > 499}">{{returnStatus.status}}</button>
+					<button
+						class="btn btn-sm btn-success"
+						type="button"
+						ng-class="{'btn-info' : returnStatus.status > 299, 'btn-warning' : returnStatus.status > 399, 'btn-danger' : returnStatus.status > 499}"
+					>
+						{{returnStatus.status}}
+					</button>
 				</td>
 				<td>
 					{{returnStatus.name}}
