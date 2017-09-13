@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mcg.apitester.api.annotations.ApiDescription;
 import com.mcg.apitester.api.annotations.ApiError;
 import com.mcg.apitester.api.annotations.ApiErrors;
+import com.mcg.apitester.example.entities.AnEnumeration;
 import com.mcg.apitester.example.entities.OneEntity;
 
 @RestController
@@ -26,6 +27,7 @@ public class OneController extends BaseController {
 	public List<OneEntity> list(
 			@RequestParam String x, 
 			@RequestParam  String y, 
+			@RequestParam  AnEnumeration enumeration, 
 			@RequestParam @ApiDescription("Pagination: The offset") int offset, 
 			@RequestParam @ApiDescription("Pagination: The maximum number of entries per page") int max, 
 			@RequestParam @ApiDescription("The field to order by. One of 'name', 'date' or 'size'") String[] orderBy) {

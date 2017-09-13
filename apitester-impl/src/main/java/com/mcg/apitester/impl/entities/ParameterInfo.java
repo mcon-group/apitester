@@ -17,6 +17,8 @@ public class ParameterInfo {
 	private ParamType paramType;
 	private Object object;
 	
+	private Object[] values;
+	
 	public ParameterInfo() {
 	}
 
@@ -123,6 +125,14 @@ public class ParameterInfo {
 
 	public void setPrimitive(boolean primitive) {
 		this.primitive = primitive;
+	}
+
+	public Object[] getValues() {
+		return values;
+	}
+
+	public void setValues(Object[] values) {
+		this.values = values;
 	}
 	
 	

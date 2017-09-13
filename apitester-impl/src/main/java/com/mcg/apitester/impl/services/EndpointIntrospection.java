@@ -59,6 +59,10 @@ public class EndpointIntrospection {
 			out.setTypeShort(resolvedType.getErasedType().getSimpleName());
 		}
 
+		if(t.isEnum()) {
+			out.setValues(t.getEnumConstants());
+		}
+		
 		if(t.getName().equals("org.springframework.web.multipart.MultipartFile")) {
 			out.setFile(true);
 		} else {
