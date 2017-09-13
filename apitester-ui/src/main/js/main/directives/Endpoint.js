@@ -114,9 +114,14 @@ angular.module("apitester").directive(
             .map(function(param) {
               var paramName = param.name;
               var value = param.value;
+              var values = param.collectionValues;
 
               if (value) {
                 return [paramName, value];
+              }
+
+              if (values) {
+                return [paramName, values];
               }
             })
             .compact()

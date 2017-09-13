@@ -51,22 +51,17 @@
 				<tbody>
 					<tr
 						ng-repeat="param in pathParams"
-						param-value-input
+						param-value
 						param="param"
 					></tr>
 					<tr
 						ng-repeat="param in requestParams"
-						param-value-input
+						param-value
 						param="param"
 					></tr>
 					<tr
 						ng-if="requestBody"
-						param-value-input
-						param="requestBody"
-					></tr>
-					<tr
-						ng-if="requestBody && !requestBody.primitive"
-						param-value-obj
+						param-value
 						param="requestBody"
 					></tr>
 				</tbody>
@@ -96,12 +91,7 @@
 		<div ng-if="response.type!='void'">
 			<table class="table table-compact">
 				<tr
-					param-value-input
-					param="response"
-				></tr>
-				<tr
-					ng-if="!response.primitive"
-					param-value-obj
+					param-value
 					param="response"
 				></tr>
 			</table>

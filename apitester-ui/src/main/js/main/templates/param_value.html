@@ -1,0 +1,63 @@
+
+<td style="width: 15%">
+  <span class="label label-info">
+    {{param.paramType}}
+  </span>
+</td>
+<td>
+
+  <div
+    class="row"
+    ng-if="param.primitive || param.paramType === 'REQUEST'"
+  >
+    <div class="col-md-6">
+      <div ng-if="param.paramType !== 'RETURN'">
+        <div class="row">
+          <div class="col-sm-4">
+            <strong>{{param.name}}</strong>
+            <span
+              class="text-red"
+              ng-if="param.required"
+            > *</span>
+            <br>
+            <small>{{param.typeShort}}<span ng-if="param.collection">[]</span></small>
+          </div>
+          <div class="col-sm-8">
+            <div ng-if="param.description" markdown="param.description"></div>
+            <div ng-if="param.values">{{param.values | json}}</div>
+          </div>
+        </div>
+      </div>
+      <div ng-if="param.paramType === 'RETURN'">
+        {{param.typeShort}}<span ng-if="param.collection">[]</span>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div
+        param-value-edit
+        param="param"
+      ></div>
+    </div>
+  </div>
+
+  <div ng-if="!param.primitive && param.paramType !== 'REQUEST'">
+    <div class="row">
+      <div class="col-md-6">
+        {{param.typeShort}}<span ng-if="param.collection">[]</span>
+      </div>
+      <div class="col-md-6"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <pre>{{param.object | json}}</pre>
+      </div>
+      <div class="col-md-6">
+        <div
+          param-value-edit
+          param="param"
+        ></div>
+      </div>
+    </div>
+  </div>
+
+</td>

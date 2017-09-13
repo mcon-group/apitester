@@ -7,10 +7,6 @@
 	border-top-width: 0;
 }
 
-.glyphicon-exclamation-sign {
-	top: 4px;
-}
-
 .label {
 	position: relative;
 	top: 5px;
@@ -22,4 +18,8 @@ input.ng-invalid,
 textarea.ng-invalid
 {
 	border: 1px solid red;
+}
+
+.text-red {
+	color: red;
 }
