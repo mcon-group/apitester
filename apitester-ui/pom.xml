@@ -9,6 +9,11 @@
 	<artifactId>apitester-ui</artifactId>
 	<dependencies>
 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.mcg.apitester</groupId>
 			<artifactId>apitester-impl</artifactId>
 			<version>0.0.13-SNAPSHOT</version>

@@ -4,8 +4,13 @@ angular.module("templates", []).config(function() {
 angular.module("apitester", [ "templates", "ngRoute", "restangular" ]);
 angular.module("apitester").config(
 		function($httpProvider, $routeProvider, $locationProvider, RestangularProvider) {
-			var index = window.location.href.lastIndexOf('/apitester');
-			RestangularProvider.setBaseUrl(window.location.href.substr(0, index));
+			var index = window.location.href.lastIndexOf('apitester');
+
+			var prefix = window.location.href.substr(0, index);
+			console.log("prefix: "+prefix);
+			
+			RestangularProvider.setBaseUrl(prefix);
+			
 			RestangularProvider.setFullResponse(true);
 			RestangularProvider.setPlainByDefault(true);
 

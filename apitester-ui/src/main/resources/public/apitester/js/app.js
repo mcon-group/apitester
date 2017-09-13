@@ -4,8 +4,13 @@ angular.module("templates", []).config(function() {
 angular.module("apitester", [ "templates", "ngRoute", "restangular" ]);
 angular.module("apitester").config(
 		function($httpProvider, $routeProvider, $locationProvider, RestangularProvider) {
-			var index = window.location.href.lastIndexOf('/apitester');
-			RestangularProvider.setBaseUrl(window.location.href.substr(0, index));
+			var index = window.location.href.lastIndexOf('apitester');
+
+			var prefix = window.location.href.substr(0, index);
+			console.log("prefix: "+prefix);
+			
+			RestangularProvider.setBaseUrl(prefix);
+			
 			RestangularProvider.setFullResponse(true);
 			RestangularProvider.setPlainByDefault(true);
 
@@ -78,6 +83,21 @@ angular.module("apitester").controller(
 		);
 	}
 );
+angular.module("apitester").service(
+	"EndpointService",
+	function($route,Restangular) {
+		var s = {
+			listEndpoints : function(success,error) {
+				Restangular.one("apitester/endpoints").get().then(success,error);
+			},
+			listPaths : function(success,error) {
+				Restangular.one("apitester/paths").get().then(success,error);
+			}
+		}
+		return s;
+	}
+);
+
 angular.module("apitester").directive(
   "endpoint",
   function(Restangular) {
@@ -509,20 +529,5 @@ angular.module("apitester").directive(
 				};
 			}
 		}
-	}
-);
-angular.module("apitester").service(
-	"EndpointService",
-	function($route,Restangular) {
-		var pathPrefix = window.location.pathname.substr(1);
-		var s = {
-			listEndpoints : function(success,error) {
-				Restangular.one(pathPrefix, "endpoints").get().then(success,error);
-			},
-			listPaths : function(success,error) {
-				Restangular.one(pathPrefix, "paths").get().then(success,error);
-			}
-		}
-		return s;
 	}
 );
