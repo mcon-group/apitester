@@ -131,6 +131,7 @@ angular.module("apitester").directive(
             return param.paramType === 'BODY';
           });
           scope.response = scope.endpoint.methodInfo.returnType;
+          scope.response.paramType = 'RETURN';
         }
 
         /**
@@ -263,6 +264,7 @@ angular.module("apitester").directive(
          * @return {undefined}
          */
         function sendRequest() {
+          scope.loading = true;
           scope.resetResponse();
 
           var apiPath = scope.getApiPath();
@@ -309,10 +311,14 @@ angular.module("apitester").directive(
          * @return {undefined}
          */
         function treatResponse(response) {
+          var data = response.data;
           scope.response = _.extend(scope.response, {
+            apiResponse: response,
+            message: data ? (data.errorMessage || data.message) : '',
             status: response.status,
-            value: JSON.stringify(response.data, null, 2),
+            value: JSON.stringify(data, null, 2),
           });
+          scope.loading = false;
         }
 
         /**
@@ -396,13 +402,6 @@ angular.module(
        * @return {undefined}
        */
       function activate() {
-        var values = scope.param.values;
-        /*
-        if (values && values.length) {
-          scope.param.value = values[0];
-        }
-        */
-
         if (scope.param.collection && scope.param.paramType === 'REQUEST') {
           scope.param.collectionValues = [];
           scope.param.newValue = '';

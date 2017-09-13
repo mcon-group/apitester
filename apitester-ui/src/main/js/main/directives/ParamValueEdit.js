@@ -25,13 +25,6 @@ angular.module(
        * @return {undefined}
        */
       function activate() {
-        var values = scope.param.values;
-        /*
-        if (values && values.length) {
-          scope.param.value = values[0];
-        }
-        */
-
         if (scope.param.collection && scope.param.paramType === 'REQUEST') {
           scope.param.collectionValues = [];
           scope.param.newValue = '';
