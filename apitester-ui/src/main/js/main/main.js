@@ -6,6 +6,8 @@ angular.module("apitester").config(
 		function($httpProvider, $routeProvider, $locationProvider, RestangularProvider) {
 			var index = window.location.href.lastIndexOf('/apitester');
 			RestangularProvider.setBaseUrl(window.location.href.substr(0, index));
+			RestangularProvider.setFullResponse(true);
+			RestangularProvider.setPlainByDefault(true);
 
 			$httpProvider.interceptors.push(function($q, $location) {
 				return {

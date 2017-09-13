@@ -2,10 +2,10 @@ angular.module("apitester").controller(
 	"EndpointController",
 	function($route,$scope,EndpointService) {
 		console.log("endpoint controller instantiated");
-		
+
 		$scope.search = "";
 		$scope.selected = "paths";
-		
+
 		$scope.updateList = function() {
 			var ne = [];
 			var np = [];
@@ -24,20 +24,20 @@ angular.module("apitester").controller(
 			$scope.paths = np;
 			$scope.endpoints = ne;
 		}
-		
+
 		$scope.$on("methodSelected", function(e,endpoint) {
 			$scope.selectedEndpoint = endpoint;
 		})
-		
+
 		EndpointService.listEndpoints(
 				function(endpoints) {
-					$scope.allEndpoints = endpoints;
+					$scope.allEndpoints = endpoints.data;
 					$scope.updateList();
 				}
 		);
 		EndpointService.listPaths(
 				function(paths) {
-					$scope.allPaths = paths;
+					$scope.allPaths = paths.data;
 					$scope.updateList();
 				}
 		);

@@ -18,9 +18,10 @@
   <input
     class="form-control"
     type="text"
-    ng-model="param.value"
-    ng-show="param.primitive"
     placeholder="{{param.defaultValue}}"
+    ng-model="param.value"
+    ng-required="param.required"
+    ng-show="param.primitive"
   >
   <div ng-if="param.description" markdown="param.description"></div>
 </td>

@@ -1,3 +1,5 @@
+
+/* Change bootstrap start */
 .form-group {
 	padding-top: 10px;
 	border-top-style: solid;
@@ -5,6 +7,19 @@
 	border-top-width: 0;
 }
 
-.border-red {
+.glyphicon-exclamation-sign {
+	top: 4px;
+}
+
+.label {
+	position: relative;
+	top: 5px;
+}
+/* Change bootstrap end */
+
+.border-red,
+input.ng-invalid,
+textarea.ng-invalid
+{
 	border: 1px solid red;
 }

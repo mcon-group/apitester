@@ -2,20 +2,19 @@
 <td width="15%"></td>
 <td colspan="3">
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-md-6">
       <pre>{{param.object | json}}</pre>
     </div>
-    <div class="col-sm-6">
+    <div class="col-md-6">
       <textarea
         class="form-control"
-        style="font-family: Menlo,Monaco,Consolas,'Courier New',monospace; font-size: 12px;"
+        name="{{param.name}}"
+        style="font-family: Menlo,Monaco,Consolas,'Courier New',monospace; font-size: 13px;"
         ng-blur="updateBody()"
-        ng-if="param.paramType !== 'RETURN'"
+        ng-disabled="param.paramType === 'RETURN'"
         ng-model="param.value"
+        ng-required="param.required"
       ></textarea>
-      <pre ng-if="param.paramType === 'RETURN'">
-        {{param.value}}
-      </pre>
     </div>
   </div>
 </td>
