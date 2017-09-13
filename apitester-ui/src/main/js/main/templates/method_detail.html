@@ -1,3 +1,8 @@
+<form
+	name="requestForm"
+	novalidate
+	ng-submit="sendRequest()"
+>
 	<div class="form-group">
 		<label>Controller Method</label>
 		<div>
@@ -26,14 +31,14 @@
 				<tbody ng-repeat="headerInfo in endpoint.methodInfo.headerInfos">
 					<tr>
 						<td width="15%">
-							<button class="btn btn-sm btn-default">{{headerInfo.name}}</button>
+							<span class="label label-info">{{headerInfo.name}}</span>
 						</td>
-						<td>	
+						<td>
 							{{headerInfo.description}}
 						</td>
 					</tr>
 				</tbody>
-			</table>	
+			</table>
 		</div>
 	</div>
 	<div class="form-group">
@@ -43,55 +48,65 @@
 		</div>
 		<div ng-if="endpoint.methodInfo.params.length>0">
 			<table class="table table-compact">
-				<tbody ng-repeat="param in endpoint.methodInfo.params">
-					<tr>
-						<td width="15%">
-							<button class="btn btn-sm btn-default">{{param.paramType}}</button>
-						</td>
-						<td>	
-							<i class="glyphicon glyphicon-exclamation-sign" ng-if="param.required"></i>
-						</td>
-						<td>	
-							{{param.name}}
-						</td>
-						<td>	
-							{{param.typeShort}}<span ng-if="param.collection">[]</span>
-						</td>
-						<td>
-							<div ng-if="param.description" markdown="param.description">
-							</div>
-						</td>
-					</tr>
-					<tr ng-show="!param.primitive">
-						<td></td>
-						<td colspan="4"><pre>{{param.object | json}}</pre></td>
-					</tr>
+				<tbody>
+					<tr
+						ng-repeat="param in pathParams"
+						param-value-input
+						param="param"
+					></tr>
+					<tr
+						ng-repeat="param in requestParams"
+						param-value-input
+						param="param"
+					></tr>
+					<tr
+						ng-if="requestBody"
+						param-value-input
+						param="requestBody"
+					></tr>
+					<tr
+						ng-if="requestBody && !requestBody.primitive"
+						param-value-obj
+						param="requestBody"
+					></tr>
 				</tbody>
-			</table>	
+			</table>
+		</div>
+	</div>
+	<div class="form-group">
+		<button
+			class="btn btn-primary btn-lg btn-block"
+			type="submit"
+		>
+			Send
+		</button>
+		<br>
+		<div
+			class="h1"
+			ng-if="response.status"
+		>
+			<span class="label label-success" ng-class="{'label-info' : response.status > 299, 'label-warning' : response.status > 399, 'label-danger' : response.status > 499}">{{response.status}}</span>
 		</div>
 	</div>
 	<div class="form-group">
 		<label><i class="glyphicon glyphicon-chevron-left"> </i>  Returns</label>
-		<div ng-if="endpoint.methodInfo.returnType.type=='void'">
+		<div ng-if="response.type=='void'">
 			<i>This method does not return anything</i>
 		</div>
-		<div ng-if="endpoint.methodInfo.returnType.type!='void'">
+		<div ng-if="response.type!='void'">
 			<table class="table table-compact">
-				<tr>
-					<td width="15%">
-						<button class="btn btn-sm btn-default">{{endpoint.methodInfo.returnType.paramType}}</button>
-					</td>
-					<td>	
-						{{endpoint.methodInfo.returnType.typeShort}}<span ng-if="endpoint.methodInfo.returnType.collection">[]</span>
-					</td>
-				</tr>
-				<tr ng-show="!endpoint.methodInfo.primitive">
-					<td></td>
-					<td><div ng-if="details"></div><pre>{{endpoint.methodInfo.returnType.object | json}}</div></pre></td>
-				</tr>
-			</table>	
+				<tr
+					param-value-input
+					param="response"
+				></tr>
+				<tr
+					ng-if="!response.primitive"
+					param-value-obj
+					param="response"
+				></tr>
+			</table>
 		</div>
-	</div>	
+	</div>
 	<div class="form-group">
 		<label>Return Status</label>
 		<table class="table table-compact">
@@ -99,13 +114,13 @@
 				<td width="15%">
 					<button class="btn btn-sm btn-success" ng-class="{'btn-info' : returnStatus.status > 299, 'btn-warning' : returnStatus.status > 399, 'btn-danger' : returnStatus.status > 499}">{{returnStatus.status}}</button>
 				</td>
-				<td>	
+				<td>
 					{{returnStatus.name}}
 				</td>
-				<td>	
+				<td>
 					{{returnStatus.description}}
 				</td>
 			</tr>
-		</table>	
-	</div>	
-	
+		</table>
+	</div>
+</form>

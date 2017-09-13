@@ -1,0 +1,27 @@
+
+<td>
+  <span class="label label-info">{{param.paramType}}</span>
+</td>
+<td>
+  <i class="glyphicon glyphicon-exclamation-sign" ng-if="param.required"></i>
+</td>
+<td>
+  <div ng-if="param.paramType !== 'RETURN'">
+    <strong>{{param.name}}</strong><br>
+    <small>{{param.typeShort}}<span ng-if="param.collection">[]</span></small>
+  </div>
+  <div ng-if="param.paramType === 'RETURN'">
+    {{param.typeShort}}<span ng-if="param.collection">[]</span>
+  </div>
+</td>
+<td>
+  <input
+    class="form-control"
+    type="text"
+    placeholder="{{param.defaultValue}}"
+    ng-model="param.value"
+    ng-required="param.required"
+    ng-show="param.primitive"
+  >
+  <div ng-if="param.description" markdown="param.description"></div>
+</td>
