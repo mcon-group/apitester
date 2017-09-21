@@ -1,7 +1,6 @@
 package com.mcg.apitester.ui.controllers;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
