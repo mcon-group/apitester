@@ -46,7 +46,15 @@ angular.module(
 
             $textarea.css({height: $pre.outerHeight()});
           }
-        }, 300);
+
+          elmt.find('input[type=file]').bind('change', function() {
+            var files = elmt.find('input[type=file]')[0].files;
+            if (files && files.length) {
+              scope.fileName = files[0].name;
+              scope.$apply();
+            }
+          });
+        }, 200);
       }
 
       /**
@@ -100,7 +108,7 @@ angular.module(
             2
           );
         } catch (error) {
-          console.error(error);
+          console.log(error);
           $textarea.addClass('border-red');
         }
       }
