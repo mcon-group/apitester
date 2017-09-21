@@ -1,6 +1,6 @@
 angular.module('apitester').directive(
   'endpoint',
-  function(Restangular) {
+  function($http, Restangular) {
     return {
       transclude: true,
       scope: {
@@ -144,13 +144,25 @@ angular.module('apitester').directive(
          * @return {undefined}
          */
         function post(apiPath, requestParams, requestBody, uploadFile) {
+          var formDataHeader = {
+            'Content-Type': undefined,
+          };
           if (uploadFile) {
-            return Restangular
-              .one(apiPath)
-              .withHttpConfig({transformRequest: angular.identity})
-              .post(null, requestBody, requestParams, {
-                'Content-Type': undefined,
-              });
+            if (uploadFile.paramType === 'REQUEST') {
+              var APIUrl = Restangular.one(apiPath).getRestangularUrl();
+
+              return $http
+                .post(APIUrl, requestParams, {
+                  transformRequest: angular.identity,
+                  headers: formDataHeader,
+                })
+              ;
+            } else {
+              return Restangular
+                .one(apiPath)
+                .withHttpConfig({transformRequest: angular.identity})
+                .post(null, requestBody, requestParams, formDataHeader);
+            }
           } else {
             return Restangular
               .one(apiPath)
@@ -224,7 +236,10 @@ angular.module('apitester').directive(
             formData.append(hasFileParam.name, file);
 
             if (hasFileParam.paramType === 'REQUEST') {
-              requestParams[hasFileParam.name] = file;
+              _.each(requestParams, function(value, key) {
+                formData.append(key, value);
+              });
+              requestParams = formData;
             }
             if (hasFileParam.paramType === 'BODY') {
               requestBody = formData;

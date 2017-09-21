@@ -51,7 +51,7 @@ angular.module(
             var files = elmt.find('input[type=file]')[0].files;
             if (files && files.length) {
               scope.fileName = files[0].name;
-              scope.$apply();
+              scope.$digest();
             }
           });
         }, 200);

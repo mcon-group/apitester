@@ -1,6 +1,6 @@
 
-<!-- Parameter could appear > 1 time, repeatable input for string, number -->
 <div ng-if="param.collectionValues">
+  <!-- Parameter could appear > 1 time, repeatable input for string, number -->
   <div class="input-group" ng-repeat="value in param.collectionValues track by $index">
     <input
       class="form-control"
@@ -47,24 +47,30 @@
 <div ng-if="!param.collectionValues">
   <div ng-if="param.file">
     <!-- Parameter appears at most 1 time, for file upload -->
-    <button
-      class="btn btn-primary"
-      type="button"
-      ng-click="triggerSelectFile()"
-    >
-      Select file
-    </button>
-    <span>{{fileName}}</span>
-    <input
-      class="hidden"
-      name="file"
-      type="file"
-    >
+    <div class="row">
+      <div class="col-md-3">
+        <button
+          class="btn btn-primary"
+          type="button"
+          ng-click="triggerSelectFile()"
+        >
+          Select file
+        </button>
+        <input
+          class="hidden"
+          name="file"
+          type="file"
+        >
+      </div>
+      <div class="col-md-9">
+        <span>{{fileName}}</span>
+      </div>
+    </div>
   </div>
 
   <div ng-if="!param.file">
-    <!-- Parameter appears at most 1 time, an input for string, number, true/false boolean strings -->
     <div ng-if="param.primitive">
+      <!-- Parameter appears at most 1 time, an input for string, number, true/false boolean strings -->
       <input
         class="form-control"
         type="text"
@@ -74,8 +80,8 @@
       >
     </div>
 
-    <!-- Parameter appears at most 1 time, an input for stringified object -->
     <div ng-if="!param.primitive && !param.values.length">
+      <!-- Parameter appears at most 1 time, an input for stringified object -->
       <textarea
         class="form-control"
         style="font-family: Menlo,Monaco,Consolas,'Courier New',monospace; font-size: 13px;"
@@ -86,8 +92,8 @@
       ></textarea>
     </div>
 
-    <!-- Parameter appears at most 1 time, only a handful of values (> 1) should be used -->
     <div ng-if="param.values.length">
+      <!-- Parameter appears at most 1 time, only a handful of values (> 1) should be used -->
       <select
         class="form-control"
         ng-model="param.value"
