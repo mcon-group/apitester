@@ -1,17 +1,17 @@
-angular.module("apitester").directive(
-  "endpoint",
+angular.module('apitester').directive(
+  'endpoint',
   function(Restangular) {
     return {
       transclude: true,
       scope: {
-        endpoint : "="
+        endpoint: '=',
       },
-      templateUrl : "method_detail.html",
-      link : function(scope, elmt) {
+      templateUrl: 'method_detail.html',
+      link: function(scope) {
         scope.select = function() {
-          console.log("method selected ... ");
-          scope.$emit("methodSelected",scope.endpoint);
-          scope.$broadcast("methodSelected",scope.endpoint);
+          console.log('method selected ... ');
+          scope.$emit('methodSelected', scope.endpoint);
+          scope.$broadcast('methodSelected', scope.endpoint);
         };
 
         scope.get = get;
@@ -50,6 +50,12 @@ angular.module("apitester").directive(
           scope.requestBody = _.find(params, function(param) {
             return param.paramType === 'BODY';
           });
+          scope.fileParam = _.find(params, function(param) {
+            return param.file;
+          });
+          if (scope.fileParam) {
+            scope.fileParam.fileContent = '';
+          }
           scope.response = scope.endpoint.methodInfo.returnType;
           scope.response.paramType = 'RETURN';
         }
@@ -136,12 +142,24 @@ angular.module("apitester").directive(
          * @description Makes a POST request with Restangular
          * @param {string} apiPath - API path used for Restangular.one()
          * @param {object} requestParams - API request parameters
-         * @param {object} requestBody - API request parameters
+         * @param {object} requestBody - API request body
+         * @param {boolean} uploadFile - Whether the request uploads a file
          * @return {undefined}
          */
-        function post(apiPath, requestParams, requestBody) {
-          return Restangular.one(apiPath)
-            .post(null, requestBody, requestParams);
+        function post(apiPath, requestParams, requestBody, uploadFile) {
+          if (uploadFile) {
+            return Restangular
+              .one(apiPath)
+              .withHttpConfig({transformRequest: angular.identity})
+              .post(null, requestBody, requestParams, {
+                'Content-Type': undefined,
+              });
+          } else {
+            return Restangular
+              .one(apiPath)
+              .post(null, requestBody, requestParams)
+            ;
+          }
         }
 
         /**
@@ -149,12 +167,23 @@ angular.module("apitester").directive(
          * @description Makes a PUT request with Restangular
          * @param {string} apiPath - API path used for Restangular.one()
          * @param {object} requestParams - API request parameters
-         * @param {object} requestBody - API request parameters
+         * @param {object} requestBody - API request body
+         * @param {boolean} uploadFile - Whether the request uploads a file
          * @return {undefined}
          */
-        function put(apiPath, requestParams, requestBody) {
-          return Restangular.one(apiPath)
-            .customPUT(requestBody, null, requestParams);
+        function put(apiPath, requestParams, requestBody, uploadFile) {
+          if (uploadFile) {
+            return Restangular
+              .one(apiPath)
+              .withHttpConfig({transformRequest: angular.identity})
+              .customPUT(requestBody, null, requestParams, {
+                'Content-Type': undefined,
+              });
+          } else {
+            return Restangular
+              .one(apiPath)
+              .customPUT(requestBody, null, requestParams);
+          }
         }
 
         /**
@@ -191,6 +220,22 @@ angular.module("apitester").directive(
           var requestBody = scope.getRequestBody();
           var requestParams = scope.getRequestParams();
 
+          var hasFileParam = scope.fileParam;
+          if (hasFileParam) {
+            var formData = new FormData();
+
+            formData.append(hasFileParam.name, hasFileParam.fileContent);
+            if (hasFileParam.paramType === 'REQUEST') {
+              _.each(requestParams, function(value, key) {
+                formData.append(key, value);
+              });
+              requestParams = formData;
+            }
+            if (hasFileParam.paramType === 'BODY') {
+              requestBody = formData;
+            }
+          }
+
           var request;
 
           switch (scope.endpoint.methods[0]) {
@@ -198,10 +243,12 @@ angular.module("apitester").directive(
               request = scope.remove(apiPath, requestParams);
               break;
             case 'POST':
-              request = scope.post(apiPath, requestParams, requestBody);
+              request = scope.post(apiPath, requestParams, requestBody,
+                hasFileParam);
               break;
             case 'PUT':
-              request = scope.put(apiPath, requestParams, requestBody);
+              request = scope.put(apiPath, requestParams, requestBody,
+                hasFileParam);
               break;
             default:
               request = scope.get(apiPath, requestParams);
