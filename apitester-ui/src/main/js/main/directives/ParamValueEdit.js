@@ -12,6 +12,7 @@ angular.module(
 
       scope.addValue = addValue;
       scope.removeValue = removeValue;
+      scope.triggerSelectFile = triggerSelectFile;
       scope.updateBody = updateBody;
 
 
@@ -68,6 +69,15 @@ angular.module(
        */
       function removeValue(index) {
         scope.param.collectionValues.splice(index, 1);
+      }
+
+      /**
+       * @name triggerSelectFile
+       * @description trigger the file input button
+       * @return {undefined}
+       */
+      function triggerSelectFile() {
+        elmt.find('input[type=file]').click();
       }
 
       /**

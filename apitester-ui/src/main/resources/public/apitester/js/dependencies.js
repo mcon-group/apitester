@@ -47721,7 +47721,7 @@ angular.module('lr.upload').factory('upload', [
   return restangular.name;
 }));
 
-;/*! showdown 02-06-2017 */
+;/*! showdown v 1.7.4 - 08-09-2017 */
 (function(){
 /**
  * Created by Tivie on 13-07-2015.
@@ -47743,12 +47743,22 @@ function getDefaultOpts (simple) {
     },
     prefixHeaderId: {
       defaultValue: false,
-      describe: 'Specify a prefix to generated header ids',
+      describe: 'Add a prefix to the generated header ids. Passing a string will prefix that string to the header id. Setting to true will add a generic \'section-\' prefix',
       type: 'string'
+    },
+    rawPrefixHeaderId: {
+      defaultValue: false,
+      describe: 'Setting this option to true will prevent showdown from modifying the prefix. This might result in malformed IDs (if, for instance, the " char is used in the prefix)',
+      type: 'boolean'
     },
     ghCompatibleHeaderId: {
       defaultValue: false,
       describe: 'Generate header ids compatible with github style (spaces are replaced with dashes, a bunch of non alphanumeric chars are removed)',
+      type: 'boolean'
+    },
+    rawHeaderId: {
+      defaultValue: false,
+      describe: 'Remove only spaces, \' and " from generated header ids (including prefixes), replacing them with dashes (-). WARNING: This might result in malformed ids',
       type: 'boolean'
     },
     headerLevelStart: {
@@ -47850,6 +47860,11 @@ function getDefaultOpts (simple) {
       defaultValue: false,
       description: 'Open all links in new windows',
       type: 'boolean'
+    },
+    backslashEscapesHTMLTags: {
+      defaultValue: false,
+      description: 'Support for HTML Tag escaping. ex: \<div>foo\</div>',
+      type: 'boolean'
     }
   };
   if (simple === false) {
@@ -47901,7 +47916,8 @@ var showdown = {},
         simpleLineBreaks:                     true,
         requireSpaceBeforeHeadingText:        true,
         ghCompatibleHeaderId:                 true,
-        ghMentions:                           true
+        ghMentions:                           true,
+        backslashEscapesHTMLTags:             true
       },
       original: {
         noHeaderId:                           true,
@@ -48293,7 +48309,7 @@ showdown.helper.isFunction = function (a) {
  */
 showdown.helper.isArray = function (a) {
   'use strict';
-  return a.constructor === Array;
+  return Array.isArray(a);
 };
 
 /**
@@ -49149,8 +49165,12 @@ showdown.subParser('anchors', function (text, options, globals) {
       if (!showdown.helper.isString(options.ghMentionsLink)) {
         throw new Error('ghMentionsLink option must be a string');
       }
-      var lnk = options.ghMentionsLink.replace(/\{u}/g, username);
-      return st + '<a href="' + lnk + '">' + mentions + '</a>';
+      var lnk = options.ghMentionsLink.replace(/\{u}/g, username),
+          target = '';
+      if (options.openLinksInNewWindow) {
+        target = ' target="¨E95Eblank"';
+      }
+      return st + '<a href="' + lnk + '"' + target + '>' + mentions + '</a>';
     });
   }
 
@@ -49663,14 +49683,26 @@ showdown.subParser('hashHTMLBlocks', function (text, options, globals) {
         return '\n\n¨K' + (globals.gHtmlBlocks.push(txt) - 1) + 'K\n\n';
       };
 
+  if (options.backslashEscapesHTMLTags) {
+    // encode backslash escaped HTML tags
+    text = text.replace(/\\<(\/?[^>]+?)>/g, function (wm, inside) {
+      return '&lt;' + inside + '&gt;';
+    });
+  }
+
+  // hash HTML Blocks
   for (var i = 0; i < blockTags.length; ++i) {
 
     var opTagPos,
-        rgx1     = new RegExp('^ {0,3}<' + blockTags[i] + '\\b[^>]*>', 'im'),
+        rgx1     = new RegExp('^ {0,3}(<' + blockTags[i] + '\\b[^>]*>)', 'im'),
         patLeft  = '<' + blockTags[i] + '\\b[^>]*>',
         patRight = '</' + blockTags[i] + '>';
     // 1. Look for the first position of the first opening HTML tag in the text
     while ((opTagPos = showdown.helper.regexIndexOf(text, rgx1)) !== -1) {
+
+      // if the HTML tag is \ escaped, we need to escape it and break
+
+
       //2. Split the text in that position
       var subTexts = showdown.helper.splitAtIndex(text, opTagPos),
       //3. Match recursively
@@ -49790,7 +49822,6 @@ showdown.subParser('headers', function (text, options, globals) {
   text = globals.converter._dispatch('headers.before', text, options, globals);
 
   var headerLevelStart = (isNaN(parseInt(options.headerLevelStart))) ? 1 : parseInt(options.headerLevelStart),
-      ghHeaderId = options.ghCompatibleHeaderId,
 
   // Set text-style headers:
   //	Header 1
@@ -49843,7 +49874,8 @@ showdown.subParser('headers', function (text, options, globals) {
   });
 
   function headerId (m) {
-    var title;
+    var title,
+        prefix;
 
     // It is separate from other options to allow combining prefix and customized
     if (options.customizedHeaderId) {
@@ -49853,16 +49885,22 @@ showdown.subParser('headers', function (text, options, globals) {
       }
     }
 
+    title = m;
+
     // Prefix id to prevent causing inadvertent pre-existing style matches.
     if (showdown.helper.isString(options.prefixHeaderId)) {
-      title = options.prefixHeaderId + m;
+      prefix = options.prefixHeaderId;
     } else if (options.prefixHeaderId === true) {
-      title = 'section ' + m;
+      prefix = 'section-';
     } else {
-      title = m;
+      prefix = '';
     }
 
-    if (ghHeaderId) {
+    if (!options.rawPrefixHeaderId) {
+      title = prefix + title;
+    }
+
+    if (options.ghCompatibleHeaderId) {
       title = title
         .replace(/ /g, '-')
         // replace previously escaped chars (&, ¨ and $)
@@ -49873,10 +49911,24 @@ showdown.subParser('headers', function (text, options, globals) {
         // borrowed from github's redcarpet (some they should produce similar results)
         .replace(/[&+$,\/:;=?@"#{}|^¨~\[\]`\\*)(%.!'<>]/g, '')
         .toLowerCase();
+    } else if (options.rawHeaderId) {
+      title = title
+        .replace(/ /g, '-')
+        // replace previously escaped chars (&, ¨ and $)
+        .replace(/&amp;/g, '&')
+        .replace(/¨T/g, '¨')
+        .replace(/¨D/g, '$')
+        // replace " and '
+        .replace(/["']/g, '-')
+        .toLowerCase();
     } else {
       title = title
         .replace(/[^\w]/g, '')
         .toLowerCase();
+    }
+
+    if (options.rawPrefixHeaderId) {
+      title = prefix + title;
     }
 
     if (globals.hashLinkCounts[title]) {
@@ -49917,8 +49969,14 @@ showdown.subParser('images', function (text, options, globals) {
 
   var inlineRegExp      = /!\[([^\]]*?)][ \t]*()\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g,
       crazyRegExp       = /!\[([^\]]*?)][ \t]*()\([ \t]?<([^>]*)>(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(?:(["'])([^"]*?)\6))?[ \t]?\)/g,
-      referenceRegExp   = /!\[([^\]]*?)] ?(?:\n *)?\[(.*?)]()()()()()/g,
+      base64RegExp      = /!\[([^\]]*?)][ \t]*()\([ \t]?<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g,
+      referenceRegExp   = /!\[([^\]]*?)] ?(?:\n *)?\[([\s\S]*?)]()()()()()/g,
       refShortcutRegExp = /!\[([^\[\]]+)]()()()()()/g;
+
+  function writeImageTagBase64 (wholeMatch, altText, linkId, url, width, height, m5, title) {
+    url = url.replace(/\s/g, '');
+    return writeImageTag (wholeMatch, altText, linkId, url, width, height, m5, title);
+  }
 
   function writeImageTag (wholeMatch, altText, linkId, url, width, height, m5, title) {
 
@@ -49989,13 +50047,17 @@ showdown.subParser('images', function (text, options, globals) {
   text = text.replace(referenceRegExp, writeImageTag);
 
   // Next, handle inline images:  ![alt text](url =<width>x<height> "optional title")
+
+  // base64 encoded images
+  text = text.replace(base64RegExp, writeImageTagBase64);
+
   // cases with crazy urls like ./image/cat1).png
   text = text.replace(crazyRegExp, writeImageTag);
 
   // normal cases
   text = text.replace(inlineRegExp, writeImageTag);
 
-  // handle reference-style shortcuts: |[img text]
+  // handle reference-style shortcuts: ![img text]
   text = text.replace(refShortcutRegExp, writeImageTag);
 
   text = globals.converter._dispatch('images.after', text, options, globals);
@@ -50044,14 +50106,14 @@ showdown.subParser('italicsAndBold', function (text, options, globals) {
 
   // Now parse asterisks
   if (options.literalMidWordAsterisks) {
-    text = text.trim().replace(/(?:^| +)\*{3}(\S[\s\S]*?)\*{3}(?: +|$)/g, function (wm, txt) {
-      return parseInside (txt, ' <strong><em>', '</em></strong> ');
+    text = text.trim().replace(/(^| )\*{3}(\S[\s\S]*?)\*{3}([ ,;!?.]|$)/g, function (wm, lead, txt, trail) {
+      return parseInside (txt, lead + '<strong><em>', '</em></strong>' + trail);
     });
-    text = text.trim().replace(/(?:^| +)\*{2}(\S[\s\S]*?)\*{2}(?: +|$)/g, function (wm, txt) {
-      return parseInside (txt, ' <strong>', '</strong> ');
+    text = text.trim().replace(/(^| )\*{2}(\S[\s\S]*?)\*{2}([ ,;!?.]|$)/g, function (wm, lead, txt, trail) {
+      return parseInside (txt, lead + '<strong>', '</strong>' + trail);
     });
-    text = text.trim().replace(/(?:^| +)\*{1}(\S[\s\S]*?)\*{1}(?: +|$)/g, function (wm, txt) {
-      return parseInside (txt, ' <em>', '</em>' + (wm.slice(-1) === ' ' ? ' ' : ''));
+    text = text.trim().replace(/(^| )\*(\S[\s\S]*?)\*([ ,;!?.]|$)/g, function (wm, lead, txt, trail) {
+      return parseInside (txt, lead + '<em>', '</em>' + trail);
     });
   } else {
     text = text.replace(/\*\*\*(\S[\s\S]*?)\*\*\*/g, function (wm, m) {
@@ -50166,16 +50228,14 @@ showdown.subParser('lists', function (text, options, globals) {
         item = showdown.subParser('lists')(item, options, globals);
         item = item.replace(/\n$/, ''); // chomp(item)
         item = showdown.subParser('hashHTMLBlocks')(item, options, globals);
+
         // Colapse double linebreaks
         item = item.replace(/\n\n+/g, '\n\n');
-        // replace double linebreaks with a placeholder
-        item = item.replace(/\n\n/g, '¨B');
         if (isParagraphed) {
           item = showdown.subParser('paragraphs')(item, options, globals);
         } else {
           item = showdown.subParser('spanGamut')(item, options, globals);
         }
-        item = item.replace(/¨B/g, '\n\n');
       }
 
       // now we need to remove the marker (¨A)
@@ -50407,7 +50467,10 @@ showdown.subParser('spanGamut', function (text, options, globals) {
   // Do hard breaks
   if (options.simpleLineBreaks) {
     // GFM style hard breaks
-    text = text.replace(/\n/g, '<br />\n');
+    // only add line breaks if the text does not contain a block (special case for lists)
+    if (!/\n\n¨K/.test(text)) {
+      text = text.replace(/\n+/g, '<br />\n');
+    }
   } else {
     // Vanilla hard breaks
     text = text.replace(/  +\n/g, '<br />\n');
@@ -50444,14 +50507,20 @@ showdown.subParser('strikethrough', function (text, options, globals) {
 showdown.subParser('stripLinkDefinitions', function (text, options, globals) {
   'use strict';
 
-  var regex = /^ {0,3}\[(.+)]:[ \t]*\n?[ \t]*<?([^>\s]+)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*\n?[ \t]*(?:(\n*)["|'(](.+?)["|')][ \t]*)?(?:\n+|(?=¨0))/gm;
+  var regex       = /^ {0,3}\[(.+)]:[ \t]*\n?[ \t]*<?([^>\s]+)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*\n?[ \t]*(?:(\n*)["|'(](.+?)["|')][ \t]*)?(?:\n+|(?=¨0))/gm,
+      base64Regex = /^ {0,3}\[(.+)]:[ \t]*\n?[ \t]*<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*\n?[ \t]*(?:(\n*)["|'(](.+?)["|')][ \t]*)?(?:\n\n|(?=¨0)|(?=\n\[))/gm;
 
   // attacklab: sentinel workarounds for lack of \A and \Z, safari\khtml bug
   text += '¨0';
 
-  text = text.replace(regex, function (wholeMatch, linkId, url, width, height, blankLines, title) {
+  var replaceFunc = function (wholeMatch, linkId, url, width, height, blankLines, title) {
     linkId = linkId.toLowerCase();
-    globals.gUrls[linkId] = showdown.subParser('encodeAmpsAndAngles')(url, options, globals);  // Link IDs are case-insensitive
+    if (url.match(/^data:.+?\/.+?;base64,/)) {
+      // remove newlines
+      globals.gUrls[linkId] = url.replace(/\s/g, '');
+    } else {
+      globals.gUrls[linkId] = showdown.subParser('encodeAmpsAndAngles')(url, options, globals);  // Link IDs are case-insensitive
+    }
 
     if (blankLines) {
       // Oops, found blank lines, so it's not a title.
@@ -50471,7 +50540,12 @@ showdown.subParser('stripLinkDefinitions', function (text, options, globals) {
     }
     // Completely remove the definition from the text
     return '';
-  });
+  };
+
+  // first we try to find base64 link references
+  text = text.replace(base64Regex, replaceFunc);
+
+  text = text.replace(regex, replaceFunc);
 
   // attacklab: strip sentinel
   text = text.replace(/¨0/, '');
@@ -50486,7 +50560,9 @@ showdown.subParser('tables', function (text, options, globals) {
     return text;
   }
 
-  var tableRgx = /^ {0,3}\|?.+\|.+\n[ \t]{0,3}\|?[ \t]*:?[ \t]*(?:-|=){2,}[ \t]*:?[ \t]*\|[ \t]*:?[ \t]*(?:-|=){2,}[\s\S]+?(?:\n\n|¨0)/gm;
+  var tableRgx       = /^ {0,3}\|?.+\|.+\n {0,3}\|?[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*:?[ \t]*(?:[-=]){2,}[\s\S]+?(?:\n\n|¨0)/gm,
+    //singeColTblRgx = /^ {0,3}\|.+\|\n {0,3}\|[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*\n(?: {0,3}\|.+\|\n)+(?:\n\n|¨0)/gm;
+      singeColTblRgx = /^ {0,3}\|.+\|\n {0,3}\|[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|\n( {0,3}\|.+\|\n)*(?:\n|¨0)/gm;
 
   function parseStyles (sLine) {
     if (/^:[ \t]*--*$/.test(sLine)) {
@@ -50503,7 +50579,8 @@ showdown.subParser('tables', function (text, options, globals) {
   function parseHeaders (header, style) {
     var id = '';
     header = header.trim();
-    if (options.tableHeaderId) {
+    // support both tablesHeaderId and tableHeaderId due to error in documention so we don't break backwards compatibility
+    if (options.tablesHeaderId || options.tableHeaderId) {
       id = ' id="' + header.replace(/ /g, '_').toLowerCase() + '"';
     }
     header = showdown.subParser('spanGamut')(header, options, globals);
@@ -50536,14 +50613,7 @@ showdown.subParser('tables', function (text, options, globals) {
     return tb;
   }
 
-  text = globals.converter._dispatch('tables.before', text, options, globals);
-
-  // find escaped pipe characters
-  text = text.replace(/\\(\|)/g, showdown.helper.escapeCharactersCallback);
-
-  // parse tables
-  text = text.replace(tableRgx, function (rawTable) {
-
+  function parseTable (rawTable) {
     var i, tableLines = rawTable.split('\n');
 
     // strip wrong first and last column if wrapped tables are used
@@ -50606,7 +50676,18 @@ showdown.subParser('tables', function (text, options, globals) {
     }
 
     return buildTable(headers, cells);
-  });
+  }
+
+  text = globals.converter._dispatch('tables.before', text, options, globals);
+
+  // find escaped pipe characters
+  text = text.replace(/\\(\|)/g, showdown.helper.escapeCharactersCallback);
+
+  // parse multi column tables
+  text = text.replace(tableRgx, parseTable);
+
+  // parse one column tables
+  text = text.replace(singeColTblRgx, parseTable);
 
   text = globals.converter._dispatch('tables.after', text, options, globals);
 
@@ -50631,16 +50712,16 @@ showdown.subParser('unescapeSpecialChars', function (text, options, globals) {
 
 var root = this;
 
-// CommonJS/nodeJS Loader
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = showdown;
-
 // AMD Loader
-} else if (typeof define === 'function' && define.amd) {
+if (typeof define === 'function' && define.amd) {
   define(function () {
     'use strict';
     return showdown;
   });
+
+// CommonJS/nodeJS Loader
+} else if (typeof module !== 'undefined' && module.exports) {
+  module.exports = showdown;
 
 // Regular Browser loader
 } else {

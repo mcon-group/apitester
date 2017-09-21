@@ -6,9 +6,10 @@
 </td>
 <td>
 
+  <!-- for primitive parameters, and request paramters, and file uploads -->
   <div
     class="row"
-    ng-if="param.primitive || param.paramType === 'REQUEST'"
+    ng-if="param.primitive || param.paramType === 'REQUEST' || param.file"
   >
     <div class="col-md-6">
       <div ng-if="param.paramType !== 'RETURN'">
@@ -40,7 +41,8 @@
     </div>
   </div>
 
-  <div ng-if="!param.primitive && param.paramType !== 'REQUEST'">
+  <!-- for non-primitive, non-file, and non-REQUEST parameters -->
+  <div ng-if="!param.primitive && param.paramType !== 'REQUEST' && !param.file">
     <div class="row">
       <div class="col-md-6">
         {{param.typeShort}}<span ng-if="param.collection">[]</span><br>
