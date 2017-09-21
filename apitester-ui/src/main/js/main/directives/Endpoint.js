@@ -7,7 +7,7 @@ angular.module('apitester').directive(
         endpoint: '=',
       },
       templateUrl: 'method_detail.html',
-      link: function(scope) {
+      link: function(scope, elmt) {
         scope.select = function() {
           console.log('method selected ... ');
           scope.$emit('methodSelected', scope.endpoint);
@@ -53,9 +53,6 @@ angular.module('apitester').directive(
           scope.fileParam = _.find(params, function(param) {
             return param.file;
           });
-          if (scope.fileParam) {
-            scope.fileParam.fileContent = '';
-          }
           scope.response = scope.endpoint.methodInfo.returnType;
           scope.response.paramType = 'RETURN';
         }
@@ -105,7 +102,7 @@ angular.module('apitester').directive(
               output[requestBody.name] = JSON.parse(requestBody.value);
               return output;
             } catch (error) {
-              console.error(error);
+              console.log(error);
             }
           }
         }
@@ -223,13 +220,11 @@ angular.module('apitester').directive(
           var hasFileParam = scope.fileParam;
           if (hasFileParam) {
             var formData = new FormData();
+            var file = elmt.find('input[type=file]')[0].files[0];
+            formData.append(hasFileParam.name, file);
 
-            formData.append(hasFileParam.name, hasFileParam.fileContent);
             if (hasFileParam.paramType === 'REQUEST') {
-              _.each(requestParams, function(value, key) {
-                formData.append(key, value);
-              });
-              requestParams = formData;
+              requestParams[hasFileParam.name] = file;
             }
             if (hasFileParam.paramType === 'BODY') {
               requestBody = formData;
