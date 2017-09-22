@@ -16,7 +16,8 @@ public class FileUploadController {
 
 	@RequestMapping(value="/upload_form",method=RequestMethod.POST)
 	public Map<String,Object> list1(
-			@RequestParam MultipartFile file
+			@RequestParam MultipartFile file,
+			@RequestParam String y
 		) {
 		Map<String,Object> out = new HashMap<>();
 		out.put("fileName", file.getOriginalFilename());
@@ -26,7 +27,8 @@ public class FileUploadController {
 
 	@RequestMapping(value="/upload_standalone",method=RequestMethod.POST)
 	public Map<String,Object> list2(
-			@RequestBody MultipartFile file
+			@RequestBody MultipartFile file,
+			@RequestParam String y
 			) {
 		Map<String,Object> out = new HashMap<>();
 		out.put("fileName", file.getOriginalFilename());
