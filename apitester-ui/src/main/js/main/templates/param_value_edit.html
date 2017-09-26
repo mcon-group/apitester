@@ -1,4 +1,3 @@
-
 <div ng-if="param.collectionValues">
   <!-- Parameter could appear > 1 time, repeatable input for string, number -->
   <div class="input-group" ng-repeat="value in param.collectionValues track by $index">
@@ -87,7 +86,6 @@
         class="form-control"
         style="font-family: Menlo,Monaco,Consolas,'Courier New',monospace; font-size: 13px;"
         ng-blur="updateBody()"
-        ng-disabled="param.paramType === 'RETURN'"
         ng-model="param.value"
         ng-required="param.required"
       ></textarea>
