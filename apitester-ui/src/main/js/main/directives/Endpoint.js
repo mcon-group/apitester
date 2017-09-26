@@ -15,6 +15,7 @@ angular.module('apitester').directive(
         };
 
         scope.get = get;
+        scope.options = options;
         scope.getApiPath = getApiPath;
         scope.getRequestBody = getRequestBody;
         scope.getRequestParams = getRequestParams;
@@ -68,6 +69,17 @@ angular.module('apitester').directive(
           return Restangular.one(apiPath).get(requestParams);
         }
 
+        /**
+         * @name options
+         * @description Makes a OPTIONS request with Restangular
+         * @param {string} apiPath - API path used for Restangular.one()
+         * @param {object} requestParams - API request parameters
+         * @return {undefined}
+         */
+        function options(apiPath, requestParams) {
+        	  return Restangular.one(apiPath).options(requestParams);
+        }
+        
         /**
          * @name getApiPath
          * @description Returns the API path having Path Parameters set, if
@@ -260,6 +272,10 @@ angular.module('apitester').directive(
               request = scope.put(apiPath, requestParams, requestBody,
                 hasFileParam);
               break;
+            case 'OPTIONS':
+            	  console.log("performing options ... ");
+              request = scope.options(apiPath, requestParams);
+            	  break;
             default:
               request = scope.get(apiPath, requestParams);
               break;
@@ -289,12 +305,23 @@ angular.module('apitester').directive(
          */
         function treatResponse(response) {
           var data = response.data;
+          
+          var hns = _.keys(response.headers());
+          
+          var headers = [];
+          
+          _.each(hns, function(hn) {
+        	  	headers.push({'name':hn, 'value' : response.headers(hn)})
+          });
+          
           scope.response = _.extend(scope.response, {
+        	    headers : headers,
             apiResponse: response,
             message: data ? (data.errorMessage || data.message) : '',
             status: response.status,
             value: JSON.stringify(data, null, 2),
           });
+
           scope.loading = false;
         }
 

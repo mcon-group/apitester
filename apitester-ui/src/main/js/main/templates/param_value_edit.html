@@ -83,6 +83,7 @@
     <div ng-if="!param.primitive && !param.values.length">
       <!-- Parameter appears at most 1 time, an input for stringified object -->
       <textarea
+      	rows="20"
         class="form-control"
         style="font-family: Menlo,Monaco,Consolas,'Courier New',monospace; font-size: 13px;"
         ng-blur="updateBody()"

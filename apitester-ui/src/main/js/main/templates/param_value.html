@@ -70,6 +70,16 @@
           </tbody>
         </table>
         <br>
+        <table class="table table-compact" ng-if="param.headers">
+        		<tr ng-repeat="header in param.headers">
+        			<td>
+        				{{header.name}}
+        			</td>
+        			<td>
+        				{{header.value}}
+        			</td>
+        		</tr>
+        </table>
       </div>
     </div>
     <div

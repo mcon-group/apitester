@@ -3,6 +3,8 @@ package com.mcg.apitester.example.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +37,11 @@ public class OneController extends BaseController {
 		arrayList.add(create(OneEntity.class));
 		
 		return arrayList;
+	}
+	
+	@RequestMapping(value="/one/entities",method=RequestMethod.OPTIONS)
+	public void permissions(HttpServletResponse response) {
+		response.setHeader("Allowed-Methods", "PUT,POST,PATCH");
 	}
 
 	@RequestMapping(value="/one/entities/{id}",method=RequestMethod.GET)
