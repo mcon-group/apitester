@@ -128,9 +128,6 @@ public class BaseController implements IController {
 	}
 	
 	
-	public static void main(String[] args) throws JsonGenerationException, JsonMappingException, IOException {
-		new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValue(System.err, create(OneEntity.class));
-	}
 	
 	
 }

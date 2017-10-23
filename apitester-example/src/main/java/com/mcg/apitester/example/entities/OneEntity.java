@@ -3,6 +3,9 @@ package com.mcg.apitester.example.entities;
 import java.util.Date;
 import java.util.List;
 
+import com.mcg.apitester.api.annotations.ApiDescription;
+
+@ApiDescription(value="represents an entity")
 public class OneEntity {
 
 	private String id;

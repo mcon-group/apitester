@@ -111,8 +111,9 @@ angular.module('apitester').directive(
           if (requestBody) {
             var output = {};
             try {
-              output[requestBody.name] = JSON.parse(requestBody.value);
-              return output;
+              //output[requestBody.name] = JSON.parse(requestBody.value);
+            	  //return output;
+            	  return JSON.parse(requestBody.value);
             } catch (error) {
               console.log(error);
             }
