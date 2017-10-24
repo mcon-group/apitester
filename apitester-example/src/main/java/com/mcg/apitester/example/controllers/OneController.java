@@ -45,7 +45,7 @@ public class OneController extends BaseController {
 	}
 
 	@RequestMapping(value="/one/entities/{id}",method=RequestMethod.GET)
-	public OneEntity get(
+	public @ApiDescription(file="/com/mcg/apitester/example/entities/OneEntity.md") OneEntity get(
 			@PathVariable @ApiDescription("The ID of the entity to read") String id, 
 			@RequestParam String y, 
 			@RequestParam int offset, 

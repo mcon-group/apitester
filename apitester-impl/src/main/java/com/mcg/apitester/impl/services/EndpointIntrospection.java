@@ -115,10 +115,17 @@ public class EndpointIntrospection {
 			}
 		}
 
+		if(t!=null) {
+			ApiDescription ad = t.getAnnotation(ApiDescription.class); 
+			if(ad!=null) {
+				out.addDescription(getDescription(t.getClass(),ad));
+			}
+		}
+		
 		if(mp!=null) {
 			ApiDescription ad = mp.getParameterAnnotation(ApiDescription.class);
 			if(ad!=null) {
-				out.setDescription(getDescription(null,ad));
+				out.addDescription(getDescription(null,ad));
 			}
 		}
 		
@@ -143,10 +150,13 @@ public class EndpointIntrospection {
 		ResolvedMethod rm = getResolvedMethod(c, m);
 		if(rm==null) return null;
 		ResolvedType rr = rm.getReturnType();
+		
 		if(rr==null) {
 			return new ParameterInfo(false,"void","void");
 		} else {
-			return getParameterInfo(rr,null,null);  
+			ParameterInfo out = getParameterInfo(rr,null,null);
+			return out;
+			
 		}
 	}
 	
@@ -170,7 +180,7 @@ public class EndpointIntrospection {
 		for(ApiExtraParam p : getApiExtraParams(clazz, m)) {
 			ParameterInfo pi = new ParameterInfo();
 			pi.setName(p.name());
-			pi.setDescription(p.description());
+			pi.addDescription(p.description());
 			pi.setCollection(p.collection());
 			pi.setType(p.type().getCanonicalName());
 			pi.setTypeShort(p.type().getSimpleName());

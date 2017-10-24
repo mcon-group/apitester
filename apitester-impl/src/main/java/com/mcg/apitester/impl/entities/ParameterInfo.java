@@ -1,5 +1,8 @@
 package com.mcg.apitester.impl.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mcg.apitester.api.annotations.ParamType;
 
 public class ParameterInfo {
@@ -9,7 +12,7 @@ public class ParameterInfo {
 	private boolean file; 
 	private boolean collection; 
 	private boolean required = false; 
-	private String description; 
+	private List<String> descriptions = new ArrayList<String>(); 
 	private String name; 
 	private String type; 
 	private String typeShort; 
@@ -101,14 +104,21 @@ public class ParameterInfo {
 		this.deprecated = deprecated;
 	}
 
-	public String getDescription() {
-		return description;
+	public List<String> getDescriptions() {
+		return descriptions;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setDescriptions(List<String> descriptions) {
+		this.descriptions.clear();
+		if(descriptions==null) return;
+		this.descriptions.addAll(descriptions);
 	}
 
+	public void addDescription(String description) {
+		if(description==null) return;
+		this.descriptions.add(description);
+	}
+	
 	public boolean isFile() {
 		return file;
 	}
