@@ -1,7 +1,9 @@
 package com.mcg.apitester.example.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -65,6 +67,13 @@ public class OneController extends BaseController {
 	@RequestMapping(value="/one/entities/{id}",method=RequestMethod.PUT)
 	public OneEntity update(@PathVariable String id, @RequestBody OneEntity body) {
 		return create(OneEntity.class);
+	}
+	
+	@RequestMapping(value="/one/counter",method=RequestMethod.GET)
+	public Map update(@RequestParam String[] in) {
+		Map<String,Object> out = new HashMap<>(); 
+		out.put("count", in.length);
+		return out;
 	}
 	
 	@ApiErrors(
