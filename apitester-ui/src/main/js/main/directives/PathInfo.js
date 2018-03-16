@@ -21,7 +21,7 @@ angular.module("apitester").directive(
 					scope.selectedMethod = method; 
 					var m = [];
 					_.each(scope.path.mappings,function(mapping) {
-						if(mapping.methods.includes(method)) {
+						if(mapping.method == method) {
 							console.log(" --- "+method+" --- matches ");
 							m.push(mapping);
 						} else {

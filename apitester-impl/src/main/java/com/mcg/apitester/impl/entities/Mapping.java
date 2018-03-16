@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class Mapping {
 	
 	private String pattern;
-	private List<RequestMethod> methods;
+	private RequestMethod method;
 	private MethodInfo methodInfo;
 	
 	public Mapping(
 			String pattern, 
-			Collection<RequestMethod> methods,
+			RequestMethod method,
 			MethodInfo methodInfo
 		) {
 		this.pattern = pattern;
-		this.methods = new ArrayList<>(methods);
+		this.setMethod(method);
 		this.setMethodInfo(methodInfo);
 	}
 
@@ -30,20 +30,20 @@ public class Mapping {
 		this.pattern = pattern;
 	}
 
-	public List<RequestMethod> getMethods() {
-		return methods;
-	}
-
-	public void setMethods(List<RequestMethod> methods) {
-		this.methods = methods;
-	}
-
 	public MethodInfo getMethodInfo() {
 		return methodInfo;
 	}
 
 	public void setMethodInfo(MethodInfo methodInfo) {
 		this.methodInfo = methodInfo;
+	}
+
+	public RequestMethod getMethod() {
+		return method;
+	}
+
+	public void setMethod(RequestMethod method) {
+		this.method = method;
 	}
 	
 	

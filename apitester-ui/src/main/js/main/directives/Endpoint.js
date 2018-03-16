@@ -261,7 +261,7 @@ angular.module('apitester').directive(
 
           var request;
 
-          switch (scope.endpoint.methods[0]) {
+          switch (scope.endpoint.method) {
             case 'DELETE':
               request = scope.remove(apiPath, requestParams);
               break;
@@ -282,6 +282,8 @@ angular.module('apitester').directive(
               break;
           }
 
+          console.log("request: ",request);
+          
           request.then(
             scope.treatSuccessResponse,
             scope.treatErrorResponse
@@ -306,6 +308,9 @@ angular.module('apitester').directive(
          */
         function treatResponse(response) {
           var data = response.data;
+          
+          console.log("data: ",data);
+          console.log("response: ",response);
           
           var hns = _.keys(response.headers());
           

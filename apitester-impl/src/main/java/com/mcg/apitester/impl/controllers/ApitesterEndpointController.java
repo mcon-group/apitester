@@ -20,12 +20,12 @@ public class ApitesterEndpointController {
 	private EndpointService endpointService; 
 
 	@RequestMapping(value="/apitester/endpoints",method=RequestMethod.GET)
-	public List<Mapping> getMappings() {
+	public List<Mapping> getMappings() throws ClassNotFoundException, LinkageError {
 		return endpointService.getMappings();
 	}
 	
 	@RequestMapping(value="/apitester/paths",method=RequestMethod.GET)
-	public List<PathInfo> getPaths() {
+	public List<PathInfo> getPaths() throws ClassNotFoundException, LinkageError {
 		return endpointService.getPathInfos();
 	}
 	

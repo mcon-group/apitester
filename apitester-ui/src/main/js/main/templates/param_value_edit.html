@@ -76,6 +76,15 @@
         placeholder="{{param.defaultValue}}"
         ng-model="param.value"
         ng-required="param.required"
+        ng-if="!param.secret"
+      >
+      <input
+        class="form-control"
+        type="password"
+        placeholder="{{param.defaultValue}}"
+        ng-model="param.value"
+        ng-required="param.required"
+        ng-if="param.secret"
       >
     </div>
 

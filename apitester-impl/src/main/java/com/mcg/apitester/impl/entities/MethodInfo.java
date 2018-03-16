@@ -13,7 +13,7 @@ public class MethodInfo {
 	private List<String> descriptions = new ArrayList<>();
 	
 	private List<ParameterInfo> params = new ArrayList<>();
-	private ParameterInfo returnType;
+	private TypeInfo returnType;
 	
 	private List<ApiReturnStatus> returnStatus = new ArrayList<>();
 	private List<HeaderInfo> headerInfos = new ArrayList<>();
@@ -21,11 +21,11 @@ public class MethodInfo {
 	public MethodInfo() {
 	}
 
-	public ParameterInfo getReturnType() {
+	public TypeInfo getReturnType() {
 		return returnType;
 	}
 
-	public void setReturnType(ParameterInfo returnType) {
+	public void setReturnType(TypeInfo returnType) {
 		this.returnType = returnType;
 	}
 

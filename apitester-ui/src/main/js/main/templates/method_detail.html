@@ -15,7 +15,7 @@
 			<i>This method has no description</i>
 		</div>
 		<div ng-if="endpoint.methodInfo.descriptions.length > 0" class="well well-sm">
-			<div ng-repeat="description in endpoint.methodInfo.descriptions">
+			<div ng-repeat="description in endpoint.methodInfo.descriptions track by $index">
 				<p markdown="description">
 				</p>
 			</div>
@@ -28,7 +28,7 @@
 		</div>
 		<div ng-if="endpoint.methodInfo.headerInfos.length>0">
 			<table class="table table-compact">
-				<tbody ng-repeat="headerInfo in endpoint.methodInfo.headerInfos">
+				<tbody ng-repeat="headerInfo in endpoint.methodInfo.headerInfos track by $index">
 					<tr>
 						<td width="15%">
 							<span class="label label-info">{{headerInfo.name}}</span>

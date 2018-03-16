@@ -1,5 +1,6 @@
 package com.mcg.apitester.impl.services;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
@@ -32,7 +34,7 @@ public class EndpointService {
 	private RequestMappingHandlerMapping handlerMapping;
 
 	
-	public List<Mapping> getMappings() {
+	public List<Mapping> getMappings() throws ClassNotFoundException, LinkageError {
 		if(mappings==null) {
 			mappings = getMappingsInternal();
 		}
@@ -40,14 +42,14 @@ public class EndpointService {
 	}
 
 
-	public List<PathInfo> getPathInfos() {
+	public List<PathInfo> getPathInfos() throws ClassNotFoundException, LinkageError {
 		if(paths==null) {
 			paths = getPathsInternal();
 		}
 		return paths;
 	}
 	
-	private List<PathInfo> getPathsInternal() {
+	private List<PathInfo> getPathsInternal() throws ClassNotFoundException, LinkageError {
 		Map<String,PathInfo> infos = new HashMap<>();
 		for(Mapping m : getMappings()) {
 			PathInfo pi = infos.get(m.getPattern()); 
@@ -67,7 +69,7 @@ public class EndpointService {
 		return out;
 	}
 	
-	private List<Mapping> getMappingsInternal() {
+	private List<Mapping> getMappingsInternal() throws ClassNotFoundException, LinkageError {
 		List<Mapping> out = new ArrayList<>();
 		Map<RequestMappingInfo, HandlerMethod> map = this.handlerMapping.getHandlerMethods();
 		for(Entry<RequestMappingInfo,HandlerMethod> e : map.entrySet()) {
@@ -81,11 +83,24 @@ public class EndpointService {
 			Set<String> patterns = rmi.getPatternsCondition().getPatterns(); 
 			Set<RequestMethod> methods = rmi.getMethodsCondition().getMethods();
 			
-			MethodInfo methodInfo = EndpointIntrospection.getMethodInfo(hm.getBeanType(),hm.getMethod(),hm.getMethodParameters());
-			if(methodInfo!=null) {
+			MethodParameter[] params = hm.getMethodParameters();
+			Class[] paramClasses = new Class[hm.getMethodParameters().length];
+			for(int i=0; i < params.length;i++) {
+				paramClasses[i] = params[i].getParameterType();
+			}
+
+			Method m = Introspection2.findMethod(hm.getBeanType(),hm.getMethod().getName(),paramClasses);
+			if(m==null) continue;
+
+			
+			MethodInfo mi = Introspection2.getMethodInfo(hm.getBeanType(),m);
+			if(mi==null) continue;
+			
+			//MethodInfo methodInfo = Introspection2.getMethodInfo(m)(hm.getBeanType(),hm.getMethod(),hm.getMethodParameters());
+			if(mi!=null) {
 				for(String pattern : patterns) {
 					for(RequestMethod method: methods) {
-						Mapping mapping = new Mapping(pattern,Collections.singletonList(method),methodInfo);
+						Mapping mapping = new Mapping(pattern,method,mi);
 						out.add(mapping);
 					}
 				}

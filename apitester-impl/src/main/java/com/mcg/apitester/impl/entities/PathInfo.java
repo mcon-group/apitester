@@ -36,10 +36,8 @@ public class PathInfo {
 	public List<RequestMethod> getMethods() {
 		List<RequestMethod> out = new ArrayList<>();
 		for(Mapping mp : mappings) {
-			for(RequestMethod m : mp.getMethods()) {
-				if(!out.contains(m)) {
-					out.add(m);
-				}
+			if(!out.contains(mp.getMethod())) {
+				out.add(mp.getMethod());
 			}
 		}
 		Collections.sort(out);

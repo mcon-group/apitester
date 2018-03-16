@@ -8,60 +8,15 @@ import com.mcg.apitester.api.annotations.ParamType;
 public class ParameterInfo {
 	
 	private boolean deprecated; 
-	private boolean primitive; 
-	private boolean file; 
-	private boolean collection; 
+	private boolean secret; 
 	private boolean required = false; 
 	private List<String> descriptions = new ArrayList<String>(); 
-	private String name; 
-	private String type; 
-	private String typeShort; 
-	private String defaultValue = ""; 
+	private String name;
+	private String defaultValue = "";
 	private ParamType paramType;
-	private Object object;
-	
-	private Object[] values;
+	private TypeInfo typeInfo;
 	
 	public ParameterInfo() {
-	}
-
-	public ParameterInfo(boolean collection, String type, String typeShort) {
-		super();
-		this.collection = collection;
-		this.type = type;
-		this.typeShort = typeShort;
-	}
-
-	public boolean isCollection() {
-		return collection;
-	}
-
-	public void setCollection(boolean collection) {
-		this.collection = collection;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getTypeShort() {
-		return typeShort;
-	}
-
-	public void setTypeShort(String typeShort) {
-		this.typeShort = typeShort;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public ParamType getParamType() {
@@ -88,14 +43,6 @@ public class ParameterInfo {
 		this.defaultValue = defaultValue;
 	}
 
-	public Object getObject() {
-		return object;
-	}
-
-	public void setObject(Object object) {
-		this.object = object;
-	}
-
 	public boolean isDeprecated() {
 		return deprecated;
 	}
@@ -119,28 +66,56 @@ public class ParameterInfo {
 		this.descriptions.add(description);
 	}
 	
-	public boolean isFile() {
-		return file;
+	public Object[] getValues() {
+		return typeInfo.getValues();
 	}
 
-	public void setFile(boolean file) {
-		this.file = file;
+	public TypeInfo getTypeInfo() {
+		return typeInfo;
+	}
+
+	public void setTypeInfo(TypeInfo typeInfo) {
+		this.typeInfo = typeInfo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isCollection() {
+		return typeInfo.isCollection() || typeInfo.isArray();
+	}
+
+	public String getType() {
+		return typeInfo.getType();
+	}
+
+	public String getTypeShort() {
+		return typeInfo.getTypeShort();
+	}
+
+	public boolean isFile() {
+		return typeInfo.isFile();
 	}
 
 	public boolean isPrimitive() {
-		return primitive;
+		return typeInfo.isPrimitive();
 	}
 
-	public void setPrimitive(boolean primitive) {
-		this.primitive = primitive;
+	public boolean isSecret() {
+		return secret;
 	}
 
-	public Object[] getValues() {
-		return values;
+	public void setSecret(boolean secret) {
+		this.secret = secret;
 	}
 
-	public void setValues(Object[] values) {
-		this.values = values;
+	public Object getObject() {
+		return typeInfo.getObject();
 	}
 	
 	
