@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.mcg.apitester</groupId>
 		<artifactId>apitester</artifactId>
-		<version>0.0.22-SNAPSHOT</version>
+		<version>0.0.23-SNAPSHOT</version>
 	</parent>
 	<artifactId>apitester-example</artifactId>
 	<dependencies>
@@ -15,22 +15,22 @@
 		<dependency>
 			<groupId>com.mcg.apitester</groupId>
 			<artifactId>apitester-api</artifactId>
-			<version>0.0.22-SNAPSHOT</version>
+			<version>0.0.23-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mcg.apitester</groupId>
 			<artifactId>apitester-documentation</artifactId>
-			<version>0.0.22-SNAPSHOT</version>
+			<version>0.0.23-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mcg.apitester</groupId>
 			<artifactId>apitester-ui</artifactId>
-			<version>0.0.22-SNAPSHOT</version>
+			<version>0.0.23-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mcg.apitester</groupId>
 			<artifactId>apitester-impl</artifactId>
-			<version>0.0.22-SNAPSHOT</version>
+			<version>0.0.23-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
