@@ -78,8 +78,6 @@ public class Introspection {
 		T t = c.getAnnotation(a);
 		if(t!=null) d.add(t);
 		d.addAll(collectAnnotations(c.getSuperclass(),a));
-		
-		System.err.println("collecting annotations: "+a.getSimpleName()+" / "+c.getName()+" --- "+d.size());
 
 		return d;
 		
@@ -91,8 +89,6 @@ public class Introspection {
 		T t = m.getAnnotation(a);
 		if(t!=null) d.add(t);
 		d.addAll(collectAnnotations(m.getDeclaringClass(),a));
-		
-		System.err.println("collecting annotations: "+a.getSimpleName()+" / "+m.getName()+" --- "+d.size());
 		
 		return d;
 	}
@@ -178,6 +174,7 @@ public class Introspection {
 				IOUtils.copy(r.getInputStream(), baos);
 				return new String(baos.toByteArray(),"utf-8");
 			} catch (Exception e) {
+				log.error("error reading documentation: "+ad.file(), e);
 			}
 		}
 		return null;
