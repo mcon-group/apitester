@@ -83,19 +83,9 @@ public class EndpointService {
 			Set<String> patterns = rmi.getPatternsCondition().getPatterns(); 
 			Set<RequestMethod> methods = rmi.getMethodsCondition().getMethods();
 			
-			MethodParameter[] params = hm.getMethodParameters();
-			Class[] paramClasses = new Class[hm.getMethodParameters().length];
-			for(int i=0; i < params.length;i++) {
-				paramClasses[i] = params[i].getParameterType();
-			}
-
-			Method m = Introspection.findMethod(hm.getBeanType(),hm.getMethod().getName(),paramClasses);
-			if(m==null) continue;
-
-			
-			MethodInfo mi = Introspection.getMethodInfo(hm.getBeanType(),m);
+			MethodInfo mi = Introspection.getMethodInfo(hm.getBeanType(),hm.getMethod());
 			if(mi==null) continue;
-			
+
 			//MethodInfo methodInfo = Introspection2.getMethodInfo(m)(hm.getBeanType(),hm.getMethod(),hm.getMethodParameters());
 			if(mi!=null) {
 				for(String pattern : patterns) {

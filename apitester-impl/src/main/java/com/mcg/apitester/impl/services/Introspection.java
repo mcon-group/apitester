@@ -539,6 +539,7 @@ public class Introspection {
 		MethodInfo mi = new MethodInfo();
 		mi.setParams(getParameterInfos(m,mappedGenerics));
 		mi.setClassName(c.getCanonicalName());
+		mi.setMethodName(m.getName());
 		
 		mi.setReturnType(getTypeInfo(m.getGenericReturnType(),mappedGenerics));
 		
