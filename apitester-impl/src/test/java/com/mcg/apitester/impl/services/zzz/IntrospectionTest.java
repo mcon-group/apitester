@@ -1,6 +1,7 @@
 package com.mcg.apitester.impl.services.zzz;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Assert;
@@ -19,7 +20,7 @@ public class IntrospectionTest {
 	public void testParameterInfoSimpleTypes() throws ClassNotFoundException, LinkageError {
 		Method m = Introspection.findMethod(TestObject.class, "add", new Class<?>[] { Integer.TYPE, Integer.TYPE} );
 		Assert.assertNotNull(m);
-		List<ParameterInfo> pis = Introspection.getParameterInfos(m);
+		List<ParameterInfo> pis = Introspection.getParameterInfos(m, new HashMap<>());
 		Assert.assertEquals(2, pis.size());
 
 		prettyPrint(pis);
@@ -33,7 +34,7 @@ public class IntrospectionTest {
 		
 		Method m = Introspection.findMethod(TestObject.class, "addAll", new Class<?>[] { x.getClass() } );
 		Assert.assertNotNull(m);
-		List<ParameterInfo> pis = Introspection.getParameterInfos(m);
+		List<ParameterInfo> pis = Introspection.getParameterInfos(m, new HashMap<>());
 		Assert.assertEquals(1, pis.size());
 		Assert.assertEquals("values", pis.get(0).getName());
 		Assert.assertEquals("Array", pis.get(0).getTypeInfo().getTypeShort());
@@ -52,7 +53,7 @@ public class IntrospectionTest {
 
 	@Test
 	public void testGetTypeInfo() throws ClassNotFoundException, LinkageError {
-		TypeInfo o = Introspection.getTypeInfo(TestObject.class);
+		TypeInfo o = Introspection.getTypeInfo(TestObject.class, new HashMap<>());
 		prettyPrint(o);
 		prettyPrint(o.getObject());
 		

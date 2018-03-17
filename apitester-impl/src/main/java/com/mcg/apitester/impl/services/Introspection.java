@@ -71,6 +71,23 @@ public class Introspection {
 		Class<?> c = ClassUtils.forName(t.getTypeName(), null);
 		return c.getCanonicalName();
 	}
+	
+	public static Map<String,Type> mapGenerics(Class<?> child, Class<?> parent) {
+
+		Map<String,Type> out = new HashMap<>();
+
+		if(child.getGenericSuperclass() instanceof ParameterizedType) {
+			TypeVariable<?>[] vars = parent.getTypeParameters(); 
+			Type[] types = ((ParameterizedType)child.getGenericSuperclass()).getActualTypeArguments();
+			for(int i = 0; i < vars.length; i++) {
+				out.put(vars[i].getName(), types[i]);
+			}
+		}
+
+		return out;
+		
+	}
+	
 
 	public static <T  extends Annotation> List<T> collectAnnotations(Class<?> c, Class<T> a) {
 		List<T> d = new ArrayList<>();
@@ -245,14 +262,17 @@ public class Introspection {
 		for(Class<?> c : findSuperclassCandidates(clazz, false)) {
 			try {
 				log.info("checking class: "+c.getCanonicalName()+", "+name);
-				Method m = c.getMethod(name, paramClasses);
-				if(m!=null) {
-					if(!m.isAnnotationPresent(ApiIgnore.class)) {
-						return m;
+				try {
+					Method m = c.getMethod(name, paramClasses);
+					if(m!=null) {
+						if(!m.isAnnotationPresent(ApiIgnore.class)) {
+							return m;
+						}
 					}
+				} catch (NoSuchMethodException e) {
+					// TODO: handle exception
 				}
 			} catch (Exception e) {
-				// continue
 				log.error("error checking: ",e);
 			}
 		}
@@ -261,12 +281,15 @@ public class Introspection {
 
 	
 	
-	private static TypeInfo getTypeInfoInternal(Type type, List<Type> v) throws ClassNotFoundException, LinkageError {
+	private static TypeInfo getTypeInfoInternal(Type type, List<Type> v, Map<String,Type> mappedGenerics) throws ClassNotFoundException, LinkageError {
 
 		TypeInfo ti = new TypeInfo();
 
+		if(mappedGenerics.containsKey(type.getTypeName())) {
+			type = mappedGenerics.get(type.getTypeName());
+		}
+		
 		if(v.contains(type)) {
-			
 			ti.setType(getName(type));
 			ti.setTypeShort(getName(type));
 			ti.setLoop(true);
@@ -307,7 +330,7 @@ public class Introspection {
 			if(rawClass.isArray()) {
 				
 				ti.setArray(true);
-				typeParameters.add(getTypeInfoInternal(rawClass.getComponentType(),visited));
+				typeParameters.add(getTypeInfoInternal(rawClass.getComponentType(),visited, mappedGenerics));
 				rawClass = arrayClass;
 
 			} else if(collClass.isAssignableFrom(rawClass)) {
@@ -316,9 +339,9 @@ public class Introspection {
 				rawClass = collClass;
 				
 				if(pt.getActualTypeArguments().length>0) {
-					typeParameters.add(getTypeInfoInternal(pt.getActualTypeArguments()[0], visited));
+					typeParameters.add(getTypeInfoInternal(pt.getActualTypeArguments()[0], visited, mappedGenerics));
 				} else {
-					typeParameters.add(getTypeInfoInternal(Object.class, visited));
+					typeParameters.add(getTypeInfoInternal(Object.class, visited, mappedGenerics));
 				}
 			} else if(mapClass.isAssignableFrom(rawClass)) {
 
@@ -326,11 +349,11 @@ public class Introspection {
 				rawClass = mapClass;
 				
 				if(pt.getActualTypeArguments().length==2) {
-					typeParameters.add(getTypeInfoInternal(pt.getActualTypeArguments()[0], visited));
-					typeParameters.add(getTypeInfoInternal(pt.getActualTypeArguments()[1], visited));
+					typeParameters.add(getTypeInfoInternal(pt.getActualTypeArguments()[0], visited, mappedGenerics));
+					typeParameters.add(getTypeInfoInternal(pt.getActualTypeArguments()[1], visited, mappedGenerics));
 				} else {
-					typeParameters.add(getTypeInfoInternal(Object.class, visited));
-					typeParameters.add(getTypeInfoInternal(Object.class, visited));
+					typeParameters.add(getTypeInfoInternal(Object.class, visited, mappedGenerics));
+					typeParameters.add(getTypeInfoInternal(Object.class, visited, mappedGenerics));
 				}
 			}
 
@@ -343,17 +366,17 @@ public class Introspection {
 	 			ti.setFile(true);
 	 		} else if(rawClass.isArray()) {
 				ti.setArray(true);
-				typeParameters.add(getTypeInfoInternal(rawClass.getComponentType(),visited));
+				typeParameters.add(getTypeInfoInternal(rawClass.getComponentType(),visited, mappedGenerics));
 				rawClass = arrayClass;
 			} else if(collClass.isAssignableFrom(rawClass)) {
 				ti.setCollection(true);
 				rawClass = collClass;
-				typeParameters.add(getTypeInfoInternal(Object.class, visited));
+				typeParameters.add(getTypeInfoInternal(Object.class, visited, mappedGenerics));
 			} else if(mapClass.isAssignableFrom(rawClass)) {
 				ti.setCollection(true);
 				rawClass = mapClass;
-				typeParameters.add(getTypeInfoInternal(Object.class, visited));
-				typeParameters.add(getTypeInfoInternal(Object.class, visited));
+				typeParameters.add(getTypeInfoInternal(Object.class, visited, mappedGenerics));
+				typeParameters.add(getTypeInfoInternal(Object.class, visited, mappedGenerics));
 			}
 	 		
 	 	} else {
@@ -387,7 +410,7 @@ public class Introspection {
 				} else {
 					FieldInfo fi = new FieldInfo();
 					fi.setName(pd.getName());
-					fi.setTypeInfo(getTypeInfoInternal(pd.getReadMethod().getGenericReturnType(),visited));
+					fi.setTypeInfo(getTypeInfoInternal(pd.getReadMethod().getGenericReturnType(),visited, mappedGenerics));
 					fields.add(fi);
 				}
 			}
@@ -406,13 +429,13 @@ public class Introspection {
 		return ti;
 	}
 
-	public static TypeInfo getTypeInfoInternal(Type type) throws ClassNotFoundException, LinkageError {
-		return getTypeInfoInternal(type, new ArrayList<>());
+	public static TypeInfo getTypeInfoInternal(Type type, Map<String,Type> mappedGenerics) throws ClassNotFoundException, LinkageError {
+		return getTypeInfoInternal(type, new ArrayList<>(), mappedGenerics);
 	}
 
-	public static TypeInfo getTypeInfo(Type type) throws ClassNotFoundException, LinkageError {
-		TypeInfo out = getTypeInfoInternal(type);
-
+	public static TypeInfo getTypeInfo(Type type, Map<String,Type> mappedGenerics) throws ClassNotFoundException, LinkageError {
+		TypeInfo out = getTypeInfoInternal(type,mappedGenerics);
+		
 		log.debug(" ================================================================= ");
 		
 		out.setObject(getObject(out));
@@ -420,15 +443,13 @@ public class Introspection {
 	}
 	
 	
-	public static ParameterInfo getParameterInfo(Method m, Parameter p, String name) throws ClassNotFoundException, LinkageError {
+	public static ParameterInfo getParameterInfo(Method m, Parameter p, String name, Map<String,Type> mappedGenerics) throws ClassNotFoundException, LinkageError {
 
 		if(p.isAnnotationPresent(ApiIgnore.class)) return null;
 		
 		ParameterInfo pi = new ParameterInfo();
 
-		Class<?> type = p.getType();
-		
-		pi.setTypeInfo(getTypeInfo(type));
+		pi.setTypeInfo(getTypeInfo(p.getParameterizedType(), mappedGenerics));
 		
 		String paramName = name;
 		
@@ -473,7 +494,7 @@ public class Introspection {
 		return pi;
 	}
 
-	public static List<ParameterInfo> getParameterInfos(Method m) throws ClassNotFoundException, LinkageError {
+	public static List<ParameterInfo> getParameterInfos(Method m, Map<String,Type> mappedGenerics) throws ClassNotFoundException, LinkageError {
 		
 		log.debug("paramater info: "+m.getDeclaringClass().getSimpleName()+"."+m.getName());
 		
@@ -488,7 +509,7 @@ public class Introspection {
 		Parameter[] params = m.getParameters();
 		for(int i=0; i < params.length;i++) {
 			Parameter p = params[i];
-			ParameterInfo pi = Introspection.getParameterInfo(m, p,paramNames[i]);
+			ParameterInfo pi = Introspection.getParameterInfo(m, p, paramNames[i], mappedGenerics);
 			if(pi==null) continue;
 			out.add(pi);
 		}
@@ -505,16 +526,21 @@ public class Introspection {
 
 		if(c.getPackage().getName().startsWith("org.springframework")) return null;
 		
-		log.debug("get method info: "+c.getName()+"."+m.getName());
+		log.info("get method info: "+c.getName()+"."+m.getName()+": --- "+c.getClass());
 
 		for(Class<?> cp : findSuperclassCandidates(c, true)) {
 			if(cp.isAnnotationPresent(ApiIgnore.class)) return null;
 		}
+
+		Class<?> cp = m.getDeclaringClass();
+
+		Map<String,Type> mappedGenerics = mapGenerics(c, cp);
 		
 		MethodInfo mi = new MethodInfo();
-		mi.setParams(getParameterInfos(m));
+		mi.setParams(getParameterInfos(m,mappedGenerics));
 		mi.setClassName(c.getCanonicalName());
-		mi.setReturnType(getTypeInfo(m.getGenericReturnType()));
+		
+		mi.setReturnType(getTypeInfo(m.getGenericReturnType(),mappedGenerics));
 		
 		for(ApiDescription ad : collectAnnotations(m, ApiDescription.class)) {
 			mi.addDescription(getDescription(ad));

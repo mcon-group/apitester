@@ -69,7 +69,7 @@ public class EndpointService {
 		return out;
 	}
 	
-	private List<Mapping> getMappingsInternal() throws ClassNotFoundException, LinkageError {
+	private synchronized List<Mapping> getMappingsInternal() throws ClassNotFoundException, LinkageError {
 		List<Mapping> out = new ArrayList<>();
 		Map<RequestMappingInfo, HandlerMethod> map = this.handlerMapping.getHandlerMethods();
 		for(Entry<RequestMappingInfo,HandlerMethod> e : map.entrySet()) {
