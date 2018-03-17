@@ -89,11 +89,11 @@ public class EndpointService {
 				paramClasses[i] = params[i].getParameterType();
 			}
 
-			Method m = Introspection2.findMethod(hm.getBeanType(),hm.getMethod().getName(),paramClasses);
+			Method m = Introspection.findMethod(hm.getBeanType(),hm.getMethod().getName(),paramClasses);
 			if(m==null) continue;
 
 			
-			MethodInfo mi = Introspection2.getMethodInfo(hm.getBeanType(),m);
+			MethodInfo mi = Introspection.getMethodInfo(hm.getBeanType(),m);
 			if(mi==null) continue;
 			
 			//MethodInfo methodInfo = Introspection2.getMethodInfo(m)(hm.getBeanType(),hm.getMethod(),hm.getMethodParameters());

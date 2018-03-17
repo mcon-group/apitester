@@ -6,7 +6,7 @@ angular.module('apitester').directive(
       scope: {
         endpoint: '=',
       },
-      templateUrl: 'method_detail.html',
+      templateUrl: 'endpoint_detail.html',
       link: function(scope, elmt) {
         scope.select = function() {
           console.log('method selected ... ');
@@ -42,8 +42,12 @@ angular.module('apitester').directive(
           scope.details = false;
 
           var params = scope.endpoint.methodInfo.params;
+          
           scope.pathParams = _.filter(params, function(param) {
             return param.paramType === 'PATH';
+          });
+          scope.headerParams = _.filter(params, function(param) {
+        	  return param.paramType === 'HEADER';
           });
           scope.requestParams = _.filter(params, function(param) {
             return param.paramType === 'REQUEST';
@@ -54,6 +58,7 @@ angular.module('apitester').directive(
           scope.fileParam = _.find(params, function(param) {
             return param.file;
           });
+          
           scope.response = scope.endpoint.methodInfo.returnType;
           scope.response.paramType = 'RETURN';
         }

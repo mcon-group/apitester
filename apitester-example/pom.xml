@@ -19,6 +19,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.mcg.apitester</groupId>
+			<artifactId>apitester-documentation</artifactId>
+			<version>0.0.21-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mcg.apitester</groupId>
 			<artifactId>apitester-ui</artifactId>
 			<version>0.0.21-SNAPSHOT</version>
 		</dependency>

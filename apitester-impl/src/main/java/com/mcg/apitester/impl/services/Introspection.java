@@ -3,6 +3,8 @@ package com.mcg.apitester.impl.services;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayOutputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -12,50 +14,53 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.PrioritizedParameterNameDiscoverer;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ValueConstants;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mcg.apitester.api.annotations.ApiDescription;
+import com.mcg.apitester.api.annotations.ApiError;
+import com.mcg.apitester.api.annotations.ApiErrors;
+import com.mcg.apitester.api.annotations.ApiHeader;
+import com.mcg.apitester.api.annotations.ApiHeaders;
 import com.mcg.apitester.api.annotations.ApiIgnore;
 import com.mcg.apitester.api.annotations.ApiSecret;
 import com.mcg.apitester.api.annotations.ParamType;
+import com.mcg.apitester.impl.entities.ApiReturnStatus;
 import com.mcg.apitester.impl.entities.FieldInfo;
+import com.mcg.apitester.impl.entities.HeaderInfo;
 import com.mcg.apitester.impl.entities.MethodInfo;
 import com.mcg.apitester.impl.entities.ParameterInfo;
 import com.mcg.apitester.impl.entities.TypeInfo;
 
-public class Introspection2 {
+public class Introspection {
 	
-	private static Log log = LogFactory.getLog(Introspection2.class);
+	private static Log log = LogFactory.getLog(Introspection.class);
 
 	
 	private static Class<?> collClass = Collection.class;
 	private static Class<?> mapClass = Map.class;
 	private static Class<?> arrayClass = Array.class;
 	
-	
-	private static List<Type> getGenerics(Class<?> in) {
-		List<Type> out = new ArrayList<>();
-		for(TypeVariable<?> tv : in.getTypeParameters()) {
-			Type[] ts = tv.getBounds();
-			if(ts.length>0) {
-				out.add(ts[0]);
-			}
-		}
-		return out;
-	}
 	
 	private static String getShortName(Type t) throws ClassNotFoundException, LinkageError {
 		Class<?> c = ClassUtils.forName(t.getTypeName(), null);
@@ -66,112 +71,122 @@ public class Introspection2 {
 		Class<?> c = ClassUtils.forName(t.getTypeName(), null);
 		return c.getCanonicalName();
 	}
-	
-	/**
-	public static Object createObject(String classname, List<Class<?>> v) throws ClassNotFoundException, LinkageError {
-		return createObject(ClassUtils.forName(classname, null),v);
+
+	public static <T  extends Annotation> List<T> collectAnnotations(Class<?> c, Class<T> a) {
+		List<T> d = new ArrayList<>();
+		if(c==null) return d;
+		T t = c.getAnnotation(a);
+		if(t!=null) d.add(t);
+		d.addAll(collectAnnotations(c.getSuperclass(),a));
+		
+		System.err.println("collecting annotations: "+a.getSimpleName()+" / "+c.getName()+" --- "+d.size());
+
+		return d;
+		
 	}
 	
-	public static Object createObject(Class<?> in, List<Class<?>> v) throws ClassNotFoundException, LinkageError {
+	public static  <T  extends Annotation> List<T> collectAnnotations(Method m, Class<T> a) {
+		List<T> d = new ArrayList<>();
+		if(m==null) return d;
+		T t = m.getAnnotation(a);
+		if(t!=null) d.add(t);
+		d.addAll(collectAnnotations(m.getDeclaringClass(),a));
 		
-		log.info("create object: "+in);
+		System.err.println("collecting annotations: "+a.getSimpleName()+" / "+m.getName()+" --- "+d.size());
 		
-		if(v==null) {
-			v = new ArrayList<>();
+		return d;
+	}
+	
+	public static  <T  extends Annotation> List<T> collectAnnotations(Method m, Parameter p, Class<T> a) {
+		List<T> d = new ArrayList<>();
+		if(p==null) return d;
+		T t = p.getAnnotation(a);
+		if(t!=null) d.add(t);
+		if(m!=null) {
+			d.addAll(collectAnnotations(m,a));
 		}
+		return d;
+	}
+	
+	public static List<HeaderInfo> getHeaderInfo(List<ApiHeaders> apiHeaders) {
 		
-		if(v.contains(in)) {
-			log.info("create object: already visited: "+in);
-			return "[REFERENCE LOOP]";
-		}
 		
-		List<Class<?>> visited = new ArrayList<>(v);
-		visited.add(in);
-
-		if(String.class.isAssignableFrom(in)) {
-			return "a string";
-		} else if (Boolean.class.isAssignableFrom(in) || in == Boolean.TYPE) {
-			return true;
-		} else if (Integer.class.isAssignableFrom(in) || in == Integer.TYPE) {
-			return 1;
-		} else if (Long.class.isAssignableFrom(in) || in == Long.TYPE) {
-			return Long.MAX_VALUE;
-		} else if (Double.class.isAssignableFrom(in) || in == Double.TYPE) {
-			return 0.003;
-		} else if (Float.class.isAssignableFrom(in) || in == Float.TYPE) {
-			return 0.003;
-		} else if (Date.class.isAssignableFrom(in)) {
-			return new Date();
-		} else if (Character.class.isAssignableFrom(in) || in == Character.TYPE) {
-			return 'c';
-		} else if (Byte.class.isAssignableFrom(in)) {
-			return 'c';
-		} else if (in.isEnum()) {
-			List<String> values = new ArrayList<>();
-			for(Object o : in.getEnumConstants()) {
-				values.add(((Enum<?>)o).name());
+		// de-duplicate shit
+		SortedSet<ApiHeader> headers = new TreeSet<>(new Comparator<ApiHeader>() {
+			@Override
+			public int compare(ApiHeader o1, ApiHeader o2) {
+				return o1.name().compareTo(o2.name());
 			}
-			return StringUtils.collectionToDelimitedString(values, " | ");
-		} else if (in == MultipartFile.class) {
-			return "[BINARY FILE]";
-		} else {
-			TypeInfo ti = getTypeInfoInternal(in, null);
+		});
+		
+		for (ApiHeaders hs : apiHeaders) {
+			for(ApiHeader h : hs.value()) {
+				if(!headers.contains(h)) headers.add(h);
+			}
+		}
+		
+		// translate shit
+		List<HeaderInfo> out = new ArrayList<>();
+		for(ApiHeader ah : headers) {
+			HeaderInfo hi = new HeaderInfo();
+			hi.setName(ah.name());
+			hi.setDescription(ah.description());
+			out.add(hi);
+		}
+		
+		return out;
+	}
+
+	public static List<ApiReturnStatus> getApiReturn(List<ApiErrors> errors) {
+		
+		// de-duplicate shit
+		SortedSet<ApiError> returns = new TreeSet<>(new Comparator<ApiError>() {
+			@Override
+			public int compare(ApiError o1, ApiError o2) {
+				return o1.value().compareTo(o2.value());
+			}
+		});
+		
+
+		for (ApiErrors es : errors) {
+			for(ApiError e : es.value()) {
+				if(!returns.contains(e)) returns.add(e);
+			}
+		}
+		
+		// translate shit
+		List<ApiReturnStatus> out = new ArrayList<>();
+		for(ApiError ah : returns) {
+			ApiReturnStatus rs = new ApiReturnStatus();
+			rs.setName(ah.value().name());
+			rs.setStatus(ah.value().value());
+			rs.setDescription(ah.description());
+			out.add(rs);
+		}
+		
+		return out;
+	}
+	
+	public static String getDescription(ApiDescription ad) {
+		if(ad==null) {
+		} else if(!StringUtils.isEmpty(ad.value())) {
+			return ad.value();
+		} else if(!StringUtils.isEmpty(ad.file())) {
+			Resource r = new ClassPathResource(ad.file());
 			try {
-				if(ti.isCollection()) {
-					ArrayList<Object> e = new ArrayList<>();
-					e.add(createObject(ti.getType(),visited));
-					return e;
-				} else {
-					Map<String,Object> out = new HashMap<>();
-					BeanInfo info = Introspector.getBeanInfo(in);
-					for(PropertyDescriptor pd : info.getPropertyDescriptors()) {
-
-						log.info("create object: "+in+"."+pd.getDisplayName());
-						
-						if(pd.getReadMethod()==null) {
-						} else if (pd.getReadMethod().getDeclaringClass().getPackage().getName().equals("java.lang")) { 
-						} else {
-
-							log.info("create object: "+in+"."+pd.getDisplayName()+" --- GENERIC "+pd.getReadMethod().getGenericReturnType());
-							log.info("create object: "+in+"."+pd.getDisplayName()+" --- RETURN  "+pd.getReadMethod().getReturnType());
-							
-							TypeInfo ti2 = getTypeInfoInternal(pd.getReadMethod().getGenericReturnType(), null);
-							
-							System.err.println(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(ti2));
-							
-							Object o = null;
-							
-							if(ti2.isCollection() || ti2.isArray()) {
-								ArrayList<Object> e = new ArrayList<>();
-								e.add(createObject(ti2.getType(),visited));
-								o = e;
-							} else {
-								o = createObject(ti2.getType(), visited);
-							}
-							out.put(pd.getName(), o);
-						}
-					}
-					return out;
-				}
-				
-
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				IOUtils.copy(r.getInputStream(), baos);
+				return new String(baos.toByteArray(),"utf-8");
 			} catch (Exception e) {
-				e.printStackTrace();
-				return "[UNRESOLVABLE TYPE]";
-				//return e.getMessage();
 			}
 		}
+		return null;
 	}
-	
-	private static Object getObject(Class<?> in) throws ClassNotFoundException, LinkageError {
-		return createObject(in, new ArrayList<>());
-	}
-	 **/
 	
 	
 	public static Object getObject(TypeInfo info) throws ClassNotFoundException, LinkageError {
 
-		log.info(info.getType()+" // "+info.isArray()+"/"+info.isCollection());
+		log.debug(info.getType()+" // "+info.isArray()+"/"+info.isCollection());
 		
 		Object out = new Object();
 		
@@ -275,7 +290,7 @@ public class Introspection2 {
 			visited.add(type);
 		}
 		
-		log.info("get type info (internal): "+type);
+		log.debug("get type info (internal): "+type);
 		
 		List<TypeInfo> typeParameters = new ArrayList<>();
 		
@@ -349,7 +364,7 @@ public class Introspection2 {
 	 		return null;
 	 	}
 
-		log.info("get type info (internal): raw class is "+rawClass);
+		log.debug("get type info (internal): raw class is "+rawClass);
 	 	
 
 		if(rawClass.isPrimitive()) {
@@ -401,20 +416,18 @@ public class Introspection2 {
 	public static TypeInfo getTypeInfo(Type type) throws ClassNotFoundException, LinkageError {
 		TypeInfo out = getTypeInfoInternal(type);
 
-		log.info(" ================================================================= ");
+		log.debug(" ================================================================= ");
 		
 		out.setObject(getObject(out));
 		return out;
 	}
 	
 	
-	public static ParameterInfo getParameterInfo(Parameter p, String name, ParameterInfo pi) throws ClassNotFoundException, LinkageError {
+	public static ParameterInfo getParameterInfo(Method m, Parameter p, String name) throws ClassNotFoundException, LinkageError {
 
 		if(p.isAnnotationPresent(ApiIgnore.class)) return null;
 		
-		if(pi == null) {
-			pi = new ParameterInfo();
-		}
+		ParameterInfo pi = new ParameterInfo();
 
 		Class<?> type = p.getType();
 		
@@ -425,29 +438,38 @@ public class Introspection2 {
 		pi.setSecret(p.getAnnotation(ApiSecret.class)!=null);
 		
 		RequestBody bodyAnnotation = p.getAnnotation(RequestBody.class); 
-		if(bodyAnnotation!=null && bodyAnnotation.required()) {
-			pi.setRequired(true);
-			pi.setParamType(ParamType.BODY);
-		}
-		
 		RequestParam paramAnnotation =  p.getAnnotation(RequestParam.class); 
-		if(paramAnnotation!=null && paramAnnotation.required()) {
-			pi.setRequired(true);
+		PathVariable pathVarAnnotation =  p.getAnnotation(PathVariable.class); 
+
+		if(bodyAnnotation!=null) {
+			pi.setRequired(bodyAnnotation.required());
+			pi.setParamType(ParamType.BODY);
+		} else if (paramAnnotation!=null) {
+			pi.setRequired(paramAnnotation.required());
 			pi.setParamType(ParamType.REQUEST);
 			if(!StringUtils.isEmpty(paramAnnotation.name())) {
 				paramName = paramAnnotation.name();
 			}
+			if(!paramAnnotation.defaultValue().equals(ValueConstants.DEFAULT_NONE)) {
+				pi.setDefaultValue(paramAnnotation.defaultValue());
+			}
+			
 		
 			if(paramAnnotation.name()!=null) {
 				pi.setName(paramAnnotation.name());
 			}
-		}
-		
-		PathVariable pathVarAnnotation =  p.getAnnotation(PathVariable.class); 
-		if(pathVarAnnotation!=null) {
+		} else if (pathVarAnnotation!=null) {
 			pi.setParamType(ParamType.PATH);
 			pi.setRequired(true);
+		} else {
+			return null;
 		}
+		
+		for(ApiDescription ad : collectAnnotations(null, p, ApiDescription.class)) {
+			pi.addDescription(getDescription(ad));
+		}
+		
+		if(p.isAnnotationPresent(Deprecated.class)) pi.setDeprecated(true);
 		
 		pi.setName(paramName);
 		
@@ -469,25 +491,17 @@ public class Introspection2 {
 		Parameter[] params = m.getParameters();
 		for(int i=0; i < params.length;i++) {
 			Parameter p = params[i];
-			
-			if(
-				(p.getAnnotation(PathVariable.class) == null) &&
-				(p.getAnnotation(RequestParam.class) == null) &&
-				(p.getAnnotation(RequestBody.class) == null)) {
-				continue;
-			}
-				
-			
-			ParameterInfo pi = Introspection2.getParameterInfo(p,paramNames[i],null);
+			ParameterInfo pi = Introspection.getParameterInfo(m, p,paramNames[i]);
 			if(pi==null) continue;
 			out.add(pi);
 		}
+
+		
 		
 		return out;
 
 	}
-	
-	
+
 	public static MethodInfo getMethodInfo(Class<?> c, Method m) throws ClassNotFoundException, LinkageError {
 		
 		if(m.isAnnotationPresent(ApiIgnore.class)) return null;
@@ -503,8 +517,18 @@ public class Introspection2 {
 		MethodInfo mi = new MethodInfo();
 		mi.setParams(getParameterInfos(m));
 		mi.setClassName(c.getCanonicalName());
-		
 		mi.setReturnType(getTypeInfo(m.getGenericReturnType()));
+		
+		for(ApiDescription ad : collectAnnotations(m, ApiDescription.class)) {
+			mi.addDescription(getDescription(ad));
+		}
+
+		List<ApiErrors> es = collectAnnotations(m, ApiErrors.class); 
+		List<ApiReturnStatus> s = getApiReturn(es);
+		mi.setReturnStatus(s);
+
+		mi.setHeaderInfos(getHeaderInfo(collectAnnotations(m,ApiHeaders.class)));
+
 		return mi;
 	}
 

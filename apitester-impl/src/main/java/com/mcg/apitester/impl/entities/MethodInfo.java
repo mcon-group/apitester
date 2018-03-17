@@ -66,15 +66,24 @@ public class MethodInfo {
 	}
 
 	public void setReturnStatus(List<ApiReturnStatus> returnStatus) {
-		this.returnStatus = returnStatus;
+		this.returnStatus.clear();
+		if(returnStatus!=null) this.returnStatus.addAll(returnStatus);
 	}
 
+	public void addDescription(String d) {
+		if(d==null) return;
+		this.descriptions.add(d);
+	}
+	
 	public List<String> getDescriptions() {
 		return descriptions;
 	}
 
 	public void setDescriptions(List<String> descriptions) {
-		this.descriptions = descriptions;
+		this.descriptions.clear();
+		if(descriptions!=null) {
+			this.descriptions.addAll(descriptions);
+		}
 	}
 
 	public List<HeaderInfo> getHeaderInfos() {
