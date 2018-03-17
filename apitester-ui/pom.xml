@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.mcg.apitester</groupId>
 		<artifactId>apitester</artifactId>
-		<version>0.0.24-SNAPSHOT</version>
+		<version>0.0.25-SNAPSHOT</version>
 	</parent>
 	<artifactId>apitester-ui</artifactId>
 	<dependencies>
@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>com.mcg.apitester</groupId>
 			<artifactId>apitester-impl</artifactId>
-			<version>0.0.24-SNAPSHOT</version>
+			<version>0.0.25-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
