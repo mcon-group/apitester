@@ -200,7 +200,8 @@ public class Introspection {
 	
 	public static Object getObject(TypeInfo info) throws ClassNotFoundException, LinkageError {
 
-		log.debug(info.getType()+" // "+info.isArray()+"/"+info.isCollection());
+		log.debug(" getObject: "+info);
+		log.debug(" getObject: "+info.getType());
 		
 		Object out = new Object();
 		
@@ -261,7 +262,7 @@ public class Introspection {
 	public static Method findMethod(Class<?> clazz, String name, Class<?>[] paramClasses) {
 		for(Class<?> c : findSuperclassCandidates(clazz, false)) {
 			try {
-				log.info("checking class: "+c.getCanonicalName()+", "+name);
+				log.debug("checking class: "+c.getCanonicalName()+", "+name);
 				try {
 					Method m = c.getMethod(name, paramClasses);
 					if(m!=null) {
@@ -283,13 +284,22 @@ public class Introspection {
 	
 	private static TypeInfo getTypeInfoInternal(Type type, List<Type> v, Map<String,Type> mappedGenerics) throws ClassNotFoundException, LinkageError {
 
-		TypeInfo ti = new TypeInfo();
+		if(type == null) {
+			throw new RuntimeException("input type should not be null");
+		} 
 
+		TypeInfo ti = new TypeInfo();
+		
 		if(mappedGenerics.containsKey(type.getTypeName())) {
 			type = mappedGenerics.get(type.getTypeName());
 		}
 		
+		log.warn("typeInfo: "+type.getTypeName());
+		
 		if(v.contains(type)) {
+			
+			log.warn("loop: "+type.getTypeName());
+			
 			ti.setType(getName(type));
 			ti.setTypeShort(getName(type));
 			ti.setLoop(true);
@@ -298,16 +308,21 @@ public class Introspection {
 		
 		List<Type> visited = new ArrayList<>(v);
 		
-		if(type == null) {
-			throw new RuntimeException("input type should not be null");
-		} else if(type.getTypeName().equals(arrayClass.getName())) {
+		
+		Type y = type;
+		if(y instanceof ParameterizedType) {
+			y = ((ParameterizedType)y).getRawType();
+		}
+		
+		if(y.getTypeName().equals(arrayClass.getName())) {
 			// 
-		} else if(type.getTypeName().equals(collClass.getName())) {
+		} else if(y.getTypeName().equals(collClass.getName())) {
 			//
-		} else if(type.getTypeName().equals(mapClass.getName())) {
+		} else if(y.getTypeName().equals(mapClass.getName())) {
 			//
 		} else {
-			visited.add(type);
+			log.warn("add: "+y.getTypeName()+" / "+y.getClass());
+			visited.add(y);
 		}
 		
 		log.debug("get type info (internal): "+type);
@@ -318,7 +333,7 @@ public class Introspection {
 		
 	 	if (type instanceof ParameterizedType) {
 	 		
-			//log.info("get type info (internal): "+type+" -- parameterized type");
+			//log.debug("get type info (internal): "+type+" -- parameterized type");
 			ParameterizedType pt = (ParameterizedType)type;
 			
 			log.debug(pt.getRawType());
@@ -358,7 +373,7 @@ public class Introspection {
 			}
 
 	 	} else if (type instanceof Class) {
-			//log.info("get type info (internal): "+type+" -- class");
+			//log.debug("get type info (internal): "+type+" -- class");
 
 	 		rawClass = (Class<?>) type;
 		
@@ -436,7 +451,7 @@ public class Introspection {
 	public static TypeInfo getTypeInfo(Type type, Map<String,Type> mappedGenerics) throws ClassNotFoundException, LinkageError {
 		TypeInfo out = getTypeInfoInternal(type,mappedGenerics);
 		
-		log.debug(" ================================================================= ");
+		log.debug(" ================================================================= "+out);
 		
 		out.setObject(getObject(out));
 		return out;
@@ -445,6 +460,8 @@ public class Introspection {
 	
 	public static ParameterInfo getParameterInfo(Method m, Parameter p, String name, Map<String,Type> mappedGenerics) throws ClassNotFoundException, LinkageError {
 
+		log.debug("parameter info: "+m.getDeclaringClass().getSimpleName()+"."+m.getName()+" : "+name+" / "+p.getType().getName());
+		
 		if(p.isAnnotationPresent(ApiIgnore.class)) return null;
 		
 		ParameterInfo pi = new ParameterInfo();
@@ -496,7 +513,7 @@ public class Introspection {
 
 	public static List<ParameterInfo> getParameterInfos(Method m, Map<String,Type> mappedGenerics) throws ClassNotFoundException, LinkageError {
 		
-		log.debug("paramater info: "+m.getDeclaringClass().getSimpleName()+"."+m.getName());
+		log.debug("parameter info: "+m.getDeclaringClass().getSimpleName()+"."+m.getName());
 		
 
 		List<ParameterInfo> out = new ArrayList<>();
@@ -509,9 +526,19 @@ public class Introspection {
 		Parameter[] params = m.getParameters();
 		for(int i=0; i < params.length;i++) {
 			Parameter p = params[i];
+			
+			if(p.getAnnotation(RequestBody.class)!=null) {
+			} else if(p.getAnnotation(RequestParam.class)!=null) {
+			} else if(p.getAnnotation(PathVariable.class)!=null) {
+			} else {
+				continue;
+			}
+ 			
+			
 			ParameterInfo pi = Introspection.getParameterInfo(m, p, paramNames[i], mappedGenerics);
-			if(pi==null) continue;
-			out.add(pi);
+			if(pi!=null) {
+				out.add(pi);
+			}
 		}
 
 		
@@ -526,7 +553,7 @@ public class Introspection {
 
 		if(c.getPackage().getName().startsWith("org.springframework")) return null;
 		
-		log.info("get method info: "+c.getName()+"."+m.getName()+": --- "+c.getClass());
+		log.debug("get method info: "+c.getName()+"."+m.getName()+": --- "+c.getClass());
 
 		for(Class<?> cp : findSuperclassCandidates(c, true)) {
 			if(cp.isAnnotationPresent(ApiIgnore.class)) return null;
