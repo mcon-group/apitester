@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ValueConstants;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcg.apitester.api.annotations.ApiDescription;
 import com.mcg.apitester.api.annotations.ApiError;
 import com.mcg.apitester.api.annotations.ApiErrors;
@@ -212,8 +213,10 @@ public class Introspection {
 		} else if (info.getType().equals("java.util.Date")) {
 			out = new Date();
 		} else if (info.isArray() || info.isCollection()) {
+			log.debug(" >>> recursive: collection ");
 			out = Collections.singletonList(getObject(info.getTypeParameters().get(0)));
 		} else if (info.isMap()) {
+			log.debug(" >>> recursive: map ");
 			Map<Object,Object> m = new HashMap<>();
 			m.put(getObject(info.getTypeParameters().get(0)), getObject(info.getTypeParameters().get(1)));
 			out = m;
@@ -240,6 +243,7 @@ public class Introspection {
 		} else {
 			Map<String,Object> m = new HashMap<>();
 			for(FieldInfo fi : info.getFields()) {
+				log.debug(" >>> recursive: field '"+fi.getName()+"'");
 				m.put(fi.getName(),getObject(fi.getTypeInfo()));
 			}
 			out = m;
@@ -422,6 +426,8 @@ public class Introspection {
 				
 				if(pd.getReadMethod()==null) {
 				} else if(pd.getReadMethod().getDeclaringClass().getPackage().getName().startsWith("java.lang")) {
+				} else if (pd.getReadMethod().getAnnotation(JsonIgnore.class)!=null) {
+				} else if (pd.getWriteMethod().getAnnotation(JsonIgnore.class)!=null) {
 				} else {
 					FieldInfo fi = new FieldInfo();
 					fi.setName(pd.getName());
