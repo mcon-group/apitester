@@ -6,7 +6,7 @@ realpath() {
   LINK=$(readlink "$(basename "$1")")
   while [ "$LINK" ]; do
     cd "$(dirname "$LINK")"
-    LINK=$(readlink "$(basename "$1")")
+    LINK=$(readlink "$(basename " $1")")
   done
   REALPATH="$PWD/$(basename "$1")"
   cd "$OURPWD"
@@ -19,7 +19,7 @@ local_maven=${HOME}/maven-mcon
 
 if [ ! -d ${local_maven} ]; then
 	mkdirs -p ${local_maven}
-	git clone git@github.com:autonubil/maven.git ${local_maven}
+	git clone git@github.com:mcon-group/maven.git ${local_maven}
 fi
 
 cd ${local_maven}
