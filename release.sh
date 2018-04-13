@@ -18,7 +18,7 @@ project_dir=`realpath $0`
 local_maven=${HOME}/maven-mcon
 
 if [ ! -d ${local_maven} ]; then
-	mkdirs -p ${local_maven}
+	mkdir -p ${local_maven}
 	git clone git@github.com:mcon-group/maven.git ${local_maven}
 fi
 
