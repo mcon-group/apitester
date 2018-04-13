@@ -1,6 +1,6 @@
 angular.module('apitester').directive(
   'endpoint',
-  function($http, Restangular) {
+  function($http, $interval, Restangular) {
     return {
       transclude: true,
       scope: {
@@ -17,6 +17,7 @@ angular.module('apitester').directive(
         scope.get = get;
         scope.options = options;
         scope.getApiPath = getApiPath;
+        scope.getDuration = getDuration;
         scope.getRequestBody = getRequestBody;
         scope.getRequestParams = getRequestParams;
         scope.post = post;
@@ -24,6 +25,8 @@ angular.module('apitester').directive(
         scope.remove = remove;
         scope.resetResponse = resetResponse;
         scope.sendRequest = sendRequest;
+        scope.startTimer = startTimer;
+        scope.stopTimer = stopTimer;
         scope.treatErrorResponse = treatErrorResponse;
         scope.treatResponse = treatResponse;
         scope.treatSuccessResponse = treatSuccessResponse;
@@ -42,12 +45,12 @@ angular.module('apitester').directive(
           scope.details = false;
 
           var params = scope.endpoint.methodInfo.params;
-          
+
           scope.pathParams = _.filter(params, function(param) {
             return param.paramType === 'PATH';
           });
           scope.headerParams = _.filter(params, function(param) {
-        	  return param.paramType === 'HEADER';
+            return param.paramType === 'HEADER';
           });
           scope.requestParams = _.filter(params, function(param) {
             return param.paramType === 'REQUEST';
@@ -58,7 +61,7 @@ angular.module('apitester').directive(
           scope.fileParam = _.find(params, function(param) {
             return param.file;
           });
-          
+
           scope.response = scope.endpoint.methodInfo.returnType;
           scope.response.paramType = 'RETURN';
         }
@@ -82,9 +85,9 @@ angular.module('apitester').directive(
          * @return {undefined}
          */
         function options(apiPath, requestParams) {
-        	  return Restangular.one(apiPath).options(requestParams);
+          return Restangular.one(apiPath).options(requestParams);
         }
-        
+
         /**
          * @name getApiPath
          * @description Returns the API path having Path Parameters set, if
@@ -104,6 +107,15 @@ angular.module('apitester').directive(
           });
 
           return apiPath;
+        }
+
+        /**
+         * @name getDuration
+         * @description get the duration of the API call
+         * @return {string}
+         */
+        function getDuration() {
+          return ((new Date()) - scope.startTime) + '';
         }
 
         /**
@@ -230,8 +242,9 @@ angular.module('apitester').directive(
          * @return {undefined}
          */
         function resetResponse() {
-          scope.response.value = '';
+          scope.response.headers = null;
           scope.response.status = '';
+          scope.response.value = '';
         }
 
         /**
@@ -265,6 +278,7 @@ angular.module('apitester').directive(
           }
 
           var request;
+          scope.startTimer();
 
           switch (scope.endpoint.method) {
             case 'DELETE':
@@ -279,20 +293,46 @@ angular.module('apitester').directive(
                 hasFileParam);
               break;
             case 'OPTIONS':
-            	  console.log("performing options ... ");
+              console.log("performing options ... ");
               request = scope.options(apiPath, requestParams);
-            	  break;
+              break;
             default:
               request = scope.get(apiPath, requestParams);
               break;
           }
 
           console.log("request: ",request);
-          
+
           request.then(
             scope.treatSuccessResponse,
             scope.treatErrorResponse
           );
+        }
+
+        /**
+         * @name startTimer
+         * @description start the time counter for the "Send" button
+         * @return {undefined}
+         */
+        function startTimer() {
+          scope.startTime = +(new Date());
+          scope.timerEnabled = true;
+          scope.timer = $interval(function() {
+            if (scope.timerEnabled) {
+              scope.sendButtonTimer = '(' + scope.getDuration() + ')';
+            }
+          }, 10);
+        }
+
+        /**
+         * @name stopTimer
+         * @description stop the time counter for the "Send" button
+         * @return {undefined}
+         */
+        function stopTimer() {
+          clearTimeout(scope.timer);
+          scope.sendButtonTimer = '(' + scope.getDuration() + ')';
+          scope.timerEnabled = false;
         }
 
         /**
@@ -302,6 +342,7 @@ angular.module('apitester').directive(
          * @return {undefined}
          */
         function treatErrorResponse(response) {
+          scope.stopTimer();
           scope.treatResponse(response);
         }
 
@@ -313,20 +354,23 @@ angular.module('apitester').directive(
          */
         function treatResponse(response) {
           var data = response.data;
-          
+
           console.log("data: ",data);
           console.log("response: ",response);
-          
+
           var hns = _.keys(response.headers());
-          
+
           var headers = [];
-          
+
           _.each(hns, function(hn) {
-        	  	headers.push({'name':hn, 'value' : response.headers(hn)})
+            headers.push({
+              name: hn,
+              value: response.headers(hn),
+            });
           });
-          
+
           scope.response = _.extend(scope.response, {
-        	    headers : headers,
+            headers: headers,
             apiResponse: response,
             message: data ? (data.errorMessage || data.message) : '',
             status: response.status,
@@ -343,6 +387,7 @@ angular.module('apitester').directive(
          * @return {undefined}
          */
         function treatSuccessResponse(response) {
+          scope.stopTimer();
           scope.treatResponse(response);
         }
       },
