@@ -427,7 +427,7 @@ public class Introspection {
 				if(pd.getReadMethod()==null) {
 				} else if(pd.getReadMethod().getDeclaringClass().getPackage().getName().startsWith("java.lang")) {
 				} else if (pd.getReadMethod().getAnnotation(JsonIgnore.class)!=null) {
-				} else if (pd.getWriteMethod().getAnnotation(JsonIgnore.class)!=null) {
+				} else if (pd.getWriteMethod() != null && pd.getWriteMethod().getAnnotation(JsonIgnore.class)!=null) {
 				} else {
 					FieldInfo fi = new FieldInfo();
 					fi.setName(pd.getName());
