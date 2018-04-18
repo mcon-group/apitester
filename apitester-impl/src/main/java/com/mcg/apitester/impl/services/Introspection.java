@@ -202,7 +202,11 @@ public class Introspection {
 	public static Object getObject(TypeInfo info) throws ClassNotFoundException, LinkageError {
 
 		log.debug(" getObject: "+info);
-		log.debug(" getObject: "+info.getType());
+
+		if(info==null) {
+			log.warn("type info is null!");
+			return null;
+		}
 		
 		Object out = new Object();
 		
@@ -298,11 +302,11 @@ public class Introspection {
 			type = mappedGenerics.get(type.getTypeName());
 		}
 		
-		log.warn("typeInfo: "+type.getTypeName());
+		log.debug("typeInfo: "+type.getTypeName());
 		
 		if(v.contains(type)) {
 			
-			log.warn("loop: "+type.getTypeName());
+			log.warn("object reference loop: "+type.getTypeName());
 			
 			ti.setType(getName(type));
 			ti.setTypeShort(getName(type));
@@ -325,7 +329,7 @@ public class Introspection {
 		} else if(y.getTypeName().equals(mapClass.getName())) {
 			//
 		} else {
-			log.warn("add: "+y.getTypeName()+" / "+y.getClass());
+			log.debug("add: "+y.getTypeName()+" / "+y.getClass());
 			visited.add(y);
 		}
 		
@@ -559,7 +563,7 @@ public class Introspection {
 
 		if(c.getPackage().getName().startsWith("org.springframework")) return null;
 		
-		log.debug("get method info: "+c.getName()+"."+m.getName()+": --- "+c.getClass());
+		log.debug("get method info: "+c.getName()+"."+m.getName()+": --- "+c);
 
 		for(Class<?> cp : findSuperclassCandidates(c, true)) {
 			if(cp.isAnnotationPresent(ApiIgnore.class)) return null;
