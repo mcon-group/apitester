@@ -2,8 +2,6 @@ package com.mcg.apitester.example.controllers;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +20,7 @@ public class CountryControllerImpl {
 	}
 	
 	@RequestMapping(value="",method=RequestMethod.POST)
-	public Country create(@Valid @RequestBody Country country) {
+	public Country create(@RequestBody Country country) {
 		return null;
 	}
 	
