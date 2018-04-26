@@ -1,2 +1,1 @@
 server.port: ${PORT:9090}
-logging.level.com.mcg.apitester: DEBUG
