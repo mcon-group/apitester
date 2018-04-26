@@ -1,6 +1,7 @@
 package com.mcg.apitester.example.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,8 @@ public class OneController extends BaseController {
 	public List<OneEntity> list(
 			@RequestParam String x, 
 			@RequestParam  String y, 
-			@RequestParam  AnEnumeration enumeration, 
+			@RequestParam  AnEnumeration enumeration,
+			@RequestParam(required=false) Date fromDate,
 			@RequestParam @ApiDescription("Pagination: The offset") int offset, 
 			@RequestParam @ApiDescription("Pagination: The maximum number of entries per page") int max, 
 			@RequestParam @ApiDescription("The field to order by. One of 'name', 'date' or 'size'") String[] orderBy) {
