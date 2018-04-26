@@ -68,7 +68,7 @@
   </div>
 
   <div ng-if="!param.file">
-    <div ng-if="param.primitive">
+    <div ng-if="shouldUseInput()">
       <!-- Parameter appears at most 1 time, an input for string, number, true/false boolean strings -->
       <input
         class="form-control"
@@ -88,7 +88,7 @@
       >
     </div>
 
-    <div ng-if="!param.primitive && !param.values.length">
+    <div ng-if="shouldUseTextarea()">
       <!-- Parameter appears at most 1 time, an input for stringified object -->
       <textarea
       	rows="20"
@@ -100,7 +100,7 @@
       ></textarea>
     </div>
 
-    <div ng-if="param.values.length">
+    <div ng-if="shouldUseSelect()">
       <!-- Parameter appears at most 1 time, only a handful of values (> 1) should be used -->
       <select
         class="form-control"
