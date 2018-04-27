@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class ThreeController {
 
 	@RequestMapping(value="/three/wait",method=RequestMethod.GET)
-	public boolean list(@RequestParam(defaultValue="2000") int wait, @RequestParam(defaultValue="false") boolean error) throws InterruptedException {
+	public boolean list(
+			@RequestParam(required=false, defaultValue="2000") int wait,
+			@RequestParam(required=false, defaultValue="false") boolean error
+	) throws InterruptedException {
 		Thread.currentThread().sleep(wait);
 		if(error) {
 			throw new RuntimeException();

@@ -6,5 +6,33 @@ angular.module(
     scope: {
       param: '=',
     },
+    link: function(scope) {
+      scope.getDisplayedType = getDisplayedType;
+
+      /**
+       * @name getDisplayedType
+       * @description returns the name of the type that is to be displayed
+       * @return {string}
+       */
+      function getDisplayedType() {
+        var obj = scope.param;
+        try {
+          // RETURN
+          if (obj.typeParameters.length) {
+            obj = obj.typeParameters[0];
+          }
+        } catch (e) {
+          try {
+            if (obj.typeInfo.typeParameters.length) {
+              obj = obj.typeInfo.typeParameters[0];
+            }
+          } catch (e) {
+            //
+          }
+        }
+
+        return obj.typeShort;
+      }
+    },
   };
 });

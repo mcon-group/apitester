@@ -21,7 +21,7 @@
               ng-if="param.required"
             > *</span>
             <br>
-            <small>{{param.typeShort}}<span ng-if="param.collection">[]</span></small>
+            <small>{{getDisplayedType()}}<span ng-if="param.typeInfo.array">[]</span></small>
           </div>
           <div class="col-sm-8">
             <div ng-if="param.descriptions.length">
@@ -34,8 +34,9 @@
           </div>
         </div>
       </div>
+
       <div ng-if="param.paramType === 'RETURN'">
-        {{param.typeShort}}<span ng-if="param.collection">[]</span>
+        {{getDisplayedType()}}<span ng-if="param.collection">[]</span>
       </div>
     </div>
     <div class="col-md-6">
@@ -50,7 +51,7 @@
   <div ng-if="!param.primitive && param.paramType !== 'REQUEST' && !param.file">
     <div class="row">
       <div class="col-md-6">
-        {{param.typeShort}}<span ng-if="param.collection">[]</span><br>
+        {{getDisplayedType()}}<span ng-if="param.collection">[]</span><br>
         <br>
       </div>
       <div class="col-md-6">
