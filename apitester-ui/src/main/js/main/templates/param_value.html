@@ -24,8 +24,13 @@
             <small>{{param.typeShort}}<span ng-if="param.collection">[]</span></small>
           </div>
           <div class="col-sm-8">
-            <div ng-if="param.description" markdown="param.description"></div>
-            <div ng-if="param.values">{{param.values | json}}</div>
+            <div ng-if="param.descriptions.length">
+              <div ng-repeat="description in param.descriptions track by $index">
+                <p markdown="description">
+                </p>
+              </div>
+            </div>
+            <div ng-if="param.values">Values: {{param.values | json}}</div>
           </div>
         </div>
       </div>

@@ -31,9 +31,9 @@ public class OneController extends BaseController {
 	@RequestMapping(value="/one/entities",method=RequestMethod.GET)
 	public List<OneEntity> list(
 			@RequestParam String x, 
-			@RequestParam  String y, 
-			@RequestParam  AnEnumeration enumeration,
-			@RequestParam(required=false) Date fromDate,
+			@RequestParam String y, 
+			@RequestParam @ApiDescription("Example for description + enumeration values") AnEnumeration enumeration,
+			@RequestParam(required=false) @ApiDescription("Time filter: Items created after fromDate, of type timestamp") Date fromDate,
 			@RequestParam @ApiDescription("Pagination: The offset") int offset, 
 			@RequestParam @ApiDescription("Pagination: The maximum number of entries per page") int max, 
 			@RequestParam @ApiDescription("The field to order by. One of 'name', 'date' or 'size'") String[] orderBy) {
