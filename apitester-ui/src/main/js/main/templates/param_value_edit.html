@@ -93,7 +93,11 @@
       <textarea
       	rows="20"
         class="form-control"
-        style="font-family: Menlo,Monaco,Consolas,'Courier New',monospace; font-size: 13px;"
+        style="
+          font-family: Menlo,Monaco,Consolas,'Courier New',monospace;
+          font-size: 13px;
+          min-height: 70px;
+        "
         ng-blur="updateBody()"
         ng-model="param.value"
         ng-required="param.required"

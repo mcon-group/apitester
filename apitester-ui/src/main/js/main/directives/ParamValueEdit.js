@@ -11,6 +11,7 @@ angular.module(
       var $textarea;
 
       scope.addValue = addValue;
+      scope.isReturnParam = isReturnParam;
       scope.removeValue = removeValue;
       scope.shouldUseInput = shouldUseInput;
       scope.shouldUseSelect = shouldUseSelect;
@@ -73,6 +74,15 @@ angular.module(
       }
 
       /**
+       * @name isReturnParam
+       * @description check whether the parameter is a 'RETURN' parameter
+       * @return {boolean}
+       */
+      function isReturnParam() {
+        return scope.param.paramType === 'RETURN';
+      }
+
+      /**
        * @name removeValue
        * @description remove a value from collectionValues by index
        * @param {integer} index - index of the value in the collectionValues
@@ -88,7 +98,10 @@ angular.module(
        * @return {boolean}
        */
       function shouldUseInput() {
-        return scope.param.primitive || scope.param.typeShort === 'Date';
+        return (
+          !scope.isReturnParam() &&
+          (scope.param.primitive || scope.param.typeShort === 'Date')
+        );
       }
 
       /**
@@ -98,7 +111,7 @@ angular.module(
        */
       function shouldUseSelect() {
         try {
-          return scope.param.values.length;
+          return !scope.isReturnParam() && scope.param.values.length;
         } catch (e) {
           return false;
         }
