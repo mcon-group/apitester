@@ -14,6 +14,7 @@ public class TypeInfo {
 	private boolean enumeration;
 	private String type;
 	private String typeShort;
+	private List<String> contentTypes;
 	private List<TypeInfo> typeParameters = new ArrayList<>();
 	private List<FieldInfo> fields = new ArrayList<>();
 	private Object[] values;
@@ -121,6 +122,14 @@ public class TypeInfo {
 
 	public void setValues(Object[] values) {
 		this.values = values;
+	}
+
+	public List<String> getContentTypes() {
+		return contentTypes;
+	}
+
+	public void setContentTypes(List<String> contentTypes) {
+		this.contentTypes = contentTypes;
 	}
 
 
