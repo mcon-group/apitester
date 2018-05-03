@@ -1,6 +1,6 @@
 angular.module('apitester').directive(
   'endpoint',
-  function($http, $interval, Restangular) {
+  function($http, $interval, $rootScope, Restangular) {
     return {
       transclude: true,
       scope: {
@@ -14,16 +14,23 @@ angular.module('apitester').directive(
           scope.$broadcast('methodSelected', scope.endpoint);
         };
 
+        scope.sendOptions = {
+          default: 'Send',
+          newTab: 'Send (new tab)',
+        };
+
         scope.get = get;
-        scope.options = options;
         scope.getApiPath = getApiPath;
         scope.getDuration = getDuration;
         scope.getRequestBody = getRequestBody;
         scope.getRequestParams = getRequestParams;
+        scope.initSendText = initSendText;
+        scope.options = options;
         scope.post = post;
         scope.put = put;
         scope.remove = remove;
         scope.resetResponse = resetResponse;
+        scope.selectOption = selectOption;
         scope.sendRequest = sendRequest;
         scope.startTimer = startTimer;
         scope.stopTimer = stopTimer;
@@ -64,6 +71,8 @@ angular.module('apitester').directive(
 
           scope.response = scope.endpoint.methodInfo.returnType;
           scope.response.paramType = 'RETURN';
+
+          scope.initSendText();
         }
 
         /**
@@ -78,14 +87,24 @@ angular.module('apitester').directive(
         }
 
         /**
-         * @name options
-         * @description Makes a OPTIONS request with Restangular
-         * @param {string} apiPath - API path used for Restangular.one()
-         * @param {object} requestParams - API request parameters
+         * @name initSendText
+         * @description initialize text of sendText
          * @return {undefined}
          */
-        function options(apiPath, requestParams) {
-          return Restangular.one(apiPath).options(requestParams);
+        function initSendText() {
+          var key = 'default';
+          try {
+            if (
+              scope.endpoint.method === 'GET' &&
+              scope.endpoint.methodInfo.returnType.contentTypes.length
+            ) {
+              key = 'newTab';
+            }
+          } catch (e) {
+            //
+          }
+
+          selectOption(key);
         }
 
         /**
@@ -162,6 +181,17 @@ angular.module('apitester').directive(
             .object()
             .value()
           ;
+        }
+
+        /**
+         * @name options
+         * @description Makes a OPTIONS request with Restangular
+         * @param {string} apiPath - API path used for Restangular.one()
+         * @param {object} requestParams - API request parameters
+         * @return {undefined}
+         */
+        function options(apiPath, requestParams) {
+          return Restangular.one(apiPath).options(requestParams);
         }
 
         /**
@@ -248,6 +278,16 @@ angular.module('apitester').directive(
         }
 
         /**
+         * @name selectOption
+         * @description select option for the send button
+         * @param {string} key - keys from scope.sendOptions
+         */
+        function selectOption(key) {
+          scope.selectedOptionKey = key;
+          scope.sendText = scope.sendOptions[key];
+        }
+
+        /**
          * @name sendRequest
          * @description Sends the API request, depending on request method
          * @return {undefined}
@@ -280,33 +320,40 @@ angular.module('apitester').directive(
           var request;
           scope.startTimer();
 
-          switch (scope.endpoint.method) {
-            case 'DELETE':
-              request = scope.remove(apiPath, requestParams);
-              break;
-            case 'POST':
-              request = scope.post(apiPath, requestParams, requestBody,
-                hasFileParam);
-              break;
-            case 'PUT':
-              request = scope.put(apiPath, requestParams, requestBody,
-                hasFileParam);
-              break;
-            case 'OPTIONS':
-              console.log("performing options ... ");
-              request = scope.options(apiPath, requestParams);
-              break;
-            default:
-              request = scope.get(apiPath, requestParams);
-              break;
+          $rootScope.linkInNewTab = scope.selectedOptionKey === 'newTab';
+          if ($rootScope.linkInNewTab) {
+            request = scope.get(apiPath, requestParams);
+          } else {
+            switch (scope.endpoint.method) {
+              case 'DELETE':
+                request = scope.remove(apiPath, requestParams);
+                break;
+              case 'POST':
+                request = scope.post(apiPath, requestParams, requestBody,
+                  hasFileParam);
+                break;
+              case 'PUT':
+                request = scope.put(apiPath, requestParams, requestBody,
+                  hasFileParam);
+                break;
+              case 'OPTIONS':
+                console.log("performing options ... ");
+                request = scope.options(apiPath, requestParams);
+                break;
+              default:
+                request = scope.get(apiPath, requestParams);
+                break;
+            }
           }
 
-          console.log("request: ",request);
-
-          request.then(
-            scope.treatSuccessResponse,
-            scope.treatErrorResponse
-          );
+          request
+            .then(
+              scope.treatSuccessResponse,
+              scope.treatErrorResponse
+            ).finally(function() {
+              scope.loading = false;
+            })
+          ;
         }
 
         /**
@@ -376,8 +423,6 @@ angular.module('apitester').directive(
             status: response.status,
             value: JSON.stringify(data, null, 2),
           });
-
-          scope.loading = false;
         }
 
         /**

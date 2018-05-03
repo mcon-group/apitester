@@ -70,13 +70,32 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<button
-			class="btn btn-primary pull-right"
-			type="submit"
-			ng-disabled="loading"
-		>
-			Send {{sendButtonTimer}}
-		</button>
+		<div class="btn-group pull-right">
+			<button
+				class="btn btn-primary"
+				type="submit"
+				ng-disabled="loading"
+			>
+				{{sendText}} {{sendButtonTimer}}
+			</button>
+			<button
+				type="button"
+				class="btn btn-primary dropdown-toggle"
+				data-toggle="dropdown"
+				aria-haspopup="true"
+				aria-expanded="false"
+			>
+				<span class="caret"></span>&nbsp;
+			</button>
+			<ul class="dropdown-menu">
+				<li
+					ng-repeat="(key, option) in sendOptions"
+					ng-click="selectOption(key)"
+				>
+					<a href="javascript:void(0);">{{option}}</a>
+				</li>
+			</ul>
+		</div>
 	</div>
 	<div class="form-group">
 		<label><i class="glyphicon glyphicon-chevron-left"> </i>  Returns</label>
