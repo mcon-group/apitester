@@ -6,49 +6,8 @@
 </td>
 <td>
 
-  <!-- for primitive parameters, and request paramters, and file uploads -->
-  <div
-    class="row"
-    ng-if="param.primitive || param.paramType === 'REQUEST' || param.file"
-  >
-    <div class="col-md-6">
-      <div ng-if="param.paramType !== 'RETURN'">
-        <div class="row">
-          <div class="col-sm-4">
-            <strong>{{param.name}}</strong>
-            <span
-              class="text-red"
-              ng-if="param.required"
-            > *</span>
-            <br>
-            <small>{{getDisplayedType()}}<span ng-if="param.typeInfo.array">[]</span></small>
-          </div>
-          <div class="col-sm-8">
-            <div ng-if="param.descriptions.length">
-              <div ng-repeat="description in param.descriptions track by $index">
-                <p markdown="description">
-                </p>
-              </div>
-            </div>
-            <div ng-if="param.values">Values: {{param.values | json}}</div>
-          </div>
-        </div>
-      </div>
-
-      <div ng-if="param.paramType === 'RETURN'">
-        {{getDisplayedType()}}<span ng-if="param.collection">[]</span>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div
-        param-value-edit
-        param="param"
-      ></div>
-    </div>
-  </div>
-
-  <!-- for non-primitive, non-file, and non-REQUEST parameters -->
-  <div ng-if="!param.primitive && param.paramType !== 'REQUEST' && !param.file">
+  <!-- for RETURN parameters -->
+  <div ng-if="param.paramType === 'RETURN'">
     <div class="row">
       <div class="col-md-6">
         {{getDisplayedType()}}<span ng-if="param.collection">[]</span><br>
@@ -64,7 +23,11 @@
                 <span
                   class="label label-success"
                   style="top: 0; vertical-align: top;"
-                  ng-class="{'label-info' : param.status > 299, 'label-warning' : param.status > 399, 'label-danger' : param.status > 499}"
+                  ng-class="{
+                    'label-info': param.status > 299,
+                    'label-warning': param.status > 399,
+                    'label-danger': param.status > 499
+                  }"
                 >
                   {{param.status}}
                 </span>
@@ -77,20 +40,77 @@
         </table>
         <br>
         <table class="table table-compact" ng-if="param.headers">
-        		<tr ng-repeat="header in param.headers">
-        			<td>
-        				{{header.name}}
-        			</td>
-        			<td>
-        				{{header.value}}
-        			</td>
-        		</tr>
+          <tr ng-repeat="header in param.headers">
+            <td>
+              {{header.name}}
+            </td>
+            <td>
+              {{header.value}}
+            </td>
+          </tr>
         </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <pre>{{param.type !== 'void' ? (param.object | json) : ''}}</pre>
+      </div>
+      <div class="col-md-6">
+        <div
+          param-value-edit
+          param="param"
+        >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- for primitive parameters, request paramters, and file uploads -->
+  <div
+    class="row"
+    ng-if="param.paramType !== 'RETURN' && !isObjectParam()"
+  >
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-sm-4">
+          <strong>{{param.name}}</strong>
+          <span
+            class="text-red"
+            ng-if="param.required"
+          > *</span>
+          <br>
+          <small>{{getDisplayedType()}}<span ng-if="param.typeInfo.array">[]</span></small>
+        </div>
+        <div class="col-sm-8">
+          <div ng-if="param.descriptions.length">
+            <div ng-repeat="description in param.descriptions track by $index">
+              <p markdown="description">
+              </p>
+            </div>
+          </div>
+          <div ng-if="param.values">Values: {{param.values | json}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div
+        param-value-edit
+        param="param"
+      >
+      </div>
+    </div>
+  </div>
+
+  <!-- for editable object parameters -->
+  <div ng-if="param.paramType !== 'RETURN' && isObjectParam()">
+    <div class="row">
+      <div class="col-md-6">
+        {{getDisplayedType()}}<span ng-if="param.collection">[]</span><br>
+        <br>
       </div>
     </div>
     <div
       class="row"
-      ng-if="param.type !== 'void'"
     >
       <div class="col-md-6">
         <pre>{{param.object | json}}</pre>
@@ -99,7 +119,8 @@
         <div
           param-value-edit
           param="param"
-        ></div>
+        >
+        </div>
       </div>
     </div>
   </div>

@@ -8,6 +8,7 @@ angular.module(
     },
     link: function(scope) {
       scope.getDisplayedType = getDisplayedType;
+      scope.isObjectParam = isObjectParam;
 
       /**
        * @name getDisplayedType
@@ -32,6 +33,18 @@ angular.module(
         }
 
         return obj.typeShort;
+      }
+
+      /**
+       * @name isObjectParam
+       * @return {boolean}
+       */
+      function isObjectParam() {
+        return (
+          scope.param.paramType === 'BODY' &&
+          !scope.param.primitive &&
+          !scope.param.file
+        );
       }
     },
   };
