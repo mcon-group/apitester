@@ -1,4 +1,4 @@
 #### The OneController
 
-The OneController deals with One Entity (annotation on the classe)
+The OneController deals with One Entity (annotation on the class)
 
