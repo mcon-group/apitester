@@ -25,10 +25,6 @@ angular.module("apitester").controller(
 			$scope.endpoints = ne;
 		}
 
-		$scope.$on("methodSelected", function(e,endpoint) {
-			$scope.selectedEndpoint = endpoint;
-		})
-
 		EndpointService.listEndpoints(
 				function(endpoints) {
 					$scope.allEndpoints = endpoints.data;

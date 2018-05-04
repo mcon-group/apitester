@@ -8,12 +8,6 @@ angular.module('apitester').directive(
       },
       templateUrl: 'endpoint_detail.html',
       link: function(scope, elmt) {
-        scope.select = function() {
-          console.log('method selected ... ');
-          scope.$emit('methodSelected', scope.endpoint);
-          scope.$broadcast('methodSelected', scope.endpoint);
-        };
-
         scope.sendOptions = {
           default: 'Send',
           newTab: 'Send (new tab)',
@@ -145,11 +139,11 @@ angular.module('apitester').directive(
         function getRequestBody() {
           var requestBody = scope.requestBody;
           if (requestBody) {
-            var output = {};
+            // var output = {};
             try {
-              //output[requestBody.name] = JSON.parse(requestBody.value);
-            	  //return output;
-            	  return JSON.parse(requestBody.value);
+              // output[requestBody.name] = JSON.parse(requestBody.value);
+              // return output;
+              return JSON.parse(requestBody.value);
             } catch (error) {
               console.log(error);
             }
@@ -337,7 +331,6 @@ angular.module('apitester').directive(
                   hasFileParam);
                 break;
               case 'OPTIONS':
-                console.log("performing options ... ");
                 request = scope.options(apiPath, requestParams);
                 break;
               default:
@@ -401,9 +394,6 @@ angular.module('apitester').directive(
          */
         function treatResponse(response) {
           var data = response.data;
-
-          console.log("data: ",data);
-          console.log("response: ",response);
 
           var hns = _.keys(response.headers());
 

@@ -70,7 +70,22 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<div class="btn-group pull-right">
+		<div
+			class="pull-right"
+			ng-if="endpoint.method !== 'GET'"
+		>
+			<button
+				class="btn btn-primary"
+				type="submit"
+				ng-disabled="loading"
+			>
+				{{sendText}} {{sendButtonTimer}}
+			</button>
+		</div>
+		<div
+			class="btn-group pull-right"
+			ng-if="endpoint.method === 'GET'"
+		>
 			<button
 				class="btn btn-primary"
 				type="submit"
