@@ -8,11 +8,6 @@ angular.module('apitester').directive(
       },
       templateUrl: 'endpoint_detail.html',
       link: function(scope, elmt) {
-        scope.select = function() {
-          scope.$emit('methodSelected', scope.endpoint);
-          scope.$broadcast('methodSelected', scope.endpoint);
-        };
-
         scope.sendOptions = {
           default: 'Send',
           newTab: 'Send (new tab)',
