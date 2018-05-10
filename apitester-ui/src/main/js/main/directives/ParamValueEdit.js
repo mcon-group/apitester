@@ -11,11 +11,7 @@ angular.module(
       var $textarea;
 
       scope.addValue = addValue;
-      scope.isReturnParam = isReturnParam;
       scope.removeValue = removeValue;
-      scope.shouldUseInput = shouldUseInput;
-      scope.shouldUseSelect = shouldUseSelect;
-      scope.shouldUseTextarea = shouldUseTextarea;
       scope.triggerSelectFile = triggerSelectFile;
       scope.updateBody = updateBody;
 
@@ -58,7 +54,7 @@ angular.module(
               scope.$digest();
             }
           });
-        }, 200);
+        }, 100);
       }
 
       /**
@@ -74,15 +70,6 @@ angular.module(
       }
 
       /**
-       * @name isReturnParam
-       * @description check whether the parameter is a 'RETURN' parameter
-       * @return {boolean}
-       */
-      function isReturnParam() {
-        return scope.param.paramType === 'RETURN';
-      }
-
-      /**
        * @name removeValue
        * @description remove a value from collectionValues by index
        * @param {integer} index - index of the value in the collectionValues
@@ -90,41 +77,6 @@ angular.module(
        */
       function removeValue(index) {
         scope.param.collectionValues.splice(index, 1);
-      }
-
-      /**
-       * @name shouldUseInput
-       * @description check whether input-tag should be used for the parameter
-       * @return {boolean}
-       */
-      function shouldUseInput() {
-        return (
-          !scope.isReturnParam() &&
-          (scope.param.primitive || scope.param.typeShort === 'Date')
-        );
-      }
-
-      /**
-       * @name shouldUseSelect
-       * @description check whether select-tag should be used for the parameter
-       * @return {boolean}
-       */
-      function shouldUseSelect() {
-        try {
-          return !scope.isReturnParam() && scope.param.values.length;
-        } catch (e) {
-          return false;
-        }
-      }
-
-      /**
-       * @name shouldUseTextarea
-       * @description check whether textarea-tag should be used for the
-       *    parameter
-       * @return {boolean}
-       */
-      function shouldUseTextarea() {
-        return !scope.shouldUseInput() && !scope.shouldUseSelect();
       }
 
       /**
@@ -139,8 +91,7 @@ angular.module(
       /**
        * @name updateBody
        * @description udpate value for request body
-       * @param {string} [value=param.value] - The stringified
-       * body
+       * @param {string} [value=param.value] - The stringified body
        * @return {undefined}
        */
       function updateBody(value) {

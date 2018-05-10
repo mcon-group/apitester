@@ -1,6 +1,6 @@
 angular.module('apitester').directive(
   'endpoint',
-  function($http, $interval, $rootScope, Restangular) {
+  function($http, $interval, $rootScope, ParamService, Restangular) {
     return {
       transclude: true,
       scope: {
@@ -47,6 +47,10 @@ angular.module('apitester').directive(
 
           var params = scope.endpoint.methodInfo.params;
 
+          _.each(params, function(param) {
+            ParamService.setDisplayValues(param);
+          });
+
           scope.pathParams = _.filter(params, function(param) {
             return param.paramType === 'PATH';
           });
@@ -65,6 +69,7 @@ angular.module('apitester').directive(
 
           scope.response = scope.endpoint.methodInfo.returnType;
           scope.response.paramType = 'RETURN';
+          ParamService.setDisplayValues(scope.response);
 
           scope.initSendText();
         }
@@ -139,13 +144,16 @@ angular.module('apitester').directive(
         function getRequestBody() {
           var requestBody = scope.requestBody;
           if (requestBody) {
-            // var output = {};
-            try {
-              // output[requestBody.name] = JSON.parse(requestBody.value);
-              // return output;
-              return JSON.parse(requestBody.value);
-            } catch (error) {
-              console.log(error);
+            if (requestBody.display.editType === 'textarea') {
+              try {
+                // output[requestBody.name] = JSON.parse(requestBody.value);
+                // return output;
+                return JSON.parse(requestBody.value);
+              } catch (error) {
+                console.log(error);
+              }
+            } else {
+              return requestBody.value;
             }
           }
         }
