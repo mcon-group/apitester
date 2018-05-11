@@ -44,7 +44,7 @@
 </div>
 
 <div ng-if="!param.collectionValues">
-  <div ng-if="param.file">
+  <div ng-if="param.display.editType === 'file'">
     <!-- Parameter appears at most 1 time, for file upload -->
     <div class="row">
       <div class="col-md-3">
@@ -67,53 +67,52 @@
     </div>
   </div>
 
-  <div ng-if="!param.file">
-    <div ng-if="shouldUseInput()">
-      <!-- Parameter appears at most 1 time, an input for string, number, true/false boolean strings -->
-      <input
-        class="form-control"
-        type="text"
-        placeholder="{{param.defaultValue}}"
-        ng-model="param.value"
-        ng-required="param.required"
-        ng-if="!param.secret"
-      >
-      <input
-        class="form-control"
-        type="password"
-        placeholder="{{param.defaultValue}}"
-        ng-model="param.value"
-        ng-required="param.required"
-        ng-if="param.secret"
-      >
-    </div>
-
-    <div ng-if="shouldUseTextarea()">
-      <!-- Parameter appears at most 1 time, an input for stringified object -->
-      <textarea
-      	rows="20"
-        class="form-control"
-        style="
-          font-family: Menlo,Monaco,Consolas,'Courier New',monospace;
-          font-size: 13px;
-          min-height: 70px;
-        "
-        ng-blur="updateBody()"
-        ng-model="param.value"
-        ng-required="param.required"
-      ></textarea>
-    </div>
-
-    <div ng-if="shouldUseSelect()">
-      <!-- Parameter appears at most 1 time, only a handful of values (> 1) should be used -->
-      <select
-        class="form-control"
-        ng-model="param.value"
-        ng-options="value for value in param.values"
-        ng-required="param.required"
-      >
-        <option value="">-- Please select --</option>
-      </select>
-    </div>
+  <div ng-if="param.display.editType === 'input'">
+    <!-- Parameter appears at most 1 time, an input for string, number, true/false boolean strings -->
+    <input
+      class="form-control"
+      type="text"
+      placeholder="{{param.defaultValue}}"
+      ng-model="param.value"
+      ng-required="param.required"
+      ng-if="!param.secret"
+    >
+    <input
+      class="form-control"
+      type="password"
+      placeholder="{{param.defaultValue}}"
+      ng-model="param.value"
+      ng-required="param.required"
+      ng-if="param.secret"
+    >
   </div>
+
+  <div ng-if="param.display.editType === 'textarea'">
+    <!-- Parameter appears at most 1 time, an input for stringified object -->
+    <textarea
+      rows="20"
+      class="form-control"
+      style="
+        font-family: Menlo,Monaco,Consolas,'Courier New',monospace;
+        font-size: 13px;
+        min-height: 70px;
+      "
+      ng-blur="updateBody()"
+      ng-model="param.value"
+      ng-required="param.required"
+    ></textarea>
+  </div>
+
+  <div ng-if="param.display.editType === 'select'">
+    <!-- Parameter appears at most 1 time, only a handful of values (> 1) should be used -->
+    <select
+      class="form-control"
+      ng-model="param.value"
+      ng-options="value for value in param.values"
+      ng-required="param.required"
+    >
+      <option value="">-- Please select --</option>
+    </select>
+  </div>
+
 </div>
