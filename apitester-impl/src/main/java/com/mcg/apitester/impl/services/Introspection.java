@@ -538,27 +538,32 @@ public class Introspection {
 		PrioritizedParameterNameDiscoverer pnd = new PrioritizedParameterNameDiscoverer();
 		pnd.addDiscoverer(new DefaultParameterNameDiscoverer());
 		
-		String[] paramNames = pnd.getParameterNames(m);
+		try {
+			
 		
-		Parameter[] params = m.getParameters();
-		for(int i=0; i < params.length;i++) {
-			Parameter p = params[i];
+			String[] paramNames = pnd.getParameterNames(m);
 			
-			if(p.getAnnotation(RequestBody.class)!=null) {
-			} else if(p.getAnnotation(RequestParam.class)!=null) {
-			} else if(p.getAnnotation(PathVariable.class)!=null) {
-			} else {
-				continue;
+			Parameter[] params = m.getParameters();
+			for(int i=0; i < params.length;i++) {
+				Parameter p = params[i];
+				
+				if(p.getAnnotation(RequestBody.class)!=null) {
+				} else if(p.getAnnotation(RequestParam.class)!=null) {
+				} else if(p.getAnnotation(PathVariable.class)!=null) {
+				} else {
+					continue;
+				}
+	 			
+				
+				ParameterInfo pi = Introspection.getParameterInfo(m, p, paramNames[i], mappedGenerics);
+				if(pi!=null) {
+					out.add(pi);
+				}
 			}
- 			
-			
-			ParameterInfo pi = Introspection.getParameterInfo(m, p, paramNames[i], mappedGenerics);
-			if(pi!=null) {
-				out.add(pi);
-			}
-		}
 
-		
+		} catch (Exception e) {
+			log.warn("error getting param info: "+m.getDeclaringClass()+" / "+m.getName(),e);
+		}
 		
 		return out;
 
