@@ -10,7 +10,7 @@
     "angular-route": "1.6.1",
     "angular-upload": "1.0.13",
     "angular-sanitize": "1.6.5",
-    "bootstrap": "3.3.7 ",
+    "bootstrap": "3.4.1 ",
     "jquery": "3.1.1",
     "restangular": "1.6.1",
     "underscore": "1.8.3"
