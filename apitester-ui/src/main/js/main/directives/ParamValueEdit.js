@@ -14,7 +14,7 @@ angular.module(
       scope.removeValue = removeValue;
       scope.triggerSelectFile = triggerSelectFile;
       scope.updateBody = updateBody;
-
+      scope.param.value = scope.param.defaultValue;
 
       activate();
 
