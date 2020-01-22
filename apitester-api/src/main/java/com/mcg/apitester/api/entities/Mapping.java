@@ -1,8 +1,4 @@
-package com.mcg.apitester.impl.entities;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+package com.mcg.apitester.api.entities;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 

@@ -48,17 +48,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mcg.apitester.api.annotations.ApiDescription;
 import com.mcg.apitester.api.annotations.ApiError;
 import com.mcg.apitester.api.annotations.ApiErrors;
+import com.mcg.apitester.api.annotations.ApiExtraParam;
+import com.mcg.apitester.api.annotations.ApiExtraParams;
 import com.mcg.apitester.api.annotations.ApiHeader;
 import com.mcg.apitester.api.annotations.ApiHeaders;
 import com.mcg.apitester.api.annotations.ApiIgnore;
 import com.mcg.apitester.api.annotations.ApiSecret;
 import com.mcg.apitester.api.annotations.ParamType;
-import com.mcg.apitester.impl.entities.ApiReturnStatus;
-import com.mcg.apitester.impl.entities.FieldInfo;
-import com.mcg.apitester.impl.entities.HeaderInfo;
-import com.mcg.apitester.impl.entities.MethodInfo;
-import com.mcg.apitester.impl.entities.ParameterInfo;
-import com.mcg.apitester.impl.entities.TypeInfo;
+import com.mcg.apitester.api.entities.ApiReturnStatus;
+import com.mcg.apitester.api.entities.FieldInfo;
+import com.mcg.apitester.api.entities.HeaderInfo;
+import com.mcg.apitester.api.entities.MethodInfo;
+import com.mcg.apitester.api.entities.ParameterInfo;
+import com.mcg.apitester.api.entities.TypeInfo;
 
 public class Introspection {
 	
@@ -81,9 +83,7 @@ public class Introspection {
 	}
 	
 	public static Map<String,Type> mapGenerics(Class<?> child, Class<?> parent) {
-
 		Map<String,Type> out = new HashMap<>();
-
 		if(child.getGenericSuperclass() instanceof ParameterizedType) {
 			TypeVariable<?>[] vars = parent.getTypeParameters(); 
 			Type[] types = ((ParameterizedType)child.getGenericSuperclass()).getActualTypeArguments();
@@ -91,9 +91,7 @@ public class Introspection {
 				out.put(vars[i].getName(), types[i]);
 			}
 		}
-
 		return out;
-		
 	}
 	
 
@@ -103,7 +101,9 @@ public class Introspection {
 		T t = c.getAnnotation(a);
 		if(t!=null) d.add(t);
 		d.addAll(collectAnnotations(c.getSuperclass(),a));
-
+		for(Class<?> i : c.getInterfaces()) {
+			d.addAll(collectAnnotations(i,a));
+		}
 		return d;
 		
 	}
@@ -114,7 +114,6 @@ public class Introspection {
 		T t = m.getAnnotation(a);
 		if(t!=null) d.add(t);
 		d.addAll(collectAnnotations(m.getDeclaringClass(),a));
-		
 		return d;
 	}
 	
@@ -199,7 +198,7 @@ public class Introspection {
 				IOUtils.copy(r.getInputStream(), baos);
 				return new String(baos.toByteArray(),"utf-8");
 			} catch (Exception e) {
-				log.error("error reading documentation: "+ad.file(), e);
+				log.warn("error reading documentation: "+ad.file()+" ("+e.getMessage()+")");
 			}
 		}
 		return null;
@@ -534,6 +533,35 @@ public class Introspection {
 		
 
 		List<ParameterInfo> out = new ArrayList<>();
+		
+		List<ApiExtraParams> aeps = collectAnnotations(m.getDeclaringClass(), ApiExtraParams.class); 
+		log.info("parameter info: checking for extra params: "+aeps.size()+" found");
+		
+		
+		aeps.forEach(
+			(x) -> {
+				for(ApiExtraParam aep : x.value()) {
+					log.info("parameter info: adding extra param: "+aep.name()+" to "+m.getDeclaringClass()+"."+m.getName());
+					ParameterInfo pi = new ParameterInfo();
+					
+					pi.setName(aep.name());
+					pi.setDescriptions(Collections.singletonList(aep.description()));
+					pi.setDefaultValue(aep.defaultValue());
+					pi.setRequired(aep.mandatory());
+					try {
+						TypeInfo ti = getTypeInfo((Type)aep.type(), mappedGenerics);
+						pi.setTypeInfo(ti);
+					} catch (Exception e) {
+						log.warn("class not found: "+pi.getClass());
+					}
+					pi.setDeprecated(aep.deprecated());
+					pi.setParamType(aep.paramType());
+					pi.setSecret(aep.secret());
+					
+					out.add(pi);
+				}
+			}
+		);
 		
 		PrioritizedParameterNameDiscoverer pnd = new PrioritizedParameterNameDiscoverer();
 		pnd.addDiscoverer(new DefaultParameterNameDiscoverer());

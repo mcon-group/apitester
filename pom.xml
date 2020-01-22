@@ -10,7 +10,7 @@
 		<module>apitester-api</module>
 		<module>apitester-impl</module>
 		<module>apitester-example</module>
-		<module>apitester-documentation</module>
+		<!-- >module>apitester-documentation</module-->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

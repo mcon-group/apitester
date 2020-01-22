@@ -1,4 +1,4 @@
-package com.mcg.apitester.impl.entities;
+package com.mcg.apitester.api.entities;
 
 import java.util.ArrayList;
 import java.util.List;

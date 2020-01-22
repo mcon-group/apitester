@@ -1,4 +1,4 @@
-package com.mcg.apitester.impl.entities;
+package com.mcg.apitester.api.entities;
 
 public class HeaderInfo {
 

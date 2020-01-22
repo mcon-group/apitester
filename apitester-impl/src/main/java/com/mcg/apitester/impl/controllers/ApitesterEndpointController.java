@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mcg.apitester.api.annotations.ApiIgnore;
-import com.mcg.apitester.impl.entities.Mapping;
-import com.mcg.apitester.impl.entities.PathInfo;
+import com.mcg.apitester.api.entities.Mapping;
+import com.mcg.apitester.api.entities.PathInfo;
 import com.mcg.apitester.impl.services.EndpointService;
 
 @RestController
