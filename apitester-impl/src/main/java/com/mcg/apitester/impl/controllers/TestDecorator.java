@@ -13,7 +13,7 @@ public class TestDecorator implements ApiDecorator {
 	@Override
 	public void processMappings(List<Mapping> mappings) {
 		mappings.forEach((m) -> { 
-			m.setPattern("/foo"+m.getPattern());
+			//m.setPattern("/foo"+m.getPattern());
 		});
 		ApiDecorator.super.processMappings(mappings);
 	}
