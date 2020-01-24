@@ -1,22 +1,21 @@
 <html>
-	<style>
-	html {
-		overflow-y: scroll;
-	}
-	</style>
-	<head>
-		<link id="main_styles" rel="stylesheet" href="css/styles.css" />
-		<title></title>
-	</head>
-	<body ng-app="apitester">
-		<div class="container">
-			<h1>API Tester</h1>
-			<div class="row"  ng-view="">
-			
-			</div>
-		</div>
-	</body>
-	<script src="js/dependencies.js"></script>
-	<script src="js/app.js"></script>
-	<script src="js/templates.js"></script>
+  <head>
+    <link id="main_styles" rel="stylesheet" href="css/styles.css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+  </head>
+
+  <body ng-app="apitester">
+    <div class="container">
+      <header class="header-container">
+        <h1>API Tester</h1>
+      </header>
+      <section class="main-section-container container" ng-view=""></section>
+    </div>
+  </body>
+  <!-- scripts -->
+  <script src="js/dependencies.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/templates.js"></script>
 </html>
