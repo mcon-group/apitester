@@ -1,4 +1,4 @@
-package com.mcg.apitester.impl.controllers;
+package com.mcg.apitester.example;
 
 import java.util.List;
 

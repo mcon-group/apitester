@@ -7,8 +7,8 @@ import com.mcg.apitester.example.entities.Pets;
 
 @ApiExtraParams(
 		{
-			@ApiExtraParam(type=String.class,name="contextHeaderToken",description="The context key to use with this request",paramType=ParamType.REQUEST),
-			@ApiExtraParam(type=Pets.class,name="favouriteAnimal",description="The context key to use with this request",paramType=ParamType.REQUEST),
+			//@ApiExtraParam(type=String.class,name="contextHeaderToken",description="The context key to use with this request",paramType=ParamType.REQUEST),
+			//@ApiExtraParam(type=Pets.class,name="favouriteAnimal",description="The context key to use with this request",paramType=ParamType.REQUEST),
 		}
 	)
 public interface IController {
