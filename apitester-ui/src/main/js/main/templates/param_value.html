@@ -1,0 +1,126 @@
+<div class="col-md-1">
+  <p>
+    <span class="label label-info">
+      {{param.paramType}}
+    </span>
+  </p>
+</div>
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<div
+  class="col-md-11"
+  ng-if="param.paramType !== 'RETURN' && param.display.editType !== 'textarea'"
+>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-5">
+          <p class="strong-text">
+            {{param.name}}<span class="text-red" ng-if="param.required">*</span>
+          </p>
+          <p>
+            {{param.display.type}}<span ng-if="param.typeInfo.array">[]</span>
+          </p>
+        </div>
+        <div class="col-md-7">
+          <div ng-if="param.descriptions.length">
+            <div ng-repeat="description in param.descriptions track by $index">
+              <p markdown="description"></p>
+            </div>
+          </div>
+          <div ng-if="param.values">Values: {{param.values | json}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div param-value-edit param="param"></div>
+    </div>
+  </div>
+</div>
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+<div
+  class="col-md-11"
+  ng-if="param.paramType !== 'RETURN' && param.display.editType === 'textarea'"
+>
+  <div class="row">
+    <div class="col-md-12">
+      <p>
+        {{param.display.type}}<span ng-if="param.collection">[]</span><br />
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <pre>{{param.object | json}}</pre>
+    </div>
+    <div class="col-md-6">
+      <div param-value-edit param="param"></div>
+    </div>
+  </div>
+</div>
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<div class="col-md-11" ng-if="param.paramType === 'RETURN'" class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <p>
+        {{param.display.type}}<span ng-if="param.collection">[]</span><br />
+      </p>
+    </div>
+    <div class="col-md-6">
+      <div class="row" ng-if="param.status">
+        <div class="col-md-3">
+          <p>
+            <span
+              class="label label-success"
+              ng-class="{
+                    'label-info': param.status > 299,
+                    'label-warning': param.status > 399,
+                    'label-danger': param.status > 499
+                  }"
+            >
+              {{param.status}}
+            </span>
+          </p>
+        </div>
+        <div class="col-md-9">
+          <p>
+            {{param.message}}
+          </p>
+        </div>
+      </div>
+
+      <div class="row" ng-if="param.headers">
+        <div class="col-lg-12" ng-repeat="header in param.headers">
+          <div class="row">
+            <div class="col-md-3">
+              <p class="strong-text">
+                {{header.name}}
+              </p>
+            </div>
+
+            <div class="col-md-9">
+              <p>
+                {{header.value}}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="clearfix visible-xs-block"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <pre>{{param.type !== 'void' ? (param.object | json) : ''}}</pre>
+    </div>
+    <div class="col-md-6">
+      <div param-value-edit param="param"></div>
+    </div>
+  </div>
+</div>
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->

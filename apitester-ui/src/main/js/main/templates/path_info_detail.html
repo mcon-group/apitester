@@ -1,0 +1,40 @@
+<div class="row">
+  <div class="col-md-11">
+    <h3 ng-click="selectMethod('none')">
+      {{path.path}}
+    </h3>
+  </div>
+
+  <div class="col-md-1">
+    <h3 ng-click="selectMethod('none')">
+      <span
+        class="pull-right glyphicon"
+        ng-class="{'glyphicon-chevron-right' : mappings.length == 0, 'glyphicon-chevron-down' : mappings.length > 0}"
+      >
+      </span>
+    </h3>
+  </div>
+</div>
+
+<div class="row methods-btn-container">
+  <div class="col-md-1" ng-repeat="method in path.methods">
+    <button
+      class="method-btn btn"
+      ng-click="selectMethod(method)"
+      ng-class="{
+				'btn-success': method === 'GET',
+				'btn-danger': method === 'DELETE',
+				'btn-primary': method === 'POST',
+				'btn-info': method === 'PUT',
+				'btn-default': method === 'OPTIONS',
+				'active' : method == selectedMethod
+			}"
+    >
+      {{method}}
+    </button>
+  </div>
+</div>
+
+<div class="row mappings-container" ng-repeat="mapping in mappings">
+  <div class="mapping-container col-md-12" endpoint="mapping"></div>
+</div>
