@@ -1,9 +1,9 @@
 <div class="col-12 col-lg-2">
-  <p>
+  <h5>
     <span class="badge badge-primary">
       {{param.paramType}}
     </span>
-  </p>
+  </h5>
 </div>
 <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 <div
@@ -13,7 +13,7 @@
   <div class="row">
     <div class="col-12 col-lg-8">
       <div class="row">
-        <div class="col-12 col-lg-5">
+        <div class="col-12 col-lg-6">
           <p class="strong-text">
             {{param.name}}<span ng-if="param.required" class="text-red">*</span>
           </p>
@@ -21,7 +21,7 @@
             {{param.display.type}}<span ng-if="param.typeInfo.array">[]</span>
           </p>
         </div>
-        <div class="col-12 col-lg-7">
+        <div class="col-12 col-lg-6">
           <div ng-if="param.descriptions.length">
             <p
               ng-repeat="description in param.descriptions track by $index"
@@ -52,21 +52,28 @@
 <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
 <div
-  class="col-12 col-lg-11"
+  class="col-12 col-lg-10"
   ng-if="param.paramType !== 'RETURN' && param.display.editType === 'textarea'"
 >
-  <div>
-    <p>{{param.display.type}}<span ng-if="param.collection">[]</span><br /></p>
-  </div>
+  <div class="row mb-4">
+    <!--param body structur-->
+    <div class="col-12 col-lg-6 mb-2">
+      <div class="card bg-light">
+        <div class="card-header">
+          Response structure
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">
+            {{param.display.type}}<span ng-if="param.collection">[]</span>
+          </h5>
+          <pre class="card-text">{{param.object | json}}</pre>
+        </div>
+      </div>
+    </div>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-12 col-lg-6">
-        <pre>{{param.object | json}}</pre>
-      </div>
-      <div class="col-12 col-lg-6">
-        <div param-value-edit param="param"></div>
-      </div>
+    <!--param body-->
+    <div class="col-12 col-lg-6 mb-2">
+      <div param-value-edit param="param"></div>
     </div>
   </div>
 </div>
