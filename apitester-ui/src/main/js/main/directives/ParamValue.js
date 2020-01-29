@@ -1,10 +1,8 @@
-angular.module(
-  'apitester'
-).directive('paramValue', function() {
+angular.module("apitester").directive("paramValue", function() {
   return {
-    templateUrl: 'param_value.html',
+    templateUrl: "param_value.html",
     scope: {
-      param: '=',
-    },
+      param: "="
+    }
   };
 });

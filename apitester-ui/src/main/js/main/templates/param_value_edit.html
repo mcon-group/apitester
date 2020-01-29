@@ -14,7 +14,7 @@
     <span
       class="input-group-addon btn btn-danger"
       ng-click="removeValue($index)"
-      ><span class="glyphicon glyphicon-remove"></span
+      ><i class="fa fa-minus" aria-hidden="true"></i
     ></span>
   </div>
 
@@ -26,16 +26,34 @@
       ng-model="param.newValue"
     />
     <span class="input-group-addon btn btn-primary" ng-click="addValue()"
-      ><span class="glyphicon glyphicon-plus"></span
+      ><i class="fa fa-plus" aria-hidden="true"></i
     ></span>
   </div>
 </div>
 
 <div ng-if="!param.collectionValues">
   <div ng-if="param.display.editType === 'file'">
+    <div class="input-group">
+      <div class="custom-file">
+        <input
+          name="file"
+          type="file"
+          class="custom-file-input"
+          id="inputGroupFile01"
+          aria-describedby="inputGroupFileAddon01"
+        />
+        <label
+          class="custom-file-label overflow-auto"
+          ng-click="triggerSelectFile()"
+          >{{fileName}}</label
+        >
+      </div>
+    </div>
+
     <!-- Parameter appears at most 1 time, for file upload -->
+    <!--
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-lg-3">
         <button
           class="btn btn-primary"
           type="button"
@@ -49,10 +67,12 @@
         <span>{{fileName}}</span>
       </div>
     </div>
+    -->
   </div>
 
   <div ng-if="param.display.editType === 'input'">
     <!-- Parameter appears at most 1 time, an input for string, number, true/false boolean strings -->
+
     <input
       class="form-control"
       type="text"
@@ -71,7 +91,9 @@
     />
   </div>
 
-  <div ng-if="param.display.editType === 'textarea'">
+  <div
+    ng-if="param.display.editType === 'textarea' && !param.contentTypes[0].includes('image')"
+  >
     <!-- Parameter appears at most 1 time, an input for stringified object -->
     <textarea
       rows="20"
@@ -80,6 +102,14 @@
       ng-model="param.value"
       ng-required="param.required"
     ></textarea>
+  </div>
+
+  <div
+    ng-if="param.display.editType === 'textarea' && param.contentTypes[0].includes('image')"
+  >
+    <!-- for the images -->
+
+    <img ng-src="{{param.apiResponse.config.url}}" class="img-thumbnail" />
   </div>
 
   <div ng-if="param.display.editType === 'select'">

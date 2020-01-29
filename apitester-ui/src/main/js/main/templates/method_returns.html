@@ -1,0 +1,91 @@
+<div class="mapping-element">
+  <div class="mapping-label-container">
+    <p>Returns</p>
+  </div>
+
+  <div ng-show="response.type === 'void'" class="mapping-value-container">
+    <p>This method does not return anything</p>
+  </div>
+
+  <div class="mapping-value-container">
+    <div class="container mb-5">
+      <div class="row">
+        <div ng-if="response.paramType === 'RETURN'" class="col-lg-2 mr-lg-2">
+          <h5>
+            <span class="badge badge-primary">{{response.paramType}}</span>
+          </h5>
+        </div>
+
+        <div ng-if="response.paramType === 'RETURN'" class="col-lg-9 container">
+          <!--return code-->
+          <div ng-if="response.status" class="row">
+            <div class="col-lg-3">
+              <h4>
+                <span
+                  class="badge badge-success"
+                  ng-class="{
+                  'badge-info': response.status > 299,
+                  'badge-warning': response.status > 399,
+                  'badge-danger': response.status > 499
+                }"
+                >
+                  {{response.status}}
+                </span>
+              </h4>
+            </div>
+            <div class="col-md-9">
+              <p>
+                {{response.message}}
+              </p>
+            </div>
+          </div>
+
+          <!--return headers-->
+          <div ng-if="response.headers" class="container mb-3">
+            <div
+              class="row shadow-sm p-3 mb-2 bg-white rounded"
+              ng-repeat="header in response.headers"
+            >
+              <div class="col-lg-3">
+                <p class="strong-text">
+                  {{header.name}}
+                </p>
+              </div>
+
+              <div class="col-lg-9">
+                <p>
+                  {{header.value}}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!--return body-->
+          <div class="row">
+            <div class="col-12">
+              <div param-value-edit param="response"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--return body structur-->
+    <div
+      ng-show="response.type != 'void'"
+      class="card bg-light mb-3 return-structure-container"
+    >
+      <div class="card-header">
+        Response structure
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">
+          {{response.display.type}}<span ng-if="response.collection">[]</span>
+        </h5>
+        <pre class="card-text">
+{{response.type !== 'void' ? (response.object | json) : ''}}</pre
+        >
+      </div>
+    </div>
+  </div>
+</div>

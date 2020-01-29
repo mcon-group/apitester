@@ -1,0 +1,30 @@
+<div class="mapping-element">
+  <div class="mapping-label-container">
+    <p>Return Status</p>
+  </div>
+
+  <div class="mapping-value-container container">
+    <div class="row mb-4" ng-repeat="statu in status">
+      <div class="col-12 col-lg-1">
+        <h4>
+          <span
+            class="badge"
+            ng-class="{'badge-info' : statu.status > 299, 'badge-warning' : statu.status > 399, 'badge-danger' : statu.status > 499}"
+          >
+            {{statu.status}}
+          </span>
+        </h4>
+      </div>
+      <div class="col-12 col-lg-4">
+        <p class="strong-text">
+          {{statu.name}}
+        </p>
+      </div>
+      <div class="col-12 col-lg-7">
+        <p>
+          {{statu.description}}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

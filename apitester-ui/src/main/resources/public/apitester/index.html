@@ -2,7 +2,10 @@
   <head>
     <link id="main_styles" rel="stylesheet" href="css/styles.css" />
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <title></title>
   </head>
 
@@ -11,7 +14,9 @@
       <header class="header-container">
         <h1>API Tester</h1>
       </header>
-      <section class="main-section-container container" ng-view=""></section>
+      <main>
+        <section class="paths-section-container" ng-view=""></section>
+      </main>
     </div>
   </body>
   <!-- scripts -->

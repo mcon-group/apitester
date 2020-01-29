@@ -1,26 +1,22 @@
-<div class="row">
-  <div class="col-lg-12 form-group">
-    <div class="form-group">
-      <div class="input-group">
-        <div class="input-group-addon">
-          <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-        </div>
-
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Paths"
-          ng-change="updateList()"
-          ng-model="search"
-        />
-      </div>
+<div class="form-group search-section">
+  <div class="input-group">
+    <div class="input-group-prepend">
+      <span class="input-group-text"
+        ><i class="fa fa-search" aria-hidden="true"></i>
+      </span>
     </div>
+    <input
+      id="path"
+      type="text"
+      class="form-control"
+      placeholder="Path"
+      ng-change="updateList()"
+      ng-model="search"
+    />
   </div>
 </div>
 
-<div class="row paths-container">
-  <div class="row" ng-repeat="path in paths">
-    <div class="col-12 line-separator"></div>
-    <div class="col-12 path-container" path="path"></div>
-  </div>
+<div ng-repeat="path in paths">
+  <div class="line-separator my-4"></div>
+  <div class="path-container my-4" path="path"></div>
 </div>

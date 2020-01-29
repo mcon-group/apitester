@@ -1,38 +1,49 @@
-<div class="col-md-1">
+<div class="col-12 col-lg-2">
   <p>
-    <span class="label label-info">
+    <span class="badge badge-primary">
       {{param.paramType}}
     </span>
   </p>
 </div>
 <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 <div
-  class="col-md-11"
   ng-if="param.paramType !== 'RETURN' && param.display.editType !== 'textarea'"
+  class="col-12 col-lg-10"
 >
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-12 col-lg-8">
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-12 col-lg-5">
           <p class="strong-text">
-            {{param.name}}<span class="text-red" ng-if="param.required">*</span>
+            {{param.name}}<span ng-if="param.required" class="text-red">*</span>
           </p>
           <p>
             {{param.display.type}}<span ng-if="param.typeInfo.array">[]</span>
           </p>
         </div>
-        <div class="col-md-7">
+        <div class="col-12 col-lg-7">
           <div ng-if="param.descriptions.length">
-            <div ng-repeat="description in param.descriptions track by $index">
-              <p markdown="description"></p>
+            <p
+              ng-repeat="description in param.descriptions track by $index"
+              markdown="description"
+              class="alert alert-primary"
+            ></p>
+          </div>
+
+          <div
+            ng-if="param.values"
+            class="card bg-light mb-3 return-structure-container"
+          >
+            <div class="card-body">
+              <h5 class="card-title">Values</h5>
+              <pre class="card-text">{{param.values | json}}</pre>
             </div>
           </div>
-          <div ng-if="param.values">Values: {{param.values | json}}</div>
         </div>
       </div>
     </div>
 
-    <div class="col-sm-6">
+    <div class="col-12 col-lg-4">
       <div param-value-edit param="param"></div>
     </div>
   </div>
@@ -41,27 +52,27 @@
 <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
 <div
-  class="col-md-11"
+  class="col-12 col-lg-11"
   ng-if="param.paramType !== 'RETURN' && param.display.editType === 'textarea'"
 >
-  <div class="row">
-    <div class="col-md-12">
-      <p>
-        {{param.display.type}}<span ng-if="param.collection">[]</span><br />
-      </p>
-    </div>
+  <div>
+    <p>{{param.display.type}}<span ng-if="param.collection">[]</span><br /></p>
   </div>
-  <div class="row">
-    <div class="col-md-6">
-      <pre>{{param.object | json}}</pre>
-    </div>
-    <div class="col-md-6">
-      <div param-value-edit param="param"></div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-6">
+        <pre>{{param.object | json}}</pre>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div param-value-edit param="param"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!--
 <div class="col-md-11" ng-if="param.paramType === 'RETURN'" class="container">
   <div class="row">
     <div class="col-md-6">
@@ -122,5 +133,5 @@
     </div>
   </div>
 </div>
-
+-->
 <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->

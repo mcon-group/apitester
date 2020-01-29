@@ -1,158 +1,73 @@
-<form class="row" name="requestForm" novalidate ng-submit="sendRequest()">
-  <!--*********************************************************-->
-  <div class="mapping-element col-lg-12">
-    <div class="row">
-      <div class="col-lg-12 mapping-label-container">
-        <p><label>Controller Method</label></p>
-      </div>
+<form name="requestForm" novalidate ng-submit="sendRequest()">
+  <!--************************responsable for showing the controller*********************************-->
+  <method-controller controller="endpoint.methodInfo"></method-controller>
+
+  <!--************************responsable for showing the method descriptions*********************************-->
+  <method-descriptions
+    descriptions="endpoint.methodInfo.descriptions"
+  ></method-descriptions>
+
+  <!--*************************responsable for showing the method headers********************************-->
+  <methode-headers headers="endpoint.methodInfo.headerInfos"></methode-headers>
+
+  <!--*************************responsable for showing the request parametres********************************-->
+  <div class="mapping-element">
+    <div class="mapping-label-container">
+      <p>Parameters</p>
     </div>
 
-    <div class="row">
-      <div class="col-lg-12 mapping-value-container">
-        <p>
-          {{endpoint.methodInfo.className}}.{{endpoint.methodInfo.methodName}}
-        </p>
-      </div>
+    <div
+      ng-if="endpoint.methodInfo.params.length==0"
+      class="mapping-value-container"
+    >
+      <i>This method has no parameters.</i>
+    </div>
+
+    <div
+      ng-if="endpoint.methodInfo.params.length>0"
+      class="container mapping-value-container"
+    >
+      <div
+        ng-repeat="param in pathParams"
+        class="row shadow-sm p-2 mb-2 bg-white"
+        param-value
+        param="param"
+      ></div>
+
+      <div
+        ng-repeat="param in requestParams"
+        class="row shadow-sm p-2 mb-2 bg-white"
+        param-value
+        param="param"
+      ></div>
+
+      <div
+        ng-if="requestBody"
+        class="row shadow-sm p-2 mb-2 bg-white"
+        param-value
+        param="requestBody"
+      ></div>
     </div>
   </div>
 
-  <!--*********************************************************-->
-  <div class="mapping-element col-lg-12">
-    <div class="row">
-      <div class="col-lg-12 mapping-label-container">
-        <p><label>Description</label></p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div
-        class="col-lg-12 mapping-value-container"
-        ng-if="endpoint.methodInfo.descriptions.length == 0"
-      >
-        <p>This method has no description</p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div
-        ng-if="endpoint.methodInfo.descriptions.length > 0"
-        class="col-lg-12 well well-lg mapping-value-container"
-      >
-        <div
-          ng-repeat="description in endpoint.methodInfo.descriptions track by $index"
-        >
-          <p markdown="description"></p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!--*********************************************************-->
-  <div class="mapping-element col-lg-12">
-    <div class="row">
-      <div class="col-lg-12 mapping-label-container">
-        <p><label>Headers</label></p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div
-        class="col-lg-12 mapping-value-container"
-        ng-if="endpoint.methodInfo.headerInfos.length==0"
-      >
-        <p>This method has no headers.</p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div
-        class="col-lg-12 mapping-value-container"
-        ng-if="endpoint.methodInfo.headerInfos.length>0"
-      >
-        <div
-          ng-repeat="headerInfo in endpoint.methodInfo.headerInfos track by $index"
-          class="row"
-        >
-          <div class="col-md-2">
-            <p><span class="label label-info">{{headerInfo.name}}</span></p>
-          </div>
-
-          <div class="col-md-10">
-            <div>
-              <p>
-                {{headerInfo.description}}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!--*********************************************************-->
-  <div class="mapping-element col-lg-12">
-    <div class="row">
-      <div class="col-lg-12 mapping-label-container">
-        <p><label>Parameters</label></p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div
-        class="col-lg-12 mapping-value-container"
-        ng-if="endpoint.methodInfo.params.length==0"
-      >
-        <i>This method has no parameters.</i>
-      </div>
-    </div>
-
-    <div class="row">
-      <div
-        class="col-lg-12 mapping-value-container"
-        ng-if="endpoint.methodInfo.params.length>0"
-      >
-        <div
-          class="row"
-          ng-repeat="param in pathParams"
-          param-value
-          param="param"
-        ></div>
-
-        <div
-          class="row"
-          ng-repeat="param in requestParams"
-          param-value
-          param="param"
-        ></div>
-
-        <div
-          class="row"
-          ng-if="requestBody"
-          param-value
-          param="requestBody"
-        ></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-lg-12 form-group">
+  <div
+    class="form-group d-flex flex-row flex-wrap justify-content-end align-items-center mb-4"
+  >
     <div ng-if="endpoint.method !== 'GET'">
-      <div class="pull-right">
-        <button class="btn btn-primary" type="submit" ng-disabled="loading">
-          {{sendText}} {{sendButtonTimer}}
-        </button>
-      </div>
+      <button class="btn btn-primary" type="submit" ng-disabled="loading">
+        {{sendText}} {{sendButtonTimer}}
+      </button>
     </div>
 
     <div ng-if="endpoint.method === 'GET'">
-      <div class="btn-group pull-right">
+      <div class="input-group-prepend">
         <button class="btn btn-primary" type="submit" ng-disabled="loading">
           {{sendText}} {{sendButtonTimer}}
         </button>
 
         <button
-          type="button"
           class="btn btn-primary dropdown-toggle"
+          type="button"
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
@@ -163,6 +78,7 @@
           <li
             ng-repeat="(key, option) in sendOptions"
             ng-click="selectOption(key)"
+            class="dropdown-item"
           >
             <a href="javascript:void(0);">{{option}}</a>
           </li>
@@ -171,66 +87,9 @@
     </div>
   </div>
 
-  <!--*********************************************************-->
-  <div class="mapping-element col-lg-12">
-    <div class="row">
-      <div class="col-lg-12 mapping-label-container">
-        <p><label>Returns</label></p>
-      </div>
-    </div>
+  <!--*************************responsable for showing the method response********************************-->
+  <method-returns response="response"></method-returns>
 
-    <div class="row">
-      <div class="col-lg-12 mapping-value-container">
-        <div ng-show="response.type === 'void'">
-          <p>This method does not return anything</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-12 mapping-value-container">
-        <div class="row" param-value param="response"></div>
-      </div>
-    </div>
-  </div>
-
-  <!--*********************************************************-->
-  <div class="mapping-element col-lg-12">
-    <div class="row">
-      <div class="col-lg-12 mapping-label-container">
-        <p><label>Return Status</label></p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-12 mapping-value-container">
-        <div
-          class="row"
-          ng-repeat="returnStatus in endpoint.methodInfo.returnStatus"
-        >
-          <div class="col-md-1">
-            <div>
-              <button
-                class="btn btn-sm btn-success"
-                type="button"
-                ng-class="{'btn-info' : returnStatus.status > 299, 'btn-warning' : returnStatus.status > 399, 'btn-danger' : returnStatus.status > 499}"
-              >
-                {{returnStatus.status}}
-              </button>
-            </div>
-          </div>
-          <div class="col-md-5">
-            <p class="strong-text">
-              {{returnStatus.name}}
-            </p>
-          </div>
-          <div class="col-md-6">
-            <p>
-              {{returnStatus.description}}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!--******************************responsable for showing the return status***************************-->
+  <return-status status="endpoint.methodInfo.returnStatus"></return-status>
 </form>
