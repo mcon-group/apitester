@@ -1,16 +1,22 @@
-angular.module('apitester').directive(
-  'endpoint',
-  function($http, $interval, $rootScope, ParamService, Restangular) {
+angular
+  .module("apitester")
+  .directive("endpoint", function(
+    $http,
+    $interval,
+    $rootScope,
+    ParamService,
+    Restangular
+  ) {
     return {
       transclude: true,
       scope: {
-        endpoint: '=',
+        endpoint: "="
       },
-      templateUrl: 'endpoint_detail.html',
+      templateUrl: "endpoint_detail.html",
       link: function(scope, elmt) {
         scope.sendOptions = {
-          default: 'Send',
-          newTab: 'Send (new tab)',
+          default: "Send",
+          newTab: "Send (new tab)"
         };
 
         scope.get = get;
@@ -32,9 +38,7 @@ angular.module('apitester').directive(
         scope.treatResponse = treatResponse;
         scope.treatSuccessResponse = treatSuccessResponse;
 
-
         activate();
-
 
         /**
          * @name activate
@@ -52,23 +56,23 @@ angular.module('apitester').directive(
           });
 
           scope.pathParams = _.filter(params, function(param) {
-            return param.paramType === 'PATH';
+            return param.paramType === "PATH";
           });
           scope.headerParams = _.filter(params, function(param) {
-            return param.paramType === 'HEADER';
+            return param.paramType === "HEADER";
           });
           scope.requestParams = _.filter(params, function(param) {
-            return param.paramType === 'REQUEST';
+            return param.paramType === "REQUEST";
           });
           scope.requestBody = _.find(params, function(param) {
-            return param.paramType === 'BODY';
+            return param.paramType === "BODY";
           });
           scope.fileParam = _.find(params, function(param) {
             return param.file;
           });
 
           scope.response = scope.endpoint.methodInfo.returnType;
-          scope.response.paramType = 'RETURN';
+          scope.response.paramType = "RETURN";
           ParamService.setDisplayValues(scope.response);
 
           scope.initSendText();
@@ -91,13 +95,13 @@ angular.module('apitester').directive(
          * @return {undefined}
          */
         function initSendText() {
-          var key = 'default';
+          var key = "default";
           try {
             if (
-              scope.endpoint.method === 'GET' &&
+              scope.endpoint.method === "GET" &&
               scope.endpoint.methodInfo.returnType.contentTypes.length
             ) {
-              key = 'newTab';
+              key = "newTab";
             }
           } catch (e) {
             //
@@ -120,7 +124,7 @@ angular.module('apitester').directive(
             var value = param.value;
 
             if (value) {
-              apiPath = apiPath.replace('{' + paramName + '}', value);
+              apiPath = apiPath.replace("{" + paramName + "}", value);
             }
           });
 
@@ -133,7 +137,7 @@ angular.module('apitester').directive(
          * @return {string}
          */
         function getDuration() {
-          return ((new Date()) - scope.startTime) + '';
+          return new Date() - scope.startTime + "";
         }
 
         /**
@@ -144,7 +148,7 @@ angular.module('apitester').directive(
         function getRequestBody() {
           var requestBody = scope.requestBody;
           if (requestBody) {
-            if (requestBody.display.editType === 'textarea') {
+            if (requestBody.display.editType === "textarea") {
               try {
                 // output[requestBody.name] = JSON.parse(requestBody.value);
                 // return output;
@@ -181,8 +185,7 @@ angular.module('apitester').directive(
             })
             .compact()
             .object()
-            .value()
-          ;
+            .value();
         }
 
         /**
@@ -207,29 +210,27 @@ angular.module('apitester').directive(
          */
         function post(apiPath, requestParams, requestBody, uploadFile) {
           var formDataHeader = {
-            'Content-Type': undefined,
+            "Content-Type": undefined
           };
           if (uploadFile) {
-            if (uploadFile.paramType === 'REQUEST') {
+            if (uploadFile.paramType === "REQUEST") {
               var APIUrl = Restangular.one(apiPath).getRestangularUrl();
 
-              return $http
-                .post(APIUrl, requestParams, {
-                  transformRequest: angular.identity,
-                  headers: formDataHeader,
-                })
-              ;
+              return $http.post(APIUrl, requestParams, {
+                transformRequest: angular.identity,
+                headers: formDataHeader
+              });
             } else {
-              return Restangular
-                .one(apiPath)
-                .withHttpConfig({transformRequest: angular.identity})
+              return Restangular.one(apiPath)
+                .withHttpConfig({ transformRequest: angular.identity })
                 .post(null, requestBody, requestParams, formDataHeader);
             }
           } else {
-            return Restangular
-              .one(apiPath)
-              .post(null, requestBody, requestParams)
-            ;
+            return Restangular.one(apiPath).post(
+              null,
+              requestBody,
+              requestParams
+            );
           }
         }
 
@@ -244,16 +245,17 @@ angular.module('apitester').directive(
          */
         function put(apiPath, requestParams, requestBody, uploadFile) {
           if (uploadFile) {
-            return Restangular
-              .one(apiPath)
-              .withHttpConfig({transformRequest: angular.identity})
+            return Restangular.one(apiPath)
+              .withHttpConfig({ transformRequest: angular.identity })
               .customPUT(requestBody, null, requestParams, {
-                'Content-Type': undefined,
+                "Content-Type": undefined
               });
           } else {
-            return Restangular
-              .one(apiPath)
-              .customPUT(requestBody, null, requestParams);
+            return Restangular.one(apiPath).customPUT(
+              requestBody,
+              null,
+              requestParams
+            );
           }
         }
 
@@ -275,8 +277,8 @@ angular.module('apitester').directive(
          */
         function resetResponse() {
           scope.response.headers = null;
-          scope.response.status = '';
-          scope.response.value = '';
+          scope.response.status = "";
+          scope.response.value = "";
         }
 
         /**
@@ -305,16 +307,16 @@ angular.module('apitester').directive(
           var hasFileParam = scope.fileParam;
           if (hasFileParam) {
             var formData = new FormData();
-            var file = elmt.find('input[type=file]')[0].files[0];
+            var file = elmt.find("input[type=file]")[0].files[0];
             formData.append(hasFileParam.name, file);
 
-            if (hasFileParam.paramType === 'REQUEST') {
+            if (hasFileParam.paramType === "REQUEST") {
               _.each(requestParams, function(value, key) {
                 formData.append(key, value);
               });
               requestParams = formData;
             }
-            if (hasFileParam.paramType === 'BODY') {
+            if (hasFileParam.paramType === "BODY") {
               requestBody = formData;
             }
           }
@@ -322,23 +324,31 @@ angular.module('apitester').directive(
           var request;
           scope.startTimer();
 
-          $rootScope.linkInNewTab = scope.selectedOptionKey === 'newTab';
+          $rootScope.linkInNewTab = scope.selectedOptionKey === "newTab";
           if ($rootScope.linkInNewTab) {
             request = scope.get(apiPath, requestParams);
           } else {
             switch (scope.endpoint.method) {
-              case 'DELETE':
+              case "DELETE":
                 request = scope.remove(apiPath, requestParams);
                 break;
-              case 'POST':
-                request = scope.post(apiPath, requestParams, requestBody,
-                  hasFileParam);
+              case "POST":
+                request = scope.post(
+                  apiPath,
+                  requestParams,
+                  requestBody,
+                  hasFileParam
+                );
                 break;
-              case 'PUT':
-                request = scope.put(apiPath, requestParams, requestBody,
-                  hasFileParam);
+              case "PUT":
+                request = scope.put(
+                  apiPath,
+                  requestParams,
+                  requestBody,
+                  hasFileParam
+                );
                 break;
-              case 'OPTIONS':
+              case "OPTIONS":
                 request = scope.options(apiPath, requestParams);
                 break;
               default:
@@ -348,13 +358,10 @@ angular.module('apitester').directive(
           }
 
           request
-            .then(
-              scope.treatSuccessResponse,
-              scope.treatErrorResponse
-            ).finally(function() {
+            .then(scope.treatSuccessResponse, scope.treatErrorResponse)
+            .finally(function() {
               scope.loading = false;
-            })
-          ;
+            });
         }
 
         /**
@@ -363,11 +370,11 @@ angular.module('apitester').directive(
          * @return {undefined}
          */
         function startTimer() {
-          scope.startTime = +(new Date());
+          scope.startTime = +new Date();
           scope.timerEnabled = true;
           scope.timer = $interval(function() {
             if (scope.timerEnabled) {
-              scope.sendButtonTimer = '(' + scope.getDuration() + ')';
+              scope.sendButtonTimer = "(" + scope.getDuration() + ")";
             }
           }, 10);
         }
@@ -379,7 +386,7 @@ angular.module('apitester').directive(
          */
         function stopTimer() {
           clearTimeout(scope.timer);
-          scope.sendButtonTimer = '(' + scope.getDuration() + ')';
+          scope.sendButtonTimer = "(" + scope.getDuration() + ")";
           scope.timerEnabled = false;
         }
 
@@ -410,17 +417,19 @@ angular.module('apitester').directive(
           _.each(hns, function(hn) {
             headers.push({
               name: hn,
-              value: response.headers(hn),
+              value: response.headers(hn)
             });
           });
 
           scope.response = _.extend(scope.response, {
             headers: headers,
             apiResponse: response,
-            message: data ? (data.errorMessage || data.message) : '',
+            message: data ? data.errorMessage || data.message : "",
             status: response.status,
-            value: JSON.stringify(data, null, 2),
+            value: JSON.stringify(data, null, 2)
           });
+
+          console.log("resp", scope.response);
         }
 
         /**
@@ -433,7 +442,6 @@ angular.module('apitester').directive(
           scope.stopTimer();
           scope.treatResponse(response);
         }
-      },
+      }
     };
-  }
-);
+  });

@@ -1,11 +1,9 @@
-angular.module(
-  'apitester'
-).directive('paramValueEdit', function($timeout) {
+angular.module("apitester").directive("paramValueEdit", function($timeout) {
   return {
-    templateUrl: 'param_value_edit.html',
+    templateUrl: "param_value_edit.html",
     scope: {
-      param: '=',
-      blur: '&',
+      param: "=",
+      blur: "&"
     },
     link: function(scope, elmt) {
       var $textarea;
@@ -16,9 +14,8 @@ angular.module(
       scope.updateBody = updateBody;
 
       scope.param.value = scope.param.defaultValue;
-      
-      activate();
 
+      activate();
 
       /**
        * @name activate
@@ -27,17 +24,17 @@ angular.module(
        * @return {undefined}
        */
       function activate() {
-        if (scope.param.collection && scope.param.paramType === 'REQUEST') {
+        if (scope.param.collection && scope.param.paramType === "REQUEST") {
           scope.param.collectionValues = [];
-          scope.param.newValue = '';
+          scope.param.newValue = "";
         }
 
         $timeout(function() {
-          $textarea = elmt.find('textarea');
-          var $pre = $textarea.closest('.row').find('pre');
+          $textarea = elmt.find("textarea");
+          var $pre = $textarea.closest(".row").find("pre");
 
           if ($textarea.length && $pre.length) {
-            if (scope.param.paramType !== 'RETURN') {
+            if (scope.param.paramType !== "RETURN") {
               var value = scope.param.object;
               if (scope.param.collection) {
                 value = [value];
@@ -45,11 +42,11 @@ angular.module(
               scope.updateBody(JSON.stringify(value));
             }
 
-            $textarea.css({height: $pre.outerHeight()});
+            $textarea.css({ height: $pre.outerHeight() });
           }
 
-          elmt.find('input[type=file]').bind('change', function() {
-            var files = elmt.find('input[type=file]')[0].files;
+          elmt.find("input[type=file]").bind("change", function() {
+            var files = elmt.find("input[type=file]")[0].files;
             if (files && files.length) {
               scope.fileName = files[0].name;
               scope.$digest();
@@ -66,7 +63,7 @@ angular.module(
       function addValue() {
         if (scope.param.newValue) {
           scope.param.collectionValues.push(scope.param.newValue);
-          scope.param.newValue = '';
+          scope.param.newValue = "";
         }
       }
 
@@ -86,7 +83,7 @@ angular.module(
        * @return {undefined}
        */
       function triggerSelectFile() {
-        elmt.find('input[type=file]').click();
+        elmt.find("input[type=file]").click();
       }
 
       /**
@@ -100,18 +97,18 @@ angular.module(
           value = scope.param.value;
         }
 
-        $textarea.removeClass('border-red');
+        $textarea.removeClass("border-red");
         try {
           scope.param.value = JSON.stringify(
-            JSON.parse(value.replace(/(\r\n|\n|\r)/gm, '')),
+            JSON.parse(value.replace(/(\r\n|\n|\r)/gm, "")),
             null,
             2
           );
         } catch (error) {
           console.log(error);
-          $textarea.addClass('border-red');
+          $textarea.addClass("border-red");
         }
       }
-    },
+    }
   };
 });

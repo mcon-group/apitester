@@ -1,35 +1,52 @@
-	<div class="col-md-12"   style="border-top-style: dashed; border-top-width: 2px; border-color: #999999; margin-top: 10px">
-	</div>
-	<div class="col-md-10">
-		<h3 ng-click="selectMethod('none')">
-			{{path.path}}
-		</h3>
-	</div>
-	<div class="col-md-2">
-		<h3 ng-click="selectMethod('none')">
-			<span class="pull-right glyphicon" ng-class="{'glyphicon-chevron-right' : mappings.length==0, 'glyphicon-chevron-down' : mappings.length>0}"> </span>
-		</h3>
-	</div>
-	<div class="col-md-12">
-		<button
-			ng-click="selectMethod(method)"
-			ng-repeat="method in path.methods"
-			class="btn"
-			ng-class="{
+<!-- path path and arrow -->
+<div
+  class="path-container-header d-flex flex-row flex-wrap justify-content-between align-items-start"
+>
+  <div class="path-container-path">
+    <h3 ng-click="selectMethod('none')">
+      {{path.path}}
+    </h3>
+  </div>
+
+  <div class="path-container-arrow cursor-pointer">
+    <div ng-click="selectMethod('none')">
+      <i
+        ng-if="mappings.length == 0"
+        class="fa fa-arrow-right"
+        aria-hidden="true"
+      ></i>
+
+      <i
+        ng-if="mappings.length > 0"
+        class="fa fa-arrow-down"
+        aria-hidden="true"
+      ></i>
+    </div>
+  </div>
+</div>
+
+<!-- methods buttons -->
+<div
+  class="methods-btn-container d-flex flex-row flex-wrap justify-content-center justify-content-lg-start align-items-center mb-4"
+>
+  <div class="m-2" ng-repeat="method in path.methods">
+    <button
+      class="btn"
+      ng-click="selectMethod(method)"
+      ng-class="{
 				'btn-success': method === 'GET',
 				'btn-danger': method === 'DELETE',
 				'btn-primary': method === 'POST',
 				'btn-info': method === 'PUT',
-				'btn-default': method === 'OPTIONS',
-				'active' : method == selectedMethod
+				'btn-light': method === 'OPTIONS',
+        'active' : method == selectedMethod
 			}"
-			style="margin: 5px">{{method}}</button>
-	</div>
-	<div class="col-md-12" ng-repeat="mapping in mappings">
-		<div class="row">
-			<div class="col-md-12">
-				<div endpoint="mapping">
-				</div>
-			</div>
-		</div>
-	</div>
+    >
+      {{method}}
+    </button>
+  </div>
+</div>
+
+<div class="mappings-container" ng-repeat="mapping in mappings">
+  <div class="mapping-container" endpoint="mapping"></div>
+</div>
