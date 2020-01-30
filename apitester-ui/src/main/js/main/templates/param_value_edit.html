@@ -46,13 +46,7 @@
   <div ng-if="param.display.editType === 'file'">
     <div class="input-group">
       <div class="custom-file">
-        <input
-          name="file"
-          type="file"
-          class="custom-file-input"
-          id="inputGroupFile01"
-          aria-describedby="inputGroupFileAddon01"
-        />
+        <input name="file" type="file" class="custom-file-input" />
         <label
           class="custom-file-label overflow-auto"
           ng-click="triggerSelectFile()"
@@ -60,25 +54,6 @@
         >
       </div>
     </div>
-
-    <!-- Parameter appears at most 1 time, for file upload -->
-    <!--
-    <div class="row">
-      <div class="col-lg-3">
-        <button
-          class="btn btn-primary"
-          type="button"
-          ng-click="triggerSelectFile()"
-        >
-          Select file
-        </button>
-        <input class="hidden" name="file" type="file" />
-      </div>
-      <div class="col-md-9">
-        <span>{{fileName}}</span>
-      </div>
-    </div>
-    -->
   </div>
 
   <div ng-if="param.display.editType === 'input'">
