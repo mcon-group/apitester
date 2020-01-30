@@ -1,6 +1,7 @@
 package com.mcg.apitester.example.controllers;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletResponse;
 

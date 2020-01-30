@@ -7,15 +7,15 @@
     <p>This method has no headers.</p>
   </div>
 
-  <div ng-if="headers.length>0" class="mapping-value-container container">
+  <div ng-if="headers.length>0" class="mapping-value-container">
     <div ng-repeat="header in headers track by $index" class="row">
-      <div class="col-lg-3 mr-lg-2">
-        <p>
+      <div class="col-lg-2">
+        <h5>
           <span class="badge badge-primary">{{header.name}}</span>
-        </p>
+        </h5>
       </div>
 
-      <div class="col mr-lg-2">
+      <div class="col">
         <p>
           {{header.description}}
         </p>

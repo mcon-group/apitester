@@ -1,7 +1,8 @@
 <div ng-if="param.collectionValues">
   <!-- Parameter could appear > 1 time, repeatable input for string, number -->
+
   <div
-    class="input-group"
+    class="input-group mb-2"
     ng-repeat="value in param.collectionValues track by $index"
   >
     <input
@@ -11,23 +12,33 @@
       ng-model="value"
       ng-required="param.required"
     />
-    <span
-      class="input-group-addon btn btn-danger"
-      ng-click="removeValue($index)"
-      ><i class="fa fa-minus" aria-hidden="true"></i
-    ></span>
+    <div class="input-group-prepend">
+      <button
+        class="btn btn-md btn-danger m-0 px-3 rounded-right"
+        ng-click="removeValue($index)"
+        type="button"
+      >
+        <i class="fa fa-minus" aria-hidden="true"></i>
+      </button>
+    </div>
   </div>
 
-  <div class="input-group bg-primary">
+  <div class="input-group mb-2">
     <input
       class="form-control"
       type="text"
       ng-class="param.required && !param.collectionValues.length ? 'border-red' : ''"
       ng-model="param.newValue"
     />
-    <span class="input-group-addon btn btn-primary" ng-click="addValue()"
-      ><i class="fa fa-plus" aria-hidden="true"></i
-    ></span>
+    <div class="input-group-prepend">
+      <button
+        class="btn btn-md btn-primary m-0 px-3 rounded-right"
+        ng-click="addValue()"
+        type="button"
+      >
+        <i class="fa fa-plus" aria-hidden="true"></i>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -104,12 +115,13 @@
     ></textarea>
   </div>
 
-  <div
-    ng-if="param.display.editType === 'textarea' && param.contentTypes[0].includes('image')"
-  >
+  <div ng-if="param.contentTypes[0].indexOf('image/')===0">
     <!-- for the images -->
 
-    <img ng-src="{{param.apiResponse.config.url}}" class="img-thumbnail" />
+    <img
+      ng-src="data:{{param.contentTypes[0]}},{{param.apiResponse.data}}"
+      class="img-thumbnail"
+    />
   </div>
 
   <div ng-if="param.display.editType === 'select'">

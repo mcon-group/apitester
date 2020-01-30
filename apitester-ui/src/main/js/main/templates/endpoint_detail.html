@@ -25,25 +25,25 @@
 
     <div
       ng-if="endpoint.methodInfo.params.length>0"
-      class="container mapping-value-container"
+      class="mapping-value-container"
     >
       <div
         ng-repeat="param in pathParams"
-        class="row shadow-sm p-2 mb-2 bg-white"
+        class="row mb-2 border-bottom"
         param-value
         param="param"
       ></div>
 
       <div
         ng-repeat="param in requestParams"
-        class="row shadow-sm p-2 mb-2 bg-white"
+        class="row mb-2 border-bottom"
         param-value
         param="param"
       ></div>
 
       <div
         ng-if="requestBody"
-        class="row shadow-sm p-2 mb-2 bg-white"
+        class="row mb-2 border-bottom"
         param-value
         param="requestBody"
       ></div>
