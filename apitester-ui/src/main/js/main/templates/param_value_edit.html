@@ -118,7 +118,10 @@
   <div ng-if="param.contentTypes[0].indexOf('image/')===0">
     <!-- for the images -->
 
-    <img ng-src="data:{{param.apiResponse.config.url}}" class="img-thumbnail" />
+    <img
+      ng-src="data:{{param.contentTypes[0]}},{{param.apiResponse.data}}"
+      class="img-thumbnail"
+    />
   </div>
 
   <div ng-if="param.display.editType === 'select'">

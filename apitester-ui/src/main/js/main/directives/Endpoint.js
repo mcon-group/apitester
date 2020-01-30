@@ -429,7 +429,7 @@ angular
             value: JSON.stringify(data, null, 2)
           });
 
-          console.log("resp", scope.response);
+          console.log("resp here ", scope.response.apiResponse.data);
         }
 
         /**
