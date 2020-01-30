@@ -33,4 +33,14 @@ angular
       $scope.allPaths = paths.data;
       $scope.updateList();
     });
+  })
+  .filter("base64", function() {
+    return function(data) {
+      console.log("filter called");
+      //I have the byte array as string => change it to byte array
+
+      //change that byte array to Base64 string
+
+      //we return that string so we can convert it to image
+    };
   });

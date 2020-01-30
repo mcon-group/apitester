@@ -64,25 +64,6 @@
         <button class="btn btn-primary" type="submit" ng-disabled="loading">
           {{sendText}} {{sendButtonTimer}}
         </button>
-
-        <button
-          class="btn btn-primary dropdown-toggle"
-          type="button"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          <span class="caret"></span>&nbsp;
-        </button>
-        <ul class="dropdown-menu">
-          <li
-            ng-repeat="(key, option) in sendOptions"
-            ng-click="selectOption(key)"
-            class="dropdown-item"
-          >
-            <a href="javascript:void(0);">{{option}}</a>
-          </li>
-        </ul>
       </div>
     </div>
   </div>

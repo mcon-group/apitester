@@ -83,7 +83,7 @@
     <!-- Parameter appears at most 1 time, an input for stringified object -->
     <textarea
       rows="20"
-      class="form-control"
+      class="form-control h-100"
       ng-blur="updateBody()"
       ng-model="param.value"
       ng-required="param.required"
@@ -94,7 +94,7 @@
     <!-- for the images -->
 
     <img
-      ng-src="data:{{param.contentTypes[0]}},{{param.apiResponse.data}}"
+      ng-src="data:{{param.contentTypes[0]}},{{param.value | base64 }}"
       class="img-thumbnail"
     />
   </div>

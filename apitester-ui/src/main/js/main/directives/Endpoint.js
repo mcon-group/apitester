@@ -15,8 +15,7 @@ angular
       templateUrl: "endpoint_detail.html",
       link: function(scope, elmt) {
         scope.sendOptions = {
-          default: "Send",
-          newTab: "Send (new tab)"
+          default: "Send"
         };
 
         scope.get = get;
@@ -101,7 +100,7 @@ angular
               scope.endpoint.method === "GET" &&
               scope.endpoint.methodInfo.returnType.contentTypes.length
             ) {
-              key = "newTab";
+              key = "default";
             }
           } catch (e) {
             //
@@ -428,7 +427,7 @@ angular
             status: response.status,
             value: JSON.stringify(data, null, 2)
           });
-console.log("resp here ", scope.response.apiResponse.data);
+          console.log("resp here ", scope.response);
         }
 
         /**
