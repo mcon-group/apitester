@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>File Upload Example</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width" />
+  <link rel="stylesheet" href="/public/bower_components/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="/public/src/directives/btnUpload.min.css" />
+  <!--[if lt IE 9]>
+    <script src="/public/bower_components/es5-shim/es5-shim.min.js"></script>
+    <script src="/public/bower_components/json3/lib/json3.min.js"></script>
+    <script src="/public/bower_components/html5shiv/dist/html5shiv.js"></script>
+    <script src="/public/bower_components/respond/respond.min.js"></script>
+  <![endif]-->
+  <script src="/public/bower_components/angular/angular.js" charset="utf-8"></script>
+  <script src="/public/angular-upload.js" charset="utf-8"></script>
+
+  <script charset="utf-8">
+
+    // Define our main app
+    var app = angular.module('app', [
+      'lr.upload'
+    ]);
+
+    app.controller('AppCtrl', function ($scope, $http) {
+
+      // App variable to show the uploaded response
+      $scope.responseData = undefined;
+
+      // Get initial uploads and populate list
+      $http({
+        method: 'get',
+        url: '/uploads?' + new Date().getTime(),
+        cache: false
+      }).then(function (response) {
+        $scope.uploads = response.data;
+      });
+
+      // Global handler for onSuccess that adds the uploaded files to the list
+      $scope.onGlobalSuccess = function (response) {
+        console.log('AppCtrl.onSuccess', response);
+        $scope.responseData = response.data;
+        $scope.uploads = $scope.uploads.concat(response.data.files);
+      };
+    });
+
+    app.controller('SimpleCtrl', function ($scope, $http) {
+      // Nothing special needed from the controller
+    });
+
+    app.controller('AdvancedMarkupCtrl', function ($scope, $http) {
+
+      // Valid mimetypes
+      $scope.acceptTypes = 'image/*,application/pdf';
+
+      // Data to be sent to the server with the upload request
+      $scope.uploadData = {
+        myformdata: 'hello world'
+      };
+
+      $scope.onUpload = function (files) {
+        console.log('AdvancedMarkupCtrl.onUpload', files);
+      };
+
+      $scope.onError = function (response) {
+        console.error('AdvancedMarkupCtrl.onError', response);
+        $scope.responseData = response.data;
+      };
+
+      $scope.onComplete = function (response) {
+        console.log('AdvancedMarkupCtrl.onComplete', response);
+        $scope.responseData = response.data;
+      };
+    });
+
+    // Start it up
+    angular.element(document).ready(function () {
+      angular.bootstrap(document, ['app']);
+    });
+  </script>
+</head>
+<body>
+  <div class="container" ng-controller="AppCtrl">
+    <div class="jumbotron">
+      <div class="jumbotron-body">
+        <h1>Angular Upload</h1>
+        <p>Upload files using FormData, fall back to iframe upload when FormData isn't supported</p>
+        <ul>
+          <li>Works in all browsers</li>
+          <li>Lightweight</li>
+          <li>No dependency on jQuery</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert alert-info" ng-show="responseData">
+      <strong>Last upload response</strong>
+      {{responseData | json}}
+    </div>
+
+    <div class="panel panel-default" ng-controller="SimpleCtrl">
+      <div class="panel-heading">
+        <h3 class="panel-title">Simple Example</h3>
+      </div>
+      <div class="panel-body">
+        <upload-button
+          class="btn btn-primary btn-upload"
+          url="/upload"
+          on-success="onGlobalSuccess(response)"
+        >Fileupload</upload-button>
+      </div>
+    </div>
+
+    <div class="panel panel-default" ng-controller="AdvancedMarkupCtrl">
+      <div class="panel-heading">
+        <h3 class="panel-title">Advanced Markup Example</h3>
+      </div>
+      <div class="panel-body">
+        <div class="checkbox">
+          <label for="allow-forceiframe">
+            <input id="allow-forceiframe" type="checkbox" ng-model="forceIframeUpload" /> Force IFrame upload
+          </label>
+        </div>
+
+        <div class="checkbox">
+          <label for="allow-multiple">
+            <input id="allow-multiple" type="checkbox" ng-model="allowMultiple" /> Allow Multiple (only works with FormData upload)
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="accept-mimetypes">Allowed mimetypes. example "image/jpeg,application/pdf" the accept attribute on upload-button also allows for a javascript array of mimetypes</label>
+          <input id="accept-mimetypes" class="form-control" type="text" ng-model="acceptTypes" />
+        </div>
+
+        <upload-button
+          class="btn btn-primary btn-upload"
+          url="/upload"
+          param="file"
+          accept="acceptTypes"
+          multiple="allowMultiple"
+          force-iframe-upload="forceIframeUpload"
+          data="uploadData"
+          on-upload="onUpload(files)"
+          on-success="onGlobalSuccess(response)"
+          on-error="onError(response)"
+          on-complete="onComplete(response)"
+        >Fileupload</div>
+      </upload-button>
+    </div>
+
+    <h4 class="m-lg">Uploaded files</h4>
+    <div class="list-group">
+      <a class="list-group-item" ng-href="/uploads/{{file}}" download ng-repeat="file in uploads">{{file}}</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -3,14 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mcg.apitester</groupId>
 	<artifactId>apitester</artifactId>
-	<version>0.1.6-SNAPSHOT</version>
+	<version>0.1.10-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>apitester-ui</module>
 		<module>apitester-api</module>
 		<module>apitester-impl</module>
 		<module>apitester-example</module>
-		<module>apitester-documentation</module>
+		<!-- >module>apitester-documentation</module-->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

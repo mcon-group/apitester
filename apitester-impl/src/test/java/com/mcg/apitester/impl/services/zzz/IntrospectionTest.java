@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.mcg.apitester.impl.entities.ParameterInfo;
-import com.mcg.apitester.impl.entities.TypeInfo;
+import com.mcg.apitester.api.entities.ParameterInfo;
+import com.mcg.apitester.api.entities.TypeInfo;
 import com.mcg.apitester.impl.services.Introspection;
 import com.mcg.apitester.impl.services.zzz.util.TestObject;
 

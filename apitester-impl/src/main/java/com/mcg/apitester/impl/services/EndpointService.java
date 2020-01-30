@@ -1,6 +1,5 @@
 package com.mcg.apitester.impl.services;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,17 +10,17 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import com.mcg.apitester.api.ApiDecorator;
 import com.mcg.apitester.api.annotations.ApiIgnore;
-import com.mcg.apitester.impl.entities.Mapping;
-import com.mcg.apitester.impl.entities.MethodInfo;
-import com.mcg.apitester.impl.entities.PathInfo;
+import com.mcg.apitester.api.entities.Mapping;
+import com.mcg.apitester.api.entities.MethodInfo;
+import com.mcg.apitester.api.entities.PathInfo;
 
 @Service
 public class EndpointService {
@@ -29,6 +28,9 @@ public class EndpointService {
 	private List<Mapping> mappings;
 
 	private List<PathInfo> paths;
+	
+	@Autowired(required = false)
+	private List<ApiDecorator> decorators = new ArrayList<ApiDecorator>();
 
 	@Autowired
 	private RequestMappingHandlerMapping handlerMapping;
@@ -37,6 +39,7 @@ public class EndpointService {
 	public List<Mapping> getMappings() throws ClassNotFoundException, LinkageError {
 		if(mappings==null) {
 			mappings = getMappingsInternal();
+			decorators.forEach((d) -> d.processMappings(mappings));
 		}
 		return mappings;
 	}

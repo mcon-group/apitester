@@ -1,6 +1,5 @@
 package com.mcg.apitester.example.controllers;
 
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -12,10 +11,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mcg.apitester.api.annotations.ApiDescription;
 import com.mcg.apitester.api.annotations.ApiError;
 import com.mcg.apitester.api.annotations.ApiErrors;
@@ -24,7 +19,6 @@ import com.mcg.apitester.api.annotations.ApiExtraParams;
 import com.mcg.apitester.api.annotations.ApiHeader;
 import com.mcg.apitester.api.annotations.ApiHeaders;
 import com.mcg.apitester.api.annotations.ParamType;
-import com.mcg.apitester.example.entities.OneEntity;
 
 
 @ApiExtraParams(
