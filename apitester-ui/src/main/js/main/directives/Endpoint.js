@@ -15,8 +15,7 @@ angular
       templateUrl: "endpoint_detail.html",
       link: function(scope, elmt) {
         scope.sendOptions = {
-          default: "Send",
-          newTab: "Send (new tab)"
+          default: "Send"
         };
 
         scope.get = get;
@@ -86,7 +85,11 @@ angular
          * @return {undefined}
          */
         function get(apiPath, requestParams) {
-          return Restangular.one(apiPath).get(requestParams);
+          return Restangular.one(apiPath)
+            .withHttpConfig({ responseType: "blob" })
+            .get(requestParams);
+
+          //return Restangular.one(apiPath).get(requestParams);
         }
 
         /**
@@ -101,7 +104,7 @@ angular
               scope.endpoint.method === "GET" &&
               scope.endpoint.methodInfo.returnType.contentTypes.length
             ) {
-              key = "newTab";
+              key = "default";
             }
           } catch (e) {
             //
@@ -408,9 +411,10 @@ angular
          * @return {undefined}
          */
         function treatResponse(response) {
+          console.log("THE TREATED RESPONSE : ", response);
           var data = response.data;
-
           var hns = _.keys(response.headers());
+          const isBinary = response.isBinary;
 
           var headers = [];
 
@@ -426,9 +430,8 @@ angular
             apiResponse: response,
             message: data ? data.errorMessage || data.message : "",
             status: response.status,
-            value: JSON.stringify(data, null, 2)
+            value: isBinary ? data : JSON.stringify(data, null, 2)
           });
-console.log("resp here ", scope.response.apiResponse.data);
         }
 
         /**
