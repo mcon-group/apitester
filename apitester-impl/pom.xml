@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>com.mcg.apitester</groupId>
 		<artifactId>apitester</artifactId>
-		<version>0.1.10-SNAPSHOT</version>
+		<version>0.1.11-SNAPSHOT</version>
 	</parent>
 	<artifactId>apitester-impl</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>com.mcg.apitester</groupId>
 			<artifactId>apitester-api</artifactId>
-			<version>0.1.10-SNAPSHOT</version>
+			<version>0.1.11-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
