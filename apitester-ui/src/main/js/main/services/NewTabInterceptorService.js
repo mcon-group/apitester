@@ -10,18 +10,19 @@ function NewTabInterceptorService($rootScope, $window) {
       if ($rootScope.linkInNewTab) {
         var urlParams = config.paramSerializer(config.params);
         if (urlParams) {
-          urlParams = '?' + urlParams;
+          urlParams = "?" + urlParams;
         }
-        $window.open(config.url + urlParams, '_blank');
+        $window.open(config.url + urlParams, "_blank");
       }
       $rootScope.linkInNewTab = false;
       return config;
-    },
+    }
   };
 }
 
-angular.module('apitester').service(
-  'NewTabInterceptorService', NewTabInterceptorService
-).config(function($httpProvider) {
-  $httpProvider.interceptors.push(NewTabInterceptorService);
-});
+angular
+  .module("apitester")
+  .service("NewTabInterceptorService", NewTabInterceptorService)
+  .config(function($httpProvider) {
+    $httpProvider.interceptors.push(NewTabInterceptorService);
+  });

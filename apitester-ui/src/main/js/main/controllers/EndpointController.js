@@ -29,6 +29,7 @@ angular
       $scope.allEndpoints = endpoints.data;
       $scope.updateList();
     });
+
     EndpointService.listPaths(function(paths) {
       $scope.allPaths = paths.data;
       $scope.updateList();

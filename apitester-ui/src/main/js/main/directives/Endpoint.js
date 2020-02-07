@@ -88,8 +88,6 @@ angular
           return Restangular.one(apiPath)
             .withHttpConfig({ responseType: "blob" })
             .get(requestParams);
-
-          //return Restangular.one(apiPath).get(requestParams);
         }
 
         /**
@@ -401,7 +399,18 @@ angular
          */
         function treatErrorResponse(response) {
           scope.stopTimer();
-          scope.treatResponse(response);
+          if (response && response.data instanceof Blob) {
+            var reader = new FileReader();
+
+            reader.addEventListener("loadend", function() {
+              response.data = JSON.parse(reader.result);
+              scope.treatResponse(response);
+            });
+
+            reader.readAsText(response.data);
+          } else {
+            scope.treatResponse(response);
+          }
         }
 
         /**
