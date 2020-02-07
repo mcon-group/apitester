@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Restangular } from "ngx-restangular";
 import { ParamService } from "./../param.service";
-import { Component, OnInit, Input, Renderer2, ElementRef } from "@angular/core";
+import { Component, OnInit, Input, ElementRef } from "@angular/core";
 import { _ } from "underscore";
 import { DomSanitizer } from "@angular/platform-browser";
 
@@ -11,20 +11,14 @@ import { DomSanitizer } from "@angular/platform-browser";
   styleUrls: ["./method.component.css"]
 })
 export class MethodComponent implements OnInit {
-  @Input() private method: any;
-  private details: false;
+  @Input() method: any;
   private pathParams;
   private headerParams;
   private requestParams;
   private requestBody;
   private fileParam;
   private response;
-  private selectedOptionKey;
-  private sendText;
   private startTime;
-  private sendOptions = {
-    default: "Send"
-  };
   private loading;
   private timerEnabled;
   private timer;
@@ -33,13 +27,10 @@ export class MethodComponent implements OnInit {
   constructor(
     private paramService: ParamService,
     private restangular: Restangular,
-    private element: Renderer2,
     private http: HttpClient,
     private elementRef: ElementRef,
     private sanitizer: DomSanitizer
-  ) {
-    this.details = false;
-  }
+  ) {}
 
   /**
    * @name ngOnInit
@@ -51,8 +42,6 @@ export class MethodComponent implements OnInit {
   ngOnInit() {
     console.log("THE METHOD : ", this.method);
 
-    this.details = false;
-
     let params = this.method.methodInfo.params;
 
     _.each(params, param => {
@@ -62,65 +51,29 @@ export class MethodComponent implements OnInit {
     this.pathParams = _.filter(params, param => {
       return param.paramType === "PATH";
     });
-    console.log("PATH PARAMS : ", this.pathParams);
 
     this.headerParams = _.filter(params, param => {
       return param.paramType === "HEADER";
     });
-    console.log("HEADER PARAMS : ", this.headerParams);
 
     this.requestParams = _.filter(params, param => {
       return param.paramType === "REQUEST";
     });
-    console.log("REQUEST PARAMS : ", this.requestParams);
 
     this.requestBody = _.find(params, param => {
       return param.paramType === "BODY";
     });
-    console.log("REQUEST BODY : ", this.requestBody);
 
     this.fileParam = _.find(params, param => {
       return param.file;
     });
-    console.log("FILE PARAMS : ", this.fileParam);
 
     this.response = this.method.methodInfo.returnType;
+
     this.response.paramType = "RETURN";
+
     this.paramService.setDisplayValues(this.response);
-
-    this.initSendText();
   }
-
-  /**
-   * @name initSendText
-   * @description initialize text of sendText
-   * @return {undefined}
-   */
-  initSendText = () => {
-    let key = "default";
-    try {
-      if (
-        this.method.method === "GET" &&
-        this.method.methodInfo.returnType.contentTypes.length
-      ) {
-        key = "default";
-      }
-    } catch (e) {
-      //
-    }
-
-    this.selectOption(key);
-  };
-
-  /**
-   * @name selectOption
-   * @description select option for the send button
-   * @param {string} key - keys from scope.sendOptions
-   */
-  selectOption = key => {
-    this.selectedOptionKey = key;
-    this.sendText = this.sendOptions[key];
-  };
 
   /**
    * @name getApiPath
@@ -180,17 +133,12 @@ export class MethodComponent implements OnInit {
    */
   getRequestParams = () => {
     return _.chain(this.requestParams)
-      .map(function(param) {
+      .map(param => {
         let paramName = param.name;
-        let value = param.value;
-        let values = param.collectionValues;
+        let value = param.value ? param.value : param.collectionValues;
 
         if (value) {
           return [paramName, value];
-        }
-
-        if (values) {
-          return [paramName, values];
         }
       })
       .compact()
@@ -207,11 +155,6 @@ export class MethodComponent implements OnInit {
    */
 
   get = (apiPath, requestParams) => {
-    console.log("-----------------------------------------------------");
-    console.log("GET REQUEST : ");
-    console.log("API PATH", apiPath);
-    console.log("PARAMS ", requestParams);
-    console.log("-----------------------------------------------------");
     return this.restangular
       .one(apiPath)
       .withHttpConfig({ responseType: "blob" })
@@ -250,9 +193,18 @@ export class MethodComponent implements OnInit {
       if (uploadFile.paramType === "REQUEST") {
         let APIUrl = this.restangular.one(apiPath).getRestangularUrl();
 
-        return this.http.post(APIUrl, requestParams, {
-          headers: formDataHeader
-        });
+        console.log("THE REQUESTR PARAM", requestParams);
+        return this.restangular
+          .one(apiPath)
+          .customPOST(requestParams, undefined, undefined, formDataHeader)
+          .toPromise();
+
+        /*
+        return this.http
+          .post(APIUrl, requestParams, {
+            headers: formDataHeader
+          })
+          .toPromise();*/
       } else {
         return this.restangular
           .one(apiPath)
@@ -340,12 +292,10 @@ export class MethodComponent implements OnInit {
         "input[type=file]"
       )[0].files[0];
 
-      console.log("THE SUBMITED FILE", file);
-
       formData.append(hasFileParam.name, file);
 
       if (hasFileParam.paramType === "REQUEST") {
-        _.each(requestParams, function(value, key) {
+        _.each(requestParams, (value, key) => {
           formData.append(key, value);
         });
         requestParams = formData;
@@ -358,8 +308,6 @@ export class MethodComponent implements OnInit {
     let request;
 
     this.startTimer();
-
-    console.log("THE METHOD : ", this.method.method);
 
     switch (this.method.method) {
       case "DELETE":
@@ -379,7 +327,7 @@ export class MethodComponent implements OnInit {
         break;
     }
 
-    request.then(this.treatResponse, this.treatErrorResponse).finally(() => {
+    request.then(this.treatResponse, this.treatResponse).finally(() => {
       this.loading = false;
     });
   };
@@ -405,33 +353,33 @@ export class MethodComponent implements OnInit {
    * @return {undefined}
    */
   stopTimer = () => {
-    console.log("STOPING THE TIMER ...");
     clearTimeout(this.timer);
     this.sendButtonTimer = "(" + this.getDuration() + ")";
     this.timerEnabled = false;
   };
 
-  /**
-   * @name treatErrorResponse
-   * @description treat API error response
-   * @param {object} response - Error response from Restangular
-   * @return {undefined}
-   */
-  treatErrorResponse = response => {
-    console.log("THE ERROR RESPONSE : ", response);
-    this.stopTimer();
-    if (response && response.data instanceof Blob) {
-      let reader = new FileReader();
+  convertResponse = response => {
+    const reader = new FileReader();
 
-      reader.addEventListener("loadend", () => {
-        response.data = JSON.parse(reader.result as string);
-        this.treatResponse(response);
-      });
+    return new Promise((resolve, reject) => {
+      if (response.data instanceof Blob) {
+        if (response.data.type.indexOf("image/") >= 0) {
+          response.data = window.URL.createObjectURL(response.data);
+          response.isBinary = true;
+          resolve(response);
+        } else {
+          reader.addEventListener("loadend", () => {
+            if (reader.result)
+              response.data = JSON.parse(<string>reader.result);
+            resolve(response);
+          });
 
-      reader.readAsText(response.data);
-    } else {
-      this.treatResponse(response);
-    }
+          reader.readAsText(response.data);
+        }
+      } else {
+        resolve(response);
+      }
+    });
   };
 
   /**
@@ -441,39 +389,39 @@ export class MethodComponent implements OnInit {
    * @return {undefined}
    */
   treatResponse = response => {
-    console.log("THE TREATED RESPONSE : ", response);
+    this.stopTimer();
+    console.log("BEFORE THE FINAL RESULT ", response);
+    this.convertResponse(response).then(result => {
+      console.log("THE FINAL RESULT ", response);
+      let data = response.data;
+      let hns = [];
 
-    let data = response.data;
+      response.headers.forEach((key, value, map) => {
+        hns.push(key);
+      });
 
-    let hns = [];
+      let headers: object[] = [];
 
-    response.headers.forEach((key, value, map) => {
-      hns.push(key);
-    });
+      _.each(hns, hn => {
+        headers.push({
+          name: hn,
+          value: response.headers.get(hn)
+        });
+      });
 
-    let headers: object[] = [];
+      const isBinary = response.isBinary;
 
-    _.each(hns, hn => {
-      headers.push({
-        name: hn,
-        value: response.headers.get(hn)
+      if (isBinary) {
+        data = this.sanitizer.bypassSecurityTrustUrl(data);
+      }
+
+      this.response = _.extend(this.response, {
+        headers: headers,
+        apiResponse: response,
+        message: data ? data.errorMessage || data.message : "",
+        status: response.status,
+        value: isBinary ? data : JSON.stringify(data, null, 2)
       });
     });
-
-    const isBinary = response.isBinary;
-
-    if (isBinary) {
-      data = this.sanitizer.bypassSecurityTrustUrl(data);
-    }
-
-    this.response = _.extend(this.response, {
-      headers: headers,
-      apiResponse: response,
-      message: data ? data.errorMessage || data.message : "",
-      status: response.status,
-      value: isBinary ? data : JSON.stringify(data, null, 2)
-    });
-
-    console.log("THE TREATED RESPONSE AFTER EXTENDING: ", this.response);
   };
 }

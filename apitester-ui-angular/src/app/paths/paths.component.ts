@@ -6,7 +6,7 @@ import { Component, OnInit, Input } from "@angular/core";
   styleUrls: ["./paths.component.css"]
 })
 export class PathsComponent implements OnInit {
-  @Input() paths: any[];
+  @Input() paths;
 
   constructor() {}
 

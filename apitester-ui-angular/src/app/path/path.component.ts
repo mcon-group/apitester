@@ -7,10 +7,11 @@ import { _ } from "underscore";
   styleUrls: ["./path.component.css"]
 })
 export class PathComponent implements OnInit {
-  @Input() path: any;
+  @Input() path;
+
   private isMethodSelected = false;
   private currentMethodName: string;
-  private selectedMappings: any[];
+  private selectedMappings: any;
 
   constructor() {}
 

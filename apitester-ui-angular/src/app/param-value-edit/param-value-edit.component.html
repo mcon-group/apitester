@@ -44,12 +44,12 @@
   </div>
 </div>
 
-<div *ngIf="!param.collectionValues">
+<div *ngIf="!param.collectionValues" class="h-100">
   <div *ngIf="param.display.editType === 'file'">
     <div class="input-group">
       <div class="custom-file">
         <input name="file" type="file" class="custom-file-input" />
-        <label class="custom-file-label overflow-auto">{{ fileName }}</label>
+        <label class="custom-file-label overflow-hidden">{{ fileName }}</label>
       </div>
     </div>
   </div>
@@ -59,17 +59,8 @@
 
     <input
       class="form-control"
-      type="text"
+      [attr.type]="param.secret ? 'password ' : 'text'"
       placeholder="{{ param.defaultValue }}"
-      [(ngModel)]="param.value"
-      [required]="param.required"
-      *ngIf="!param.secret"
-    />
-    <input
-      class="form-control"
-      type="password"
-      placeholder="{{ param.defaultValue }}"
-      *ngIf="param.secret"
       [(ngModel)]="param.value"
       [required]="param.required"
     />
@@ -78,9 +69,13 @@
   <div
     *ngIf="
       param.display.editType === 'textarea' &&
-      (!param.contentTypes ||
-        (param.contentTypes && !param.contentTypes.length === 0))
+      !(
+        param.contentTypes &&
+        param.contentTypes.length > 0 &&
+        param.contentTypes[0].indexOf('image/') === 0
+      )
     "
+    class="h-100"
   >
     <!-- Parameter appears at most 1 time, an input for stringified object -->
     <textarea
@@ -99,9 +94,7 @@
       param.contentTypes[0].indexOf('image/') === 0
     "
   >
-    <!-- for the images -->
-
-    <img [(src)]="param.value" class="img-thumbnail" />
+    <img *ngIf="param.value" [(src)]="param.value" class="img-thumbnail" />
   </div>
 
   <div *ngIf="param.display.editType === 'select'">

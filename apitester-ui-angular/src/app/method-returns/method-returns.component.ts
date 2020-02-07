@@ -11,7 +11,5 @@ export class MethodReturnsComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
-    console.log("THE RETURNS : ", this.response);
-  }
+  ngOnInit() {}
 }

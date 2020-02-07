@@ -6,11 +6,9 @@ import { Component, OnInit, Input } from "@angular/core";
   styleUrls: ["./method-return-status.component.css"]
 })
 export class MethodReturnStatusComponent implements OnInit {
-  @Input() private status;
+  @Input() status;
 
   constructor() {}
 
-  ngOnInit() {
-    console.log("THE RETURN STATUS : ", this.status);
-  }
+  ngOnInit() {}
 }

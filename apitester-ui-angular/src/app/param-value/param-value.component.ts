@@ -6,11 +6,11 @@ import { Component, OnInit, Input } from "@angular/core";
   styleUrls: ["./param-value.component.css"]
 })
 export class ParamValueComponent implements OnInit {
-  @Input() private param;
+  @Input() param;
 
   constructor() {}
 
   ngOnInit() {
-    console.log("THE PARAMETRE VALUE : ", this.param);
+    console.log("THE PARAMETRE : ", this.param);
   }
 }

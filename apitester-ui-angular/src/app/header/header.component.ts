@@ -8,12 +8,12 @@ import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 export class HeaderComponent implements OnInit {
   @Output() onSearchChange = new EventEmitter<string>();
 
+  private path;
+
   constructor() {}
 
-  handleSearchChange(input) {
-    const path = input.target.value;
-    console.log("THE SEARCH BAR INPUT : ", path);
-    this.onSearchChange.emit(path);
+  handleSearchChange() {
+    this.onSearchChange.emit(this.path);
   }
 
   ngOnInit() {}

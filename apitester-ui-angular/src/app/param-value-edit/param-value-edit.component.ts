@@ -13,8 +13,6 @@ export class ParamValueEditComponent implements OnInit {
   constructor(private elmt: Renderer2, private elmt2: ElementRef) {}
 
   ngOnInit() {
-    console.log("THE PARAM VALUE EDIT ", this.param);
-
     this.param.value = this.param.defaultValue;
 
     if (this.param.collection && this.param.paramType === "REQUEST") {
@@ -25,13 +23,14 @@ export class ParamValueEditComponent implements OnInit {
     setTimeout(() => {
       this.$textarea = this.elmt2.nativeElement.querySelector("textarea");
 
-      if (this.$textarea && this.$textarea.length) {
+      if (this.$textarea) {
         if (this.param.paramType !== "RETURN") {
           let value = this.param.object;
-          console.log("THE VALUE = ", value);
+
           if (this.param.collection) {
             value = [value];
           }
+
           this.updateBody(JSON.stringify(value));
         }
       }
@@ -39,9 +38,8 @@ export class ParamValueEditComponent implements OnInit {
       const $files = this.elmt2.nativeElement.querySelector("input[type=file]");
 
       if ($files) {
-        console.log("FILE INPUT ...", $files);
-        $files.addEventListener("change", e => {
-          const files = e.target.files;
+        $files.addEventListener("change", event => {
+          const files = event.target.files;
 
           if (files && files.length) {
             this.fileName = files[0].name;
@@ -60,7 +58,6 @@ export class ParamValueEditComponent implements OnInit {
     if (this.param.newValue) {
       this.param.collectionValues.push(this.param.newValue);
       this.param.newValue = "";
-      console.log("THE COLLECTION VALUES ARE ", this.param.collectionValues);
     }
   }
 
@@ -81,11 +78,11 @@ export class ParamValueEditComponent implements OnInit {
    * @return {undefined}
    */
   updateBody(value) {
+    this.elmt.removeClass(this.$textarea, "border-red");
+
     if (!value) {
       value = this.param.value;
     }
-
-    this.elmt.removeClass(this.$textarea, "border-red");
 
     try {
       this.param.value = JSON.stringify(

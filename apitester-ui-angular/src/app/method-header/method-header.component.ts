@@ -6,11 +6,9 @@ import { Component, OnInit, Input } from "@angular/core";
   styleUrls: ["./method-header.component.css"]
 })
 export class MethodHeaderComponent implements OnInit {
-  @Input() private headers;
+  @Input() headers;
 
   constructor() {}
 
-  ngOnInit() {
-    console.log("THE HEADERS : ", this.headers);
-  }
+  ngOnInit() {}
 }

@@ -1,4 +1,4 @@
-<div class="row mb-2 border-bottom">
+<div class="row mb-4 border-bottom">
   <div class="col-12 col-lg-2">
     <h5>
       <span class="badge badge-primary">
@@ -27,11 +27,13 @@
             </p>
           </div>
           <div class="col-12 col-lg-6">
-            <div *ngIf="param.descriptions.length">
-              <p
-                *ngFor="let description of param.descriptions"
-                class="alert alert-primary"
-              >
+            <div
+              *ngIf="param.descriptions.length"
+              class="alert alert-primary"
+              role="alert"
+            >
+              <h5 class="alert-heading">Descriptions</h5>
+              <p *ngFor="let description of param.descriptions">
                 <markdown [data]="description"></markdown>
               </p>
             </div>
@@ -66,7 +68,7 @@
     <div class="row mb-4">
       <!--param body structur-->
       <div class="col-12 col-lg-6 mb-2">
-        <div class="card bg-light h-100">
+        <div class="card bg-light">
           <div class="card-header">
             Request body structure
           </div>

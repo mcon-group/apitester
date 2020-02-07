@@ -10,7 +10,5 @@ export class MethodDescriptionsComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
-    console.log("THE DESCRIPTIONS : ", this.descriptions);
-  }
+  ngOnInit() {}
 }
