@@ -1,0 +1,83 @@
+<div *ngIf="response.type === 'void'" class="mapping-value-container">
+  <p>This method does not return anything</p>
+</div>
+
+<div class="mapping-value-container mb-5">
+  <div class="row">
+    <div *ngIf="response.paramType === 'RETURN'" class="col-12 col-lg-2">
+      <h5>
+        <span class="badge badge-primary">{{ response.paramType }}</span>
+      </h5>
+    </div>
+
+    <div *ngIf="response.paramType === 'RETURN'" class="col-12 col-lg-10">
+      <!--return code-->
+      <div *ngIf="response.status" class="row mb-4">
+        <div class="col-lg-4">
+          <h5>
+            <span
+              class="badge badge-success"
+              [ngClass]="{
+                'badge-info': response.status > 299,
+                'badge-warning': response.status > 399,
+                'badge-danger': response.status > 499
+              }"
+            >
+              {{ response.status }}
+            </span>
+          </h5>
+        </div>
+        <div class="col">
+          <p>
+            {{ response.message }}
+          </p>
+        </div>
+      </div>
+
+      <!--return headers-->
+      <div *ngIf="response.headers" class="mb-4">
+        <div
+          class="row border-bottom mb-2"
+          *ngFor="let header of response.headers"
+        >
+          <div class="col-12 col-lg-4">
+            <p class="strong-text">
+              {{ header.name }}
+            </p>
+          </div>
+
+          <div class="col">
+            <p>
+              {{ header.value }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!--return body structur-->
+        <div class="col-12 col-lg-6 mb-4">
+          <div *ngIf="response.type != 'void'" class="card bg-light h-100">
+            <div class="card-header">
+              Response structure
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">
+                {{ response.display.type
+                }}<span *ngIf="response.collection">[]</span>
+              </h5>
+              <pre class="card-text">{{
+                response.type !== "void" ? (response.object | json) : ""
+              }}</pre>
+            </div>
+          </div>
+        </div>
+
+        <!--return body-->
+        <div class="col-12 col-lg-6 mb-4">
+          <app-param-value-edit [param]="response"></app-param-value-edit>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

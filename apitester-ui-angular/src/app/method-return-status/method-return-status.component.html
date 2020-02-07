@@ -1,0 +1,31 @@
+<p *ngIf="status.length === 0">Empty Return Status</p>
+<div class="row mb-4" *ngFor="let statu of status">
+  <div class="col-12 col-lg-2">
+    <h5>
+      <span
+        class="badge"
+        [ngClass]="{
+          'badge-info': statu.status > 299,
+          'badge-warning': statu.status > 399,
+          'badge-danger': statu.status > 499
+        }"
+      >
+        {{ statu.status }}
+      </span>
+    </h5>
+  </div>
+  <div class="col-lg-10">
+    <div class="row">
+      <div class="col-12 col-lg-4">
+        <p class="strong-text">
+          {{ statu.name }}
+        </p>
+      </div>
+      <div class="col">
+        <p>
+          {{ statu.description }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

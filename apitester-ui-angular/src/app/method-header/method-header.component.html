@@ -1,0 +1,17 @@
+<p *ngIf="headers.length == 0">This method has no headers</p>
+
+<div *ngIf="headers.length > 0">
+  <div *ngFor="let header of headers" class="row">
+    <div class="col-12 col-lg-2">
+      <h5>
+        <span class="badge badge-primary">{{ header.name }}</span>
+      </h5>
+    </div>
+
+    <div class="col">
+      <p>
+        {{ header.description }}
+      </p>
+    </div>
+  </div>
+</div>

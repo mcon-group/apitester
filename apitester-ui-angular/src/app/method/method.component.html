@@ -1,0 +1,111 @@
+<form name="requestForm" novalidate (submit)="sendRequest($event)">
+  <!--************************responsable for showing the controller*********************************-->
+  <div class="method-info-container">
+    <div class="method-info-label">
+      <p>Controller Method</p>
+    </div>
+
+    <div class="method-info-value">
+      <app-method-controller
+        [controller]="method.methodInfo"
+      ></app-method-controller>
+    </div>
+  </div>
+
+  <!--************************responsable for showing the method descriptions*********************************-->
+  <div class="method-info-container">
+    <div class="method-info-label">
+      <p>Descriptions</p>
+    </div>
+
+    <div class="method-info-value">
+      <app-method-descriptions
+        [descriptions]="method.methodInfo.descriptions"
+      ></app-method-descriptions>
+    </div>
+  </div>
+
+  <!--*************************responsable for showing the method headers********************************-->
+  <div class="method-info-container">
+    <div class="method-info-label">
+      <p>Headers</p>
+    </div>
+
+    <div class="method-info-value">
+      <app-method-header
+        [headers]="method.methodInfo.headerInfos"
+      ></app-method-header>
+    </div>
+  </div>
+
+  <!--*************************responsable for showing the request parametres********************************-->
+  <div class="method-info-container">
+    <div class="method-info-label">
+      <p>Parameters</p>
+    </div>
+
+    <div *ngIf="method.methodInfo.params.length == 0" class="method-info-value">
+      <i>This method has no parameters.</i>
+    </div>
+
+    <div *ngIf="method.methodInfo.params.length > 0" class="method-info-value">
+      <app-param-value
+        *ngFor="let param of pathParams"
+        [param]="param"
+      ></app-param-value>
+
+      <app-param-value
+        *ngFor="let param of requestParams"
+        [param]="param"
+      ></app-param-value>
+
+      <app-param-value
+        *ngIf="requestBody"
+        [param]="requestBody"
+      ></app-param-value>
+    </div>
+  </div>
+
+  <div
+    class="form-group d-flex flex-row flex-wrap justify-content-end align-items-center mb-4"
+  >
+    <div *ngIf="method.method !== 'GET'">
+      <button class="btn btn-primary" type="submit" [disabled]="loading">
+        {{ sendText }} {{ sendButtonTimer }}
+      </button>
+    </div>
+
+    <div *ngIf="method.method === 'GET'">
+      <div class="input-group-prepend">
+        <button class="btn btn-primary" type="submit" [disabled]="loading">
+          {{ sendText }} {{ sendButtonTimer }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!--*************************responsable for showing the method response********************************-->
+
+  <div class="method-info-container">
+    <div class="method-info-label">
+      <p>Returns</p>
+    </div>
+
+    <div class="method-info-value">
+      <app-method-returns [response]="response"></app-method-returns>
+    </div>
+  </div>
+
+  <!--******************************responsable for showing the return status***************************-->
+  <div class="method-info-container">
+    <div class="method-info-label">
+      <p>Return Status</p>
+    </div>
+
+    <div class="method-info-value">
+      <app-method-return-status
+        [status]="method.methodInfo.returnStatus"
+      ></app-method-return-status>
+    </div>
+  </div>
+</form>
