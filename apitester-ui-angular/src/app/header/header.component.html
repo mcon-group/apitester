@@ -1,0 +1,14 @@
+<nav class="navbar navbar-light bg-light mb-4">
+  <span class="navbar-brand mb-0 display-1">Api Tester</span>
+  <div class="form-inline">
+    <input
+      name="path"
+      class="form-control form-control-lg mr-sm-2"
+      type="search"
+      placeholder="Search"
+      aria-label="Search"
+      [(ngModel)]="path"
+      (keyup)="handleSearchChange()"
+    />
+  </div>
+</nav>

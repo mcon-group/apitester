@@ -1,0 +1,47 @@
+/* You can add global styles to this file, and also import other style files */
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "../node_modules/font-awesome/css/font-awesome.min.css";
+
+.pointer {
+  cursor: pointer;
+}
+
+.strong-text {
+  font-weight: bold;
+}
+
+.path-container {
+  border-bottom: solid 1px #00000011;
+}
+
+.method-info-container {
+  margin-bottom: 36px;
+}
+
+.method-info-label {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.border-red,
+input.ng-invalid,
+select.ng-invalid,
+textarea.ng-invalid {
+  border: 1px solid red;
+}
+
+.text-red {
+  color: red;
+}
+
+p,
+pre {
+  word-break: break-word;
+}
+
+textarea {
+  min-height: 70px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+}

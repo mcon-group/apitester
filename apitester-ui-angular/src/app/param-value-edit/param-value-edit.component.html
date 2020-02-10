@@ -1,0 +1,113 @@
+<div *ngIf="param.collectionValues">
+  <!-- Parameter could appear > 1 time, repeatable input for string, number -->
+
+  <div
+    class="input-group mb-2"
+    *ngFor="let value of param.collectionValues; index as i"
+  >
+    <input
+      class="form-control"
+      disabled
+      type="text"
+      [(ngModel)]="value"
+      [required]="param.required"
+    />
+    <div class="input-group-prepend">
+      <button
+        class="btn btn-md btn-danger m-0 px-3 rounded-right"
+        (click)="removeValue(i)"
+        type="button"
+      >
+        <i class="fa fa-minus" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="input-group mb-2">
+    <input
+      class="form-control"
+      type="text"
+      [ngClass]="
+        param.required && !param.collectionValues.length ? 'border-red' : ''
+      "
+      [(ngModel)]="param.newValue"
+    />
+    <div class="input-group-prepend">
+      <button
+        class="btn btn-md btn-primary m-0 px-3 rounded-right"
+        (click)="addValue()"
+        type="button"
+      >
+        <i class="fa fa-plus" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!param.collectionValues" class="h-100">
+  <div *ngIf="param.display.editType === 'file'">
+    <div class="input-group">
+      <div class="custom-file">
+        <input name="file" type="file" class="custom-file-input" />
+        <label class="custom-file-label overflow-hidden">{{ fileName }}</label>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="param.display.editType === 'input'">
+    <!-- Parameter appears at most 1 time, an input for string, number, true/false boolean strings -->
+
+    <input
+      class="form-control"
+      [attr.type]="param.secret ? 'password ' : 'text'"
+      placeholder="{{ param.defaultValue }}"
+      [(ngModel)]="param.value"
+      [required]="param.required"
+    />
+  </div>
+
+  <div
+    *ngIf="
+      param.display.editType === 'textarea' &&
+      !(
+        param.contentTypes &&
+        param.contentTypes.length > 0 &&
+        param.contentTypes[0].indexOf('image/') === 0
+      )
+    "
+    class="h-100"
+  >
+    <!-- Parameter appears at most 1 time, an input for stringified object -->
+    <textarea
+      rows="20"
+      class="form-control h-100 textarea"
+      (blur)="updateBody()"
+      [(ngModel)]="param.value"
+      [required]="param.required"
+    ></textarea>
+  </div>
+
+  <div
+    *ngIf="
+      param.contentTypes &&
+      param.contentTypes.length > 0 &&
+      param.contentTypes[0].indexOf('image/') === 0
+    "
+  >
+    <img *ngIf="param.value" [(src)]="param.value" class="img-thumbnail" />
+  </div>
+
+  <div *ngIf="param.display.editType === 'select'">
+    <!-- Parameter appears at most 1 time, only a handful of values (> 1) should be used -->
+    <select
+      class="form-control"
+      [(ngModel)]="param.value"
+      [required]="param.required"
+    >
+      <option [value]="value" *ngFor="let value of param.values">{{
+        value
+      }}</option>
+      <option value="">-- Please select --</option>
+    </select>
+  </div>
+</div>

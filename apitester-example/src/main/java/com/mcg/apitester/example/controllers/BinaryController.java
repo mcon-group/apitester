@@ -27,6 +27,7 @@ public class BinaryController {
 		@RequestParam(required=false) @ApiDescription("Some lucky number") Integer x,
 		HttpServletResponse response
 	) throws IOException {
+		System.out.println("ITS CALLED ");
 		response.setHeader("Content-Type", "image/gif");
 		response.getOutputStream().write(Base64.decodeBase64(i));
 	}
