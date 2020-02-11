@@ -1,0 +1,90 @@
+<div class="row mb-4 border-bottom">
+  <div class="col-12 col-lg-2">
+    <h5>
+      <span class="badge badge-primary">
+        {{ param.paramType }}
+      </span>
+    </h5>
+  </div>
+  <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+  <div
+    *ngIf="
+      param.paramType !== 'RETURN' && param.display.editType !== 'textarea'
+    "
+    class="col-12 col-lg-10"
+  >
+    <div class="row">
+      <div class="col-12 col-lg-8">
+        <div class="row">
+          <div class="col-12 col-lg-6">
+            <p class="strong-text">
+              {{ param.name
+              }}<span *ngIf="param.required" class="text-red">*</span>
+            </p>
+            <p>
+              {{ param.display.type
+              }}<span *ngIf="param.typeInfo.array">[]</span>
+            </p>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div
+              *ngIf="param.descriptions.length"
+              class="alert alert-primary"
+              role="alert"
+            >
+              <h5 class="alert-heading">Descriptions</h5>
+              <p *ngFor="let description of param.descriptions">
+                <markdown [data]="description"></markdown>
+              </p>
+            </div>
+
+            <div
+              *ngIf="param.values"
+              class="card bg-light mb-3 return-structure-container"
+            >
+              <div class="card-body">
+                <h5 class="card-title">Values</h5>
+                <pre class="card-text">{{ param.values | json }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <app-param-value-edit [param]="param"></app-param-value-edit>
+      </div>
+    </div>
+  </div>
+
+  <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+  <div
+    class="col-12 col-lg-10"
+    *ngIf="
+      param.paramType !== 'RETURN' && param.display.editType === 'textarea'
+    "
+  >
+    <div class="row mb-4">
+      <!--param body structur-->
+      <div class="col-12 col-lg-6 mb-2">
+        <div class="card bg-light">
+          <div class="card-header">
+            Request body structure
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">
+              {{ param.display.type }}<span *ngIf="param.collection">[]</span>
+            </h5>
+            <pre class="card-text">{{ param.object | json }}</pre>
+          </div>
+        </div>
+      </div>
+
+      <!--param body-->
+      <div class="col-12 col-lg-6 mb-2">
+        <app-param-value-edit [param]="param"></app-param-value-edit>
+      </div>
+    </div>
+  </div>
+</div>

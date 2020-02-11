@@ -1,0 +1,51 @@
+<div class="path-container mb-4 py-4">
+  <div
+    class="d-flex flex-row flex-wrap justify-content-between align-items-start mb-2"
+  >
+    <div>
+      <h3>
+        {{ path.path }}
+      </h3>
+    </div>
+
+    <div>
+      <i
+        class="pointer fa"
+        aria-hidden="true"
+        [ngClass]="{
+          'fa-arrow-down': isMethodSelected,
+          'fa-arrow-right': !isMethodSelected
+        }"
+        (click)="handleArrowClick()"
+      ></i>
+    </div>
+  </div>
+
+  <div
+    class="d-flex flex-row flex-wrap justify-content-center justify-content-lg-start align-items-center mb-2"
+  >
+    <div class="mr-2" *ngFor="let method of path.methods">
+      <button
+        class="btn"
+        (click)="handleMethodClick(method)"
+        [ngClass]="{
+          'btn-success': method === 'GET',
+          'btn-danger': method === 'DELETE',
+          'btn-primary': method === 'POST',
+          'btn-info': method === 'PUT',
+          'btn-light': method === 'OPTIONS',
+          active: isMethodSelected && method === currentMethodName
+        }"
+      >
+        {{ method }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isMethodSelected">
+    <app-method
+      *ngFor="let mapping of selectedMappings"
+      [method]="mapping"
+    ></app-method>
+  </div>
+</div>

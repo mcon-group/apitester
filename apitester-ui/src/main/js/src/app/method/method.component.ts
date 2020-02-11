@@ -12,17 +12,17 @@ import { DomSanitizer } from "@angular/platform-browser";
 })
 export class MethodComponent implements OnInit {
   @Input() method: any;
-  private pathParams;
-  private headerParams;
-  private requestParams;
-  private requestBody;
-  private fileParam;
-  private response;
-  private startTime;
-  private loading;
-  private timerEnabled;
-  private timer;
-  private sendButtonTimer;
+  pathParams;
+  headerParams;
+  requestParams;
+  requestBody;
+  fileParam;
+  response;
+  startTime;
+  loading;
+  timerEnabled;
+  timer;
+  sendButtonTimer;
 
   constructor(
     private paramService: ParamService,
@@ -262,8 +262,7 @@ export class MethodComponent implements OnInit {
    * @description Sends the API request, depending on request method
    * @return {undefined}
    */
-  sendRequest = e => {
-    e.preventDefault();
+  sendRequest = () => {
     this.loading = true;
     this.resetResponse();
 
