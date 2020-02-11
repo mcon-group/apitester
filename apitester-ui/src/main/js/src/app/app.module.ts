@@ -1,8 +1,8 @@
+import { RouterModule, Routes } from "@angular/router";
 import { ParamService } from "./param.service";
 import { PathsService } from "./paths.service";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { HttpClientModule } from "@angular/common/http";
@@ -24,7 +24,10 @@ import { MethodReturnsComponent } from "./method-returns/method-returns.componen
 
 // Function for setting the default restangular configuration
 export function RestangularConfigFactory(RestangularProvider) {
-  let prefix = window.location.href;
+  var index = window.location.href.lastIndexOf("apitester");
+
+  var prefix = window.location.href.substr(0, index);
+  console.log("prefix: " + prefix);
 
   RestangularProvider.setBaseUrl(prefix);
   RestangularProvider.setFullResponse(true);

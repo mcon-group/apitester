@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -27,7 +28,8 @@
 				<!-- Use the latest released version: https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
 				<version>1.3</version>
 				<configuration>
-					<nodeVersion>v6.9.1</nodeVersion>
+					<nodeVersion>v10.18.1</nodeVersion>
+					<npmVersion>6.13.4</npmVersion>
 					<nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
 					<workingDirectory>src/main/js</workingDirectory>
 					<installDirectory>${project.basedir}/target/node</installDirectory>
@@ -40,6 +42,7 @@
 						</goals>
 						<phase>generate-resources</phase>
 					</execution>
+
 					<execution>
 						<id>npm install</id>
 						<goals>
@@ -49,15 +52,20 @@
 							<arguments>install</arguments>
 						</configuration>
 					</execution>
+
+
 					<execution>
-						<id>gulp build</id>
+						<id>npm run build</id>
 						<goals>
-							<goal>gulp</goal>
+							<goal>npm</goal>
 						</goals>
+
 						<configuration>
-							<arguments>build</arguments>
+							<arguments>run build</arguments>
 						</configuration>
 					</execution>
+
+					
 				</executions>
 			</plugin>
 		</plugins>
