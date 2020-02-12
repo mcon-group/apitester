@@ -1,14 +1,20 @@
-<nav class="navbar navbar-light bg-light mb-4">
-  <span class="navbar-brand mb-0 display-1">Api Tester</span>
-  <div class="form-inline">
+<header class="my-4">
+  <div class="mb-2 display-3"><h1>Api Tester</h1></div>
+
+  <div class="input-group mb-3">
     <input
       name="path"
-      class="form-control form-control-lg mr-sm-2"
+      class="form-control"
       type="search"
       placeholder="Search"
       aria-label="Search"
       [(ngModel)]="path"
       (keyup)="handleSearchChange()"
     />
+    <div class="input-group-append">
+      <span class="input-group-text"
+        ><i class="fa fa-search" aria-hidden="true"></i>
+      </span>
+    </div>
   </div>
-</nav>
+</header>

@@ -21,6 +21,7 @@ import { MethodReturnStatusComponent } from "./method-return-status/method-retur
 import { ParamValueComponent } from "./param-value/param-value.component";
 import { ParamValueEditComponent } from "./param-value-edit/param-value-edit.component";
 import { MethodReturnsComponent } from "./method-returns/method-returns.component";
+import { APP_BASE_HREF } from "@angular/common";
 
 // Function for setting the default restangular configuration
 export function RestangularConfigFactory(RestangularProvider) {
@@ -39,6 +40,12 @@ export function RestangularConfigFactory(RestangularProvider) {
     }
   );
 }
+
+const getBaseUrl = () => {
+  const baseHref = "/" + window.location.pathname.split("/")[1];
+  console.log("THE BASE ", baseHref);
+  return baseHref;
+};
 
 @NgModule({
   declarations: [
@@ -63,7 +70,11 @@ export function RestangularConfigFactory(RestangularProvider) {
     MarkdownModule.forRoot(),
     RestangularModule.forRoot(RestangularConfigFactory)
   ],
-  providers: [PathsService, ParamService],
+  providers: [
+    PathsService,
+    ParamService,
+    { provide: APP_BASE_HREF, useValue: getBaseUrl() }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
