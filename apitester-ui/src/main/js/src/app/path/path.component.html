@@ -1,11 +1,11 @@
-<div class="path-container mb-4 py-4">
+<div class="path-container mb-2 py-2">
   <div
     class="d-flex flex-row flex-wrap justify-content-between align-items-start mb-2"
   >
     <div>
-      <h3>
+      <h4>
         {{ path.path }}
-      </h3>
+      </h4>
     </div>
 
     <div>
@@ -26,7 +26,7 @@
   >
     <div class="mr-2" *ngFor="let method of path.methods">
       <button
-        class="btn"
+        class="btn btn-sm"
         (click)="handleMethodClick(method)"
         [ngClass]="{
           'btn-success': method === 'GET',

@@ -9,7 +9,7 @@
 
   <div *ngIf="response.paramType === 'RETURN'" class="col-12 col-lg-10">
     <!--return code-->
-    <div *ngIf="response.status" class="row mb-4">
+    <div *ngIf="response.status" class="row mb-2">
       <div class="col-12 col-lg-4">
         <h5>
           <span
@@ -32,9 +32,9 @@
     </div>
 
     <!--return headers-->
-    <div *ngIf="response.headers" class="mb-4">
+    <div *ngIf="response.headers" class="mb-1">
       <div
-        class="row py-2 mb-2 border-bottom"
+        class="row mb-1 border-bottom"
         *ngFor="let header of response.headers"
       >
         <div class="col-12 col-lg-4">
@@ -53,7 +53,7 @@
 
     <div class="row">
       <!--return body structur-->
-      <div class="col-12 col-lg-6 mb-4">
+      <div class="col-12 col-lg-6 mb-2">
         <div *ngIf="response.type != 'void'" class="card bg-light h-100">
           <div class="card-header">
             Response structure
@@ -71,7 +71,7 @@
       </div>
 
       <!--return body-->
-      <div class="col-12 col-lg-6 mb-4">
+      <div class="col-12 col-lg-6 mb-2">
         <app-param-value-edit [param]="response"></app-param-value-edit>
       </div>
     </div>

@@ -1,4 +1,4 @@
-<div class="row mb-4 border-bottom">
+<div class="row mb-1 py-1 border-bottom">
   <div class="col-12 col-lg-2">
     <h5>
       <span class="badge badge-primary">
@@ -27,12 +27,7 @@
             </p>
           </div>
           <div class="col-12 col-lg-6">
-            <div
-              *ngIf="param.descriptions.length"
-              class="alert alert-primary"
-              role="alert"
-            >
-              <h5 class="alert-heading">Descriptions</h5>
+            <div *ngIf="param.descriptions.length" class="text-secondary">
               <p *ngFor="let description of param.descriptions">
                 <markdown [data]="description"></markdown>
               </p>
@@ -43,7 +38,7 @@
               class="card bg-light mb-3 return-structure-container"
             >
               <div class="card-body">
-                <h5 class="card-title">Values</h5>
+                <h6 class="card-title">Values</h6>
                 <pre class="card-text">{{ param.values | json }}</pre>
               </div>
             </div>
