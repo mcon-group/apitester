@@ -1,3 +1,4 @@
+import { MainComponent } from "./main/main.component";
 import { RouterModule, Routes } from "@angular/router";
 import { ParamService } from "./param.service";
 import { PathsService } from "./paths.service";
@@ -42,10 +43,25 @@ export function RestangularConfigFactory(RestangularProvider) {
 }
 
 const getBaseUrl = () => {
-  const baseHref = "/" + window.location.pathname.split("/")[1];
+  const paths = window.location.pathname.split("/");
+  console.log("THE PATHS ", paths);
+
+  let baseHref = "/";
+  for (let i = 1; i < paths.length - 1; i++) {
+    baseHref += paths[i];
+  }
+
   console.log("THE BASE ", baseHref);
   return baseHref;
 };
+
+const appRoutes: Routes = [
+  { path: "", component: MainComponent, pathMatch: "full" },
+  {
+    path: "**",
+    redirectTo: ""
+  }
+];
 
 @NgModule({
   declarations: [
@@ -60,7 +76,8 @@ const getBaseUrl = () => {
     MethodReturnStatusComponent,
     ParamValueComponent,
     ParamValueEditComponent,
-    MethodReturnsComponent
+    MethodReturnsComponent,
+    MainComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +85,8 @@ const getBaseUrl = () => {
     HttpClientModule,
     FormsModule,
     MarkdownModule.forRoot(),
-    RestangularModule.forRoot(RestangularConfigFactory)
+    RestangularModule.forRoot(RestangularConfigFactory),
+    RouterModule.forRoot(appRoutes, { enableTracing: true })
   ],
   providers: [
     PathsService,
