@@ -49,6 +49,13 @@ const getBaseUrl = () => {
   let baseHref = "/";
   for (let i = 1; i < paths.length - 1; i++) {
     baseHref += paths[i];
+    if (i < paths.length - 2) baseHref += "/";
+  }
+
+  var index = baseHref.lastIndexOf("apitester");
+
+  if (index < 0) {
+    baseHref += "/apitester";
   }
 
   console.log("THE BASE ", baseHref);
