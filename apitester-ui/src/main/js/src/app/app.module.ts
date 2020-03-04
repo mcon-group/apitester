@@ -43,7 +43,7 @@ export function RestangularConfigFactory(RestangularProvider) {
       document.cookie.split(";").map(
         value => {
           let c = value.split("=");
-          id(c[0] == "XSRF-TOKEN") {
+          if(c[0] == "XSRF-TOKEN") {
             xsrfToken = c[1];
           }
         }
