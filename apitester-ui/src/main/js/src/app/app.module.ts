@@ -49,6 +49,7 @@ export function RestangularConfigFactory(RestangularProvider) {
         }
       );
       return {headers : Object.assign({} , headers , {'X-XSRF-TOKEN': xsrfToken})};
+    }
   );
 
   RestangularProvider.addResponseInterceptor(
