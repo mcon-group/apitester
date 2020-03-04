@@ -37,11 +37,20 @@ export function RestangularConfigFactory(RestangularProvider) {
 
   RestangularProvider.addFullRequestInterceptor(
   	(element , operation , path , url , headers , params)=>{
-	    let xsrfToken = document.cookie.replace(/(?:(?:^|.;\s)XSRF-TOKEN\s\=\s([^;]).$)|^.*$/, "$1");
-	    return {headers : Object.assign({} , headers , {'X-XSRF-TOKEN': xsrfToken})};
-    }
+
+	    let xsrfToken = "";
+
+      document.cookie.split(";").map(
+        value => {
+          let c = value.split("=");
+          id(c[0] == "XSRF-TOKEN") {
+            xsrfToken = c[1];
+          }
+        }
+      );
+      return {headers : Object.assign({} , headers , {'X-XSRF-TOKEN': xsrfToken})};
   );
-  
+
   RestangularProvider.addResponseInterceptor(
     (data, operation, what, url, response) => {
       return data;
