@@ -34,10 +34,10 @@ export function RestangularConfigFactory(RestangularProvider) {
   RestangularProvider.setBaseUrl(prefix);
   RestangularProvider.setFullResponse(true);
   RestangularProvider.setPlainByDefault(true);
-  
+
   RestangularProvider.addFullRequestInterceptor(
   	(element , operation , path , url , headers , params)=>{
-	    let xsrfCookie = document.cookie.replace(/(?:(?:^|.;\s)XSRF-TOKEN\s\=\s([^;]).$)|^.*$/, "$1");
+	    let xsrfToken = document.cookie.replace(/(?:(?:^|.;\s)XSRF-TOKEN\s\=\s([^;]).$)|^.*$/, "$1");
 	    return {headers : Object.assign({} , headers , {'X-XSRF-TOKEN': xsrfToken})};
     }
   );
