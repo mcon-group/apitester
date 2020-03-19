@@ -22,6 +22,7 @@ import com.mcg.apitester.api.annotations.ApiError;
 import com.mcg.apitester.api.annotations.ApiErrors;
 import com.mcg.apitester.example.entities.AnEnumeration;
 import com.mcg.apitester.example.entities.OneEntity;
+import com.mcg.apitester.example.entities.Pets;
 
 @RestController
 @RequestMapping(value="/api")
@@ -30,6 +31,7 @@ public class OneController extends BaseController {
 
 	@RequestMapping(value="/one/entities",method=RequestMethod.GET)
 	public List<OneEntity> list(
+			@RequestParam List<Pets> petfilter,
 			@RequestParam String x, 
 			@RequestParam String y, 
 			@RequestParam @ApiDescription("Example for description + enumeration values") AnEnumeration enumeration,
