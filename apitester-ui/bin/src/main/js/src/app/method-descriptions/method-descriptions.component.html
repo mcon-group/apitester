@@ -1,7 +1,0 @@
-<p *ngIf="descriptions.length === 0">This method has no description</p>
-
-<ul *ngIf="descriptions.length > 0" class="list-group">
-  <li *ngFor="let description of descriptions" class="list-group-item">
-    <markdown [data]="description"></markdown>
-  </li>
-</ul>
