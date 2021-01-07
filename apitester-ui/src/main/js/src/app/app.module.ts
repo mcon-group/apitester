@@ -38,11 +38,11 @@ export function RestangularConfigFactory(RestangularProvider) {
   RestangularProvider.addFullRequestInterceptor(
   	(element , operation , path , url , headers , params)=>{
 
-	    let xsrfToken = "";
+      let xsrfToken = "";
 
       document.cookie.split(";").map(
         value => {
-          let c = value.split("=");
+          let entry = value.split("=");
           if(entry[0].includes("XSRF-TOKEN")) {
             xsrfToken = entry[1].trim();
           }
