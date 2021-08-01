@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +26,8 @@ import com.mcg.apitester.api.entities.PathInfo;
 
 @Service
 public class EndpointService {
+	
+	private static Log log = LogFactory.getLog(EndpointService.class);
 	
 	private List<Mapping> mappings;
 
@@ -76,6 +80,9 @@ public class EndpointService {
 		List<Mapping> out = new ArrayList<>();
 		Map<RequestMappingInfo, HandlerMethod> map = this.handlerMapping.getHandlerMethods();
 		for(Entry<RequestMappingInfo,HandlerMethod> e : map.entrySet()) {
+			
+			
+			log.info(" ====> "+e.getValue().getMethod().getName());
 			
 			RequestMappingInfo rmi = e.getKey();
 			HandlerMethod hm = e.getValue();
